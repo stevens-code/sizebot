@@ -22,7 +22,7 @@ class DataStore:
         # These are the messages that are chosen from at random when the sizeray malfunctions
         self.malfunction_messages = []
 
-        # Discord bot token - A environment variable "SIZEBOT_TOKEN", which is the token Discord provides 
+        # Discord bot token - An environment variable "SIZEBOT_TOKEN", which is the token Discord provides 
         # you for running a bot. If this is not defined, the application cannot run. After setting it, log in and
         # out again so it can take effect globally.
         self.discord_bot_token = ''

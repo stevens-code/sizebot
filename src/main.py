@@ -12,9 +12,7 @@ from magic8 import *
 # Includes all the dice command processing
 from dice import *
 
-description = '''An example bot to showcase the discord.ext.commands extension
-module.
-There are a number of utility commands being showcased here.'''
+description = '''SizeBot'''
 
 intents = discord.Intents.default()
 intents.members = True
@@ -22,7 +20,8 @@ intents.message_content = True
 
 bot = commands.Bot(command_prefix='?', description=description, intents=intents)
 
-# Load the messages from files so they can be used by the commands
+# Load messages from files so they can be used by the commands 
+# Also loads the bot token used to authenticate the bot
 data_store = DataStore()
 
 @bot.event
