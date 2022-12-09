@@ -12,6 +12,8 @@ from data_store import *
 # - target: the target member that the author is targeting
 
 def sizeray_is_bot_targeted(interaction: discord.Interaction, target: discord.Member):
+    """Checks if the size ray is being targeted at the bot account itself."""
+
     return interaction.client.user == target
 
 def sizeray_shrink(data_store: DataStore, interaction: discord.Interaction, target: discord.Member) -> str:
