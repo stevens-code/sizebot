@@ -4,13 +4,13 @@ from discord.ext.commands import Context
 from data_store import *
 
 # Replace variables in messages
-def variable_replace(text: str, message_ctx: Context, data_store: DataStore, target_user: discord.Member = None):
+def variable_replace(text: str, interaction: discord.Interaction, data_store: DataStore, target_user: discord.Member = None):
     """Replaces context-specific variables in text."""
 
     result = text
 
     # Replace variables with server-specific emojis
-    emoji_cursor = data_store.db_connection.execute(f"SELECT * from emoji_variables WHERE guild = {message_ctx.guild.id}")    
+    emoji_cursor = data_store.db_connection.execute(f"SELECT * from emoji_variables WHERE guild = {interaction.guild.id}")    
     emoji_rows = emoji_cursor.fetchall()
     for emoji_row in emoji_rows:
         variable_name = emoji_row[3]
@@ -28,6 +28,6 @@ def variable_replace(text: str, message_ctx: Context, data_store: DataStore, tar
     # with strings mentioning the target and author members
     if target_user is not None:
         result = result.replace("{{target}}", target_user.mention)
-    result = result.replace("{{author}}", message_ctx.author.mention)
+    result = result.replace("{{author}}", interaction.user.mention)
 
     return result

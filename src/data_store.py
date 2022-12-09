@@ -1,13 +1,24 @@
 import os
 import sys
 import sqlite3
+import discord
 
 # Handles loading data from files and environment
-def data_read_list_file(filename: str) -> list[str]:
+def data_read_list_file(filename: str, enable_comments: bool = False) -> list[str]:
     """Helper function to read all lines from a file into a list of strings"""
 
     with open(filename) as file:
-        return file.read().splitlines()
+        lines = file.read().splitlines()
+
+        # Strip out comments (lines that start with "//"), if enabled
+        if enable_comments:
+            stripped_lines = []
+            for line in lines:
+                if not line.startswith("//"):
+                    stripped_lines.append(line)
+            return stripped_lines
+        else:
+            return lines
 
 class DataStore:
     """A class that stores all the data that is loaded from the environment. This should be a singleton (only have
@@ -17,6 +28,7 @@ class DataStore:
     # Constants
     CREATE_TABLES_SQL_PATH = "sql/create_tables.sql"
     DATABASE_PATH = "data/bot_data.db"
+    GUILDS_LIST_PATH = "data/guilds.txt"
     SIZERAY_SHRINK_MESSAGES_PATH = "data/messages/sizeray_shrink.txt"
     SIZERAY_GROW_MESSAGES_PATH = "data/messages/sizeray_grow.txt"
     SIZERAY_MALFUNCTION_MESSAGES_PATH = "data/messages/sizeray_malfunction.txt"
@@ -29,6 +41,11 @@ class DataStore:
         # These are the messages that are chosen from at random when the sizeray malfunctions
         self.malfunction_messages = []
 
+        # A list of Discord guild id that the bot targets
+        self.guild_ids = []
+        # A list of Discord guilds that the bot targets (created from guild_ids)
+        self.guilds = []
+
         # Discord bot token - An environment variable "SIZEBOT_TOKEN", which is the token Discord provides 
         # you for running a bot. If this is not defined, the application cannot run. After setting it, log in and
         # out again so it can take effect globally.
@@ -36,10 +53,21 @@ class DataStore:
 
         # Load environment variables
         self.load_environment_variables()
+        # Load guilds
+        self.load_guilds()
         # Load data from messages
         self.load_messages()
         # Load database
         self.db_connection = self.load_db()
+
+    def load_guilds(self):
+        """Load guilds that this bot is targeting."""
+
+        self.guild_ids = data_read_list_file(DataStore.GUILDS_LIST_PATH, True)
+        for guild_id in self.guild_ids:
+            self.guilds.append(discord.Object(id=guild_id))
+        print("Loaded list of guilds:")
+        print(self.guild_ids)
 
     def load_messages(self):
         """Load all message files from their folder into their lists."""
