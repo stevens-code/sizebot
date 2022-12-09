@@ -1,11 +1,33 @@
 import discord
+from discord.ext.commands import Context
+
+from data_store import *
 
 # Replace variables in messages
+def variable_replace(text: str, message_ctx: Context, data_store: DataStore, target_user: discord.Member = None):
+    """Replaces context-specific variables in text."""
 
-def variables_replace_target_author(text: str, target: discord.Member, author: discord.Member) -> str:
-    """Takes text and replaces variables {{target}} and {{author}} with strings mentioning the target and author members"""
+    result = text
+
+    # Replace variables with server-specific emojis
+    emoji_cursor = data_store.db_connection.execute(f"SELECT * from emoji_variables WHERE guild = {message_ctx.guild.id}")    
+    emoji_rows = emoji_cursor.fetchall()
+    for emoji_row in emoji_rows:
+        variable_name = emoji_row[3]
+        name = emoji_row[2]
+        result = result.replace(variable_name, name)
+    emoji_cursor.close()
+
+    # If there's any left over because the server didn't have custom emojis for them,
+    # replace them with the default emojis
+    result = result.replace("{{growth_ray}}", "🔫⏫")
+    result = result.replace("{{shrink_ray}}", "🔫⏬")
+    result = result.replace("{{size_ray}}", "🔫")
     
-    result = text.replace("{{target}}", target.mention)
-    result = result.replace("{{author}}", author.mention)
+    # Takes text and replaces variables {{target}} and {{author}} (if specified in function call) 
+    # with strings mentioning the target and author members
+    if target_user is not None:
+        result = result.replace("{{target}}", target_user.mention)
+    result = result.replace("{{author}}", message_ctx.author.mention)
 
     return result

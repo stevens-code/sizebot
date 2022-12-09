@@ -1,3 +1,4 @@
 .DS_Store
 .DS_Store?
 src/__pycache__
+src/data/bot_data.db
