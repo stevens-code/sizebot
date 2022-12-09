@@ -14,8 +14,8 @@ def variable_replace(text: str, message_ctx: Context, data_store: DataStore, tar
     emoji_rows = emoji_cursor.fetchall()
     for emoji_row in emoji_rows:
         variable_name = emoji_row[3]
-        name = emoji_row[2]
-        result = result.replace(variable_name, name)
+        emoji = emoji_row[2]
+        result = result.replace(variable_name, emoji)
     emoji_cursor.close()
 
     # If there's any left over because the server didn't have custom emojis for them,
