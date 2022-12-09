@@ -29,6 +29,7 @@ class DataStore:
     CREATE_TABLES_SQL_PATH = "sql/create_tables.sql"
     DATABASE_PATH = "data/bot_data.db"
     GUILDS_LIST_PATH = "data/guilds.txt"
+    DISCORD_TOKEN_PATH = "data/token.txt"
     SIZERAY_SHRINK_MESSAGES_PATH = "data/messages/sizeray_shrink.txt"
     SIZERAY_GROW_MESSAGES_PATH = "data/messages/sizeray_grow.txt"
     SIZERAY_MALFUNCTION_MESSAGES_PATH = "data/messages/sizeray_malfunction.txt"
@@ -46,13 +47,12 @@ class DataStore:
         # A list of Discord guilds that the bot targets (created from guild_ids)
         self.guilds = []
 
-        # Discord bot token - An environment variable "SIZEBOT_TOKEN", which is the token Discord provides 
-        # you for running a bot. If this is not defined, the application cannot run. After setting it, log in and
-        # out again so it can take effect globally.
+        # Discord bot token - Provided in the data/token.txt file, which is a plain text file including the token 
+        # Discord provides you for running a bot. If this is not defined, the bot cannot run.
         self.discord_bot_token = ""
 
-        # Load environment variables
-        self.load_environment_variables()
+        # Load the token
+        self.load_discord_token()
         # Load guilds
         self.load_guilds()
         # Load data from messages
@@ -84,14 +84,14 @@ class DataStore:
         print("Loaded size ray malfunction messages:")
         print(self.malfunction_messages) 
 
-    def load_environment_variables(self):
-        """Load environment variables into local variables"""
+    def load_discord_token(self):
+        """Load the Discord token from file."""
 
-        try:  
-            self.discord_bot_token = os.environ["SIZEBOT_TOKEN"]
-        except KeyError:
-            print("Please define the environment variable SIZEBOT_TOKEN. This is the token given by Discord that allows you to connect.")
-            sys.exit(1)
+        if os.path.exists(DataStore.DISCORD_TOKEN_PATH):            
+            with open(DataStore.DISCORD_TOKEN_PATH) as file:
+                self.discord_bot_token  = file.read()
+        else:
+            self.discord_bot_token = ""
 
     def load_db(self) -> sqlite3.Connection:
         """Load a SqlLite database file data/bot_data.db (this is created if it doesn't already exist).

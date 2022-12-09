@@ -11,6 +11,8 @@ from sizeray import *
 from magic8 import *
 # Includes all the dice command processing
 from dice import *
+# Includes app info
+from about import *
 
 description = """SizeBot"""
 
@@ -38,9 +40,14 @@ async def sizeray(interaction: discord.Interaction, target: discord.Member):
     await interaction.response.send_message(sizeray_sizeray(data_store, interaction, target))
 
 # === Dice commands ===
-@tree.command(description = "Rolls the dice.")
-async def roll(interaction: discord.Interaction, limit: int, rolls: int = 1):
-    await interaction.response.send_message(dice_roll(limit, rolls))
+@tree.command(description = "Rolls a X sided die for up to a 100 rolls. Defaults to a single roll of a 6 sided die.")
+async def roll(interaction: discord.Interaction, sides: int = 6, rolls: int = 1):
+    await interaction.response.send_message(dice_roll(sides, rolls))
+
+# === About commands ===
+@tree.command(name="about-sizebot", description = "Get info about SizeBot and the system it's running on.")
+async def about_sizebot(interaction: discord.Interaction):
+    await interaction.response.send_message(about_message(data_store, interaction))
 
 @client.event
 async def on_ready():
@@ -49,7 +56,8 @@ async def on_ready():
 
     # Sync slash commands
     for guild in data_store.guilds:
-        print(f"Syncing tree for guild {guild}")
+        print(f"Syncing tree for guild {guild.id}")
+        tree.copy_global_to(guild=guild)
         await tree.sync(guild= guild)
 
     print("Finished all tree syncs")
