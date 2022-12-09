@@ -11,8 +11,14 @@ from data_store import *
 # - interaction: the discord message's interaction context
 # - target: the target member that the author is targeting
 
+def sizeray_is_bot_targeted(interaction: discord.Interaction, target: discord.Member):
+    return interaction.client.user == target
+
 def sizeray_shrink(data_store: DataStore, interaction: discord.Interaction, target: discord.Member) -> str:
     """Generate a message for shrinking a member."""
+
+    if sizeray_is_bot_targeted:
+        return sizeray_malfunction(data_store, interaction, target)
 
     random_message = random.choice(data_store.shrink_messages);
     message_format = "{{shrink_ray}} ✨⚡ {{target}} has been zapped by the shrink ray! " + random_message + " ⚡✨"
@@ -20,6 +26,9 @@ def sizeray_shrink(data_store: DataStore, interaction: discord.Interaction, targ
 
 def sizeray_grow(data_store: DataStore, interaction: discord.Interaction, target: discord.Member) -> str:
     """Generate a message for growing a member."""
+
+    if sizeray_is_bot_targeted:
+        return sizeray_malfunction(data_store, interaction, target)
 
     random_message = random.choice(data_store.grow_messages);
     message_format = "{{growth_ray}} ✨⚡ {{target}} has been zapped by the growth ray! " + random_message + " ⚡✨"    
@@ -34,6 +43,9 @@ def sizeray_malfunction(data_store: DataStore, interaction: discord.Interaction,
 
 def sizeray_sizeray(data_store: DataStore, interaction: discord.Interaction, target: discord.Member) -> str:
     """Generate a message for a random size ray operation."""
+
+    if sizeray_is_bot_targeted:
+        return sizeray_malfunction(data_store, interaction, target)
 
     # Include shrink and grow twice so they're more likely to occur than malfunction
     options = ['shrink', 'grow', 'shrink', 'grow', 'malfunction']
