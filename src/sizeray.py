@@ -17,7 +17,7 @@ def sizeray_is_bot_targeted(interaction: discord.Interaction, target: discord.Me
 def sizeray_shrink(data_store: DataStore, interaction: discord.Interaction, target: discord.Member) -> str:
     """Generate a message for shrinking a member."""
 
-    if sizeray_is_bot_targeted:
+    if sizeray_is_bot_targeted(interaction, target):
         return sizeray_malfunction(data_store, interaction, target)
 
     random_message = random.choice(data_store.shrink_messages);
@@ -27,7 +27,7 @@ def sizeray_shrink(data_store: DataStore, interaction: discord.Interaction, targ
 def sizeray_grow(data_store: DataStore, interaction: discord.Interaction, target: discord.Member) -> str:
     """Generate a message for growing a member."""
 
-    if sizeray_is_bot_targeted:
+    if sizeray_is_bot_targeted(interaction, target):
         return sizeray_malfunction(data_store, interaction, target)
 
     random_message = random.choice(data_store.grow_messages);
@@ -44,7 +44,7 @@ def sizeray_malfunction(data_store: DataStore, interaction: discord.Interaction,
 def sizeray_sizeray(data_store: DataStore, interaction: discord.Interaction, target: discord.Member) -> str:
     """Generate a message for a random size ray operation."""
 
-    if sizeray_is_bot_targeted:
+    if sizeray_is_bot_targeted(interaction, target):
         return sizeray_malfunction(data_store, interaction, target)
 
     # Include shrink and grow twice so they're more likely to occur than malfunction
