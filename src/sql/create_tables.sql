@@ -3,7 +3,7 @@ CREATE TABLE text_variables(
 guild           INT         NOT NULL,
 timestamp       TIMESTAMP   NOT NULL,
 variable_name   TEXT        NOT NULL,
-replacement     TEXT        NOT NULL
+variable_value  TEXT        NOT NULL
 );
 
 -- Keep stats of size ray actions

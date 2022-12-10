@@ -12,7 +12,7 @@ SIZEBOT_VERSION = 1.0
 
 async def about_message(data_store: DataStore, interaction: discord.Interaction):
     process = psutil.Process(os.getpid())
-    await say(f"""**SizeBot Version:** {SIZEBOT_VERSION}
+    await say(interaction, f"""**SizeBot Version:** {SIZEBOT_VERSION}
 **Python Version:** {sys.version}
 **Local Time:** {format_datetime(datetime.now())}
 **Running Since:** {format_datetime(datetime.fromtimestamp(process.create_time()))} 
