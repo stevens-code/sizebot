@@ -5,14 +5,18 @@ from discord import app_commands
 
 # Includes functions to load data from the system (including messages from the data/messages files)
 from data_store import *
-# Includes all the size ray command processing
+# Includes all the size ray functionality
 from sizeray import *
 # Includes all the Magic 8 Ball functionality
 from magic8 import *
-# Includes all the dice command processing
+# Includes all the dice functionality
 from dice import *
+# Includes all greeter functionality
+from greeter import *
 # Includes app info
 from about import *
+# Includes utility functions
+from util import *
 
 description = """SizeBot"""
 
@@ -29,25 +33,34 @@ tree = app_commands.CommandTree(client)
 # === Sizebot commands ===
 @tree.command(description = "Fires a shrink ray at someone.")
 async def shrink(interaction: discord.Interaction, target: discord.Member):
-    await interaction.response.send_message(sizeray_shrink(data_store, interaction, target))
+    await sizeray_shrink(data_store, interaction, target)
 
 @tree.command(description = "Fires a growth ray at someone.")
 async def grow(interaction: discord.Interaction, target: discord.Member):
-    await interaction.response.send_message(sizeray_grow(data_store, interaction, target))
+    await sizeray_grow(data_store, interaction, target)
 
 @tree.command(description = "Fires the size ray at someone.")
 async def sizeray(interaction: discord.Interaction, target: discord.Member):
-    await interaction.response.send_message(sizeray_sizeray(data_store, interaction, target))
+    await sizeray_sizeray(data_store, interaction, target)
 
 # === Dice commands ===
 @tree.command(description = "Rolls a X sided die for up to a 100 rolls. Defaults to a single roll of a 6 sided die.")
 async def roll(interaction: discord.Interaction, sides: int = 6, rolls: int = 1):
-    await interaction.response.send_message(dice_roll(sides, rolls))
+    await dice_roll(sides, rolls)
+
+# === Greeter commands ===
+@tree.command(description = "Welcome a user.")
+async def welcome(interaction: discord.Interaction, target: discord.Member):
+    await greeter_welcome(data_store, interaction, target)
+
+@tree.command(description = "Say goodbye to a user.")
+async def goodbye(interaction: discord.Interaction, target: discord.Member):
+    await greeter_say_goodbye(data_store, interaction, target)
 
 # === About commands ===
 @tree.command(name="about-sizebot", description = "Get info about SizeBot and the system it's running on.")
 async def about_sizebot(interaction: discord.Interaction):
-    await interaction.response.send_message(about_message(data_store, interaction))
+    await about_message(data_store, interaction)
 
 @client.event
 async def on_ready():
