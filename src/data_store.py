@@ -42,6 +42,7 @@ class DataStore:
     SIZERAY_MALFUNCTION_MESSAGES_PATH = "data/messages/sizeray_malfunction.txt"
     CHARACTER_SCARA_MESSAGES_PATH = "data/messages/character_scara.txt"
     GREETER_WELCOME_MESSAGES_PATH = "data/messages/greeter_welcome.txt"
+    GREETER_GOODBYE_MESSAGES_PATH = "data/messages/greeter_goodbye.txt"
 
     def __init__(self) -> None:
         # These are the messages that are chosen from at random when someone is shrunk
@@ -88,6 +89,7 @@ class DataStore:
         self.malfunction_messages = load_lines_file(DataStore.SIZERAY_MALFUNCTION_MESSAGES_PATH, "Loaded size ray malfunction messages")
         self.character_scara_messages = load_lines_file(DataStore.CHARACTER_SCARA_MESSAGES_PATH, "Loaded size ray malfunction messages")
         self.greeter_welcome_messages = load_lines_file(DataStore.GREETER_WELCOME_MESSAGES_PATH, "Loaded greeter welcome messages")
+        self.greeter_goodbye_messages = load_lines_file(DataStore.GREETER_GOODBYE_MESSAGES_PATH, "Loaded greeter goodbye messages")
 
     def load_discord_token(self):
         """Load the Discord token from file."""

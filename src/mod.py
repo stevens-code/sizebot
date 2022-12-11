@@ -81,3 +81,33 @@ async def mod_reset_sizebot_welcome(data_store: DataStore, interaction: discord.
         os.remove(old_path)
     
     await say_with_image(interaction, "Reset welcome image back to default:", "data/images/welcome.jpg")
+
+async def mod_set_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction, file_attachment: discord.Attachment):
+    """Set the SizeBot goodbye image."""
+
+    ext = pathlib.Path(file_attachment.filename).suffix.lower() 
+    if ext not in DISCORD_SUPPORTED_FILE_EXTS:
+        await say(interaction, f"🚨 **Error:** Not a supported file type. The supported types are: {DISCORD_SUPPORTED_FILE_EXTS}. 🚨")
+    else:
+        guild_id = f"{interaction.guild.id}"
+
+        # Delete the old goodbye image if it exists
+        old_path = find_file_with_supported_ext("data/images/guild_custom/goodbye/", guild_id)
+        if os.path.exists(old_path):
+            os.remove(old_path)
+
+        await say(interaction, "Uploading new goodbye image...")
+
+        # Set the new one and send it back as a message
+        file_path = f"data/images/guild_custom/goodbye/{guild_id}{ext}"
+        await file_attachment.save(file_path)
+        await say_with_image(interaction, "Set new goodbye image to:", file_path, True)
+
+async def mod_reset_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction):
+    """Delete the custom SizeBot goodbye image and reset to default."""
+
+    old_path = find_file_with_supported_ext("data/images/guild_custom/goodbye/", f"{interaction.guild.id}")
+    if os.path.exists(old_path):
+        os.remove(old_path)
+    
+    await say_with_image(interaction, "Reset goodbye image back to default:", "data/images/fallen.png")

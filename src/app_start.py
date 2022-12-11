@@ -97,6 +97,16 @@ async def set_sizebot_welcome(interaction: discord.Interaction, file: discord.At
 async def reset_sizebot_welcome(interaction: discord.Interaction):
     await mod_reset_sizebot_welcome(data_store, interaction)
 
+@tree.command(name="set-sizebot-goodbye", description = "Set the SizeBot goodbye image.")
+@has_permissions(administrator = True)
+async def set_sizebot_goodbye(interaction: discord.Interaction, file: discord.Attachment):
+    await mod_set_sizebot_goodbye(data_store, interaction, file)
+
+@tree.command(name="reset-sizebot-goodbye", description = "Delete the custom SizeBot goodbye image and reset to default.")
+@has_permissions(administrator = True)
+async def reset_sizebot_goodbye(interaction: discord.Interaction):
+    await mod_reset_sizebot_goodbye(data_store, interaction)
+
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user} (ID: {client.user.id})")
