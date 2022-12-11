@@ -43,6 +43,9 @@ class DataStore:
     CHARACTER_SCARA_MESSAGES_PATH = "data/messages/character_scara.txt"
     GREETER_WELCOME_MESSAGES_PATH = "data/messages/greeter_welcome.txt"
     GREETER_GOODBYE_MESSAGES_PATH = "data/messages/greeter_goodbye.txt"
+    MAGIC8_POSITIVE_MESSAGES_PATH = "data/messages/magic8_positive.txt"
+    MAGIC8_NEGATIVE_MESSAGES_PATH = "data/messages/magic8_negative.txt"
+    MAGIC8_NONCOMMITTAL_MESSAGES_PATH = "data/messages/magic8_noncommittal.txt"
 
     def __init__(self) -> None:
         # These are the messages that are chosen from at random when someone is shrunk
@@ -53,6 +56,14 @@ class DataStore:
         self.malfunction_messages = []
         # These are the messages that are chosen from at random when welcoming someone
         self.greeter_welcome_messages = []
+        # These are the messages that are chosen from at random when saying goodbye to someone
+        self.greeter_goodbye_messages = []
+        # Postive responses from the Magic 8 Ball
+        self.magic8_positive_messages = []
+        # Negative responses from the Magic 8 Ball
+        self.magic8_negative_messages = []
+        # Non-committal responses from the Magic 8 Ball
+        self.magic8_noncommittal_messages = []
 
         # A list of Discord guild id that the bot targets
         self.guild_ids = []
@@ -90,6 +101,9 @@ class DataStore:
         self.character_scara_messages = load_lines_file(DataStore.CHARACTER_SCARA_MESSAGES_PATH, "Loaded size ray malfunction messages")
         self.greeter_welcome_messages = load_lines_file(DataStore.GREETER_WELCOME_MESSAGES_PATH, "Loaded greeter welcome messages")
         self.greeter_goodbye_messages = load_lines_file(DataStore.GREETER_GOODBYE_MESSAGES_PATH, "Loaded greeter goodbye messages")
+        self.magic8_positive_messages = load_lines_file(DataStore.MAGIC8_POSITIVE_MESSAGES_PATH, "Loaded Magic 8 positive messages")
+        self.magic8_negative_messages = load_lines_file(DataStore.MAGIC8_NEGATIVE_MESSAGES_PATH, "Loaded Magic 8 negative messages")
+        self.magic8_noncommittal_messages = load_lines_file(DataStore.MAGIC8_NONCOMMITTAL_MESSAGES_PATH, "Loaded Magic 8 non-committal messages")
 
     def load_discord_token(self):
         """Load the Discord token from file."""

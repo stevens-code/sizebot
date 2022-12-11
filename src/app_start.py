@@ -56,6 +56,11 @@ async def sizeray_last_10(interaction: discord.Interaction):
 @tree.command(name = "roll", description = "Rolls a X sided die for up to a 100 rolls. Defaults to a single roll of a 6 sided die.")
 async def roll(interaction: discord.Interaction, sides: int = 6, rolls: int = 1):
     await dice_roll(interaction, sides, rolls)
+    
+# === Magic 8 ball commands ===
+@tree.command(name = "magic8", description = "Ask the Magic 8 ball something.")
+async def magic8(interaction: discord.Interaction, question: str = ""):
+    await magic8_ask(data_store, interaction, question)
 
 # === Greeter commands ===
 @tree.command(name = "welcome", description = "Welcome a user.")
