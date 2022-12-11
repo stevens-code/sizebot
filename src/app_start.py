@@ -65,7 +65,7 @@ async def goodbye(interaction: discord.Interaction, target: discord.Member):
     await greeter_say_goodbye(data_store, interaction, target)
 
 # === About commands ===
-@tree.command(name = "about-sizebot",description = "Get info about SizeBot and the system it's running on.")
+@tree.command(name = "about-sizebot", description = "Get info about SizeBot and the system it's running on.")
 async def about_sizebot(interaction: discord.Interaction):
     await about_message(data_store, interaction)
 
@@ -93,4 +93,5 @@ async def on_ready():
 
     print("Finished all tree syncs")
 
+# Launch the app
 client.run(data_store.discord_bot_token)

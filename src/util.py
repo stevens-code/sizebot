@@ -5,7 +5,9 @@ from datetime import datetime
 # Various helper functions
 
 def format_datetime(time: datetime) -> str:
-    return datetime.strftime(time, "%Y-%m-%d %H:%M:%S")
+    """Formats a date and time to a clean format."""
+
+    return datetime.strftime(time, f"%I:%M %p ({time.astimezone().tzname()}) on %m/%d/%Y")
 
 async def say(interaction: discord.Interaction, text: str):
     """Wrapper for sending a plain text message."""

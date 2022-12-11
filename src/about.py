@@ -11,6 +11,8 @@ from util import *
 SIZEBOT_VERSION = 1.0
 
 async def about_message(data_store: DataStore, interaction: discord.Interaction):
+    """Responds with a message about SizeBot."""
+
     process = psutil.Process(os.getpid())
     await say(interaction, f"""**SizeBot Version:** {SIZEBOT_VERSION}
 **GitHub Repository:** stevens-code/sizebot
