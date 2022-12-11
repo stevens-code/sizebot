@@ -5,7 +5,7 @@ from variables import *
 from data_store import *
 from util import *
 
-# All of these functions take 3 arguments:
+# All of the command-related functions take 3 arguments:
 # - data_store: the data_store that is defined in app_start. This contains all the data, including messages that are loaded from 
 # the data/messages folder that start with "sizeray_". To add/remove/change the messages that are chosen at random for each
 # sizeray function, change the corresponding file. Each message is on its own line.
@@ -21,7 +21,8 @@ async def sizeray_malfunction(data_store: DataStore, interaction: discord.Intera
     """Generate a message for a size ray malfunction."""
 
     random_message = random.choice(data_store.malfunction_messages);
-    message_format = "{{size_ray}} 🔥⚠ The size ray's *malfunctioned*!! ⚠🔥  ⚡✨\n{{size_ray}} " + random_message    
+    message_format = "{{size_ray}} 🔥⚠ The size ray's *malfunctioned*!! ⚠🔥  ⚡✨\n{{size_ray}} " + random_message  
+    sizeray_log_action(data_store, interaction.guild.id, "malfunction", target, interaction.user)   
     await say(interaction, variable_replace(message_format, interaction, data_store, target))
 
 async def sizeray_shrink(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):
@@ -32,6 +33,7 @@ async def sizeray_shrink(data_store: DataStore, interaction: discord.Interaction
     else:
         random_message = random.choice(data_store.shrink_messages);
         message_format = "{{shrink_ray}} ✨⚡ {{target}} has been zapped by the shrink ray! " + random_message + " ⚡✨"
+        sizeray_log_action(data_store, interaction.guild.id, "shrink", target, interaction.user) 
         await say(interaction, variable_replace(message_format, interaction, data_store, target))
 
 async def sizeray_grow(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):
@@ -41,7 +43,8 @@ async def sizeray_grow(data_store: DataStore, interaction: discord.Interaction, 
         await sizeray_malfunction(data_store, interaction, target)
     else:
         random_message = random.choice(data_store.grow_messages);
-        message_format = "{{growth_ray}} ✨⚡ {{target}} has been zapped by the growth ray! " + random_message + " ⚡✨"    
+        message_format = "{{growth_ray}} ✨⚡ {{target}} has been zapped by the growth ray! " + random_message + " ⚡✨"   
+        sizeray_log_action(data_store, interaction.guild.id, "grow", target, interaction.user) 
         await say(interaction, variable_replace(message_format, interaction, data_store, target))
 
 async def sizeray_sizeray(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):
@@ -61,10 +64,36 @@ async def sizeray_sizeray(data_store: DataStore, interaction: discord.Interactio
         else: # malfunction
             await sizeray_malfunction(data_store, interaction, target)
 
-def sizeray_current_state(data_store: DataStore, member: discord.Member) -> str:
-    """"""
+async def sizeray_get_last_10(data_store: DataStore, interaction: discord.Interaction):
+    lines = ["**The last 10 size ray actions were:**"];
 
-    return "normal"
+    cursor = data_store.db_connection.execute(f"SELECT * from sizeray_actions WHERE guild = ? ORDER BY timestamp DESC LIMIT 10", (interaction.guild.id, ))    
+    rows = cursor.fetchall()
+    counter = 1
+    for row in rows:
+        time = format_datetime(row[1])
+        action = row[2]
+        target = await get_user(interaction, row[3])
+        author = await get_user(interaction, row[4])
+
+        if author is not None and target is not None:
+            if action == "malfunction":
+                lines.append(f"({counter}) The size ray *malfunctioned* on ***{no_ping(author)}*** at {time}")            
+            elif action == "shrink":
+                lines.append(f"({counter}) ***{no_ping(author)}*** *shrank* ***{no_ping(target)}*** at {time}")     
+            elif action == "grow":
+                lines.append(f"({counter}) ***{no_ping(author)}*** *grew* ***{no_ping(target)}*** at {time}")  
+        else:
+            lines.append(f"({counter}) Sadly, the author or target of this action has left us")   
+        
+        counter += 1
+    
+    await say(interaction, "\n".join(lines))
+
+def sizeray_log_action(data_store: DataStore, guild_id: int, action: str, target: discord.Member, author: discord.Member):
+        cursor=data_store.db_connection.cursor()
+        cursor.execute("INSERT INTO sizeray_actions(guild, timestamp, action, target, author) VALUES (?, ?, ?, ?, ?)", (guild_id, datetime.now(), action, target.id, author.id))
+        data_store.db_connection.commit()
 
 def sizeray_has_shield(data_store: DataStore, member: discord.Member) -> bool:
     return False

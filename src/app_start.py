@@ -46,6 +46,10 @@ async def grow(interaction: discord.Interaction, target: discord.Member):
 async def sizeray(interaction: discord.Interaction, target: discord.Member):
     await sizeray_sizeray(data_store, interaction, target)
 
+@tree.command( name = "sizeray-last-10", description = "Get a list of the last 10 size ray actions.")
+async def sizeray_last_10(interaction: discord.Interaction):
+    await sizeray_get_last_10(data_store, interaction)
+
 # === Dice commands ===
 @tree.command(name = "roll", description = "Rolls a X sided die for up to a 100 rolls. Defaults to a single roll of a 6 sided die.")
 async def roll(interaction: discord.Interaction, sides: int = 6, rolls: int = 1):
@@ -70,6 +74,11 @@ async def about_sizebot(interaction: discord.Interaction):
 @has_permissions(administrator = True)
 async def set_sizebot_variable(interaction: discord.Interaction, variable_name: str, variable_value: str):
     await mod_set_sizebot_variable(data_store, interaction, variable_name, variable_value)
+
+@tree.command(name="delete-sizebot-variable", description = "Delete a server-specific variable from SizeBot.")
+@has_permissions(administrator = True)
+async def delete_sizebot_variable(interaction: discord.Interaction, variable_name: str):
+    await mod_delete_sizebot_variable(data_store, interaction, variable_name)
 
 @client.event
 async def on_ready():
