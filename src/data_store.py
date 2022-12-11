@@ -20,6 +20,13 @@ def data_read_list_file(filename: str, enable_comments: bool = False) -> list[st
         else:
             return lines
 
+def load_lines_file(path: str, message: str) -> list[str]:
+    lines = data_read_list_file(path)
+    print(f"{message:}")
+    print(lines)
+
+    return lines
+
 class DataStore:
     """A class that stores all the data that is loaded from the environment. This should be a singleton (only have
     one instance in the entire application) and be initialized in the main.py file. From there, you can pass it to other
@@ -34,6 +41,7 @@ class DataStore:
     SIZERAY_GROW_MESSAGES_PATH = "data/messages/sizeray_grow.txt"
     SIZERAY_MALFUNCTION_MESSAGES_PATH = "data/messages/sizeray_malfunction.txt"
     CHARACTER_SCARA_MESSAGES_PATH = "data/messages/character_scara.txt"
+    GREETER_WELCOME_MESSAGES_PATH = "data/messages/greeter_welcome.txt"
 
     def __init__(self) -> None:
         # These are the messages that are chosen from at random when someone is shrunk
@@ -42,6 +50,8 @@ class DataStore:
         self.grow_messages = []
         # These are the messages that are chosen from at random when the sizeray malfunctions
         self.malfunction_messages = []
+        # These are the messages that are chosen from at random when welcoming someone
+        self.greeter_welcome_messages = []
 
         # A list of Discord guild id that the bot targets
         self.guild_ids = []
@@ -73,21 +83,11 @@ class DataStore:
     def load_messages(self):
         """Load all message files from their folder into their lists."""
 
-        self.shrink_messages = data_read_list_file(DataStore.SIZERAY_SHRINK_MESSAGES_PATH)
-        print("Loaded size ray shrink messages:")
-        print(self.shrink_messages)
-
-        self.grow_messages = data_read_list_file(DataStore.SIZERAY_GROW_MESSAGES_PATH)
-        print("Loaded size ray grow messages:")
-        print(self.grow_messages)
-
-        self.malfunction_messages = data_read_list_file(DataStore.SIZERAY_MALFUNCTION_MESSAGES_PATH)
-        print("Loaded size ray malfunction messages:")
-        print(self.malfunction_messages) 
-
-        self.character_scara_messages = data_read_list_file(DataStore.CHARACTER_SCARA_MESSAGES_PATH)
-        print("Loaded character messages:")
-        print(self.character_scara_messages) 
+        self.shrink_messages = load_lines_file(DataStore.SIZERAY_SHRINK_MESSAGES_PATH, "Loaded size ray shrink messages")
+        self.grow_messages = load_lines_file(DataStore.SIZERAY_GROW_MESSAGES_PATH, "Loaded size ray grow messages")
+        self.malfunction_messages = load_lines_file(DataStore.SIZERAY_MALFUNCTION_MESSAGES_PATH, "Loaded size ray malfunction messages")
+        self.character_scara_messages = load_lines_file(DataStore.CHARACTER_SCARA_MESSAGES_PATH, "Loaded size ray malfunction messages")
+        self.greeter_welcome_messages = load_lines_file(DataStore.GREETER_WELCOME_MESSAGES_PATH, "Loaded greeter welcome messages")
 
     def load_discord_token(self):
         """Load the Discord token from file."""

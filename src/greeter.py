@@ -7,9 +7,11 @@ from data_store import *
 from util import *
 
 async def greeter_welcome(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):
-    """Says hello to a new user"""
+    """Says hello to a new user."""
     
-    await say_with_image(interaction, f"Welcome {target.mention}!", "data/images/welcome.jpg")
+    welcome_image = get_welcome_image(interaction.guild.id)
+    random_message = random.choice(data_store.greeter_welcome_messages);
+    await say_with_image(interaction, variable_replace(random_message, interaction, data_store, target), welcome_image)
 
 async def greeter_say_goodbye(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):
     """Generates an image for a member leaving and attaches it to a message saying goodbye."""
@@ -34,3 +36,13 @@ async def greeter_say_goodbye(data_store: DataStore, interaction: discord.Intera
     except:
         print("Error creating image")
         await say(interaction, f"Goodbye {target.mention}!")
+
+def get_welcome_image(guild_id: int):
+    """Get a guild-specific welcome image. Returns the default image if none is found."""
+
+    custom_image_path = find_file_with_supported_ext("data/images/guild_custom/welcome", f"{guild_id}")
+
+    if os.path.exists(custom_image_path):
+        return custom_image_path
+    else:
+        return "data/images/welcome.jpg"

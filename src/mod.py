@@ -1,5 +1,6 @@
 import discord
 import random
+import pathlib
 
 from util import *
 from data_store import *
@@ -50,3 +51,33 @@ def get_variable_list(data_store: DataStore, guild_id: int) -> list[str]:
     for variable_name in variable_dict:
         lines.append(f'*{variable_format(variable_name)}* for the value "{variable_dict[variable_name]}"')
     return lines
+
+async def mod_set_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction, file_attachment: discord.Attachment):
+    """Set the SizeBot welcome image."""
+
+    ext = pathlib.Path(file_attachment.filename).suffix.lower() 
+    if ext not in DISCORD_SUPPORTED_FILE_EXTS:
+        await say(interaction, f"🚨 **Error:** Not a supported file type. The supported types are: {DISCORD_SUPPORTED_FILE_EXTS}. 🚨")
+    else:
+        guild_id = f"{interaction.guild.id}"
+
+        # Delete the old welcome image if it exists
+        old_path = find_file_with_supported_ext("data/images/guild_custom/welcome/", guild_id)
+        if os.path.exists(old_path):
+            os.remove(old_path)
+
+        await say(interaction, "Uploading new welcome image...")
+
+        # Set the new one and send it back as a message
+        file_path = f"data/images/guild_custom/welcome/{guild_id}{ext}"
+        await file_attachment.save(file_path)
+        await say_with_image(interaction, "Set new welcome image to:", file_path, True)
+
+async def mod_reset_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
+    """Delete the custom SizeBot welcome image and reset to default."""
+
+    old_path = find_file_with_supported_ext("data/images/guild_custom/welcome/", f"{interaction.guild.id}")
+    if os.path.exists(old_path):
+        os.remove(old_path)
+    
+    await say_with_image(interaction, "Reset welcome image back to default:", "data/images/welcome.jpg")

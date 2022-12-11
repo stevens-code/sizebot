@@ -1,0 +1,2 @@
+Welcome to the server {{target}}, be careful not to get slurped up on accident~
+I think {{target}} joined… They're on the floor here, somewhere.
