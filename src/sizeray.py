@@ -12,7 +12,7 @@ from util import *
 # - interaction: the discord message's interaction context
 # - target: the target member that the author is targeting
 
-def sizeray_is_bot_targeted(interaction: discord.Interaction, target: discord.Member):
+def sizeray_is_bot_targeted(interaction: discord.Interaction, target: discord.Member) -> bool:
     """Checks if the size ray is being targeted at the bot account itself."""
 
     return interaction.client.user == target
