@@ -69,7 +69,7 @@ async def sizeray_get_last_10(data_store: DataStore, interaction: discord.Intera
 
     cursor = data_store.db_connection.execute(f"SELECT * from sizeray_actions WHERE guild = ? ORDER BY timestamp DESC LIMIT 10", (interaction.guild.id, ))    
     rows = cursor.fetchall()
-    counter = 1
+    i = 1
     for row in rows:
         time = format_datetime(row[1])
         action = row[2]
@@ -78,15 +78,15 @@ async def sizeray_get_last_10(data_store: DataStore, interaction: discord.Intera
 
         if author is not None and target is not None:
             if action == "malfunction":
-                lines.append(f"({counter}) The size ray *malfunctioned* on ***{no_ping(author)}*** at {time}")            
+                lines.append(f"({i}) The size ray *malfunctioned* on {no_ping(author)} while they were trying to use it on {no_ping(target)} at {time}")            
             elif action == "shrink":
-                lines.append(f"({counter}) ***{no_ping(author)}*** *shrank* ***{no_ping(target)}*** at {time}")     
+                lines.append(f"({i}) {no_ping(author)} *shrank* {no_ping(target)} at {time}")     
             elif action == "grow":
-                lines.append(f"({counter}) ***{no_ping(author)}*** *grew* ***{no_ping(target)}*** at {time}")  
+                lines.append(f"({i}) {no_ping(author)} *grew* {no_ping(target)} at {time}")  
         else:
-            lines.append(f"({counter}) Sadly, the author or target of this action has left us")   
+            lines.append(f"({i}) Sadly, the author or target of this action has left us")   
         
-        counter += 1
+        i += 1
     
     await say(interaction, "\n".join(lines))
 

@@ -20,5 +20,5 @@ async def about_message(data_store: DataStore, interaction: discord.Interaction)
 **Operating System:** {platform.system()} {platform.release()} 
 **CPU:** {platform.platform()} with {psutil.cpu_count()} cores at {psutil.cpu_percent()}% utilization
 **RAM:** {int(psutil.virtual_memory().total)/(1024**3):.1f} GB with {psutil.virtual_memory().percent}% used
-**The Girl Reading This:** {interaction.user.display_name}
+**The Girl Reading This:** {no_ping(interaction.user)}
 """)

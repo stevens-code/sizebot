@@ -33,4 +33,4 @@ async def get_user(interaction: discord.Integration, id: int) -> discord.Member:
 def no_ping(member: discord.Member):
     """Format a member name for a meesage where you don't want to ping them."""
 
-    return f"@{member.name}";
+    return f"***{member.name}***";
