@@ -65,6 +65,8 @@ async def sizeray_sizeray(data_store: DataStore, interaction: discord.Interactio
             await sizeray_malfunction(data_store, interaction, target)
 
 async def sizeray_get_last_10(data_store: DataStore, interaction: discord.Interaction):
+    """Lists the last 10 size ray actions"""
+
     lines = ["**The last 10 size ray actions were:**"];
 
     cursor = data_store.db_connection.execute(f"SELECT * from sizeray_actions WHERE guild = ? ORDER BY timestamp DESC LIMIT 10", (interaction.guild.id, ))    
@@ -84,7 +86,7 @@ async def sizeray_get_last_10(data_store: DataStore, interaction: discord.Intera
             elif action == "grow":
                 lines.append(f"({i}) {no_ping(author)} *grew* {no_ping(target)} at {time}")  
         else:
-            lines.append(f"({i}) Sadly, the author or target of this action has left us")   
+            lines.append(f"({i}) Sadly, the author or target of this action has left us")
         
         i += 1
     
