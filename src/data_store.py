@@ -33,6 +33,7 @@ class DataStore:
     SIZERAY_SHRINK_MESSAGES_PATH = "data/messages/sizeray_shrink.txt"
     SIZERAY_GROW_MESSAGES_PATH = "data/messages/sizeray_grow.txt"
     SIZERAY_MALFUNCTION_MESSAGES_PATH = "data/messages/sizeray_malfunction.txt"
+    CHARACTER_SCARA_MESSAGES_PATH = "data/messages/character_scara.txt"
 
     def __init__(self) -> None:
         # These are the messages that are chosen from at random when someone is shrunk
@@ -83,6 +84,10 @@ class DataStore:
         self.malfunction_messages = data_read_list_file(DataStore.SIZERAY_MALFUNCTION_MESSAGES_PATH)
         print("Loaded size ray malfunction messages:")
         print(self.malfunction_messages) 
+
+        self.character_scara_messages = data_read_list_file(DataStore.CHARACTER_SCARA_MESSAGES_PATH)
+        print("Loaded character messages:")
+        print(self.character_scara_messages) 
 
     def load_discord_token(self):
         """Load the Discord token from file."""

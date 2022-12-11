@@ -20,6 +20,8 @@ from about import *
 from util import *
 # Includes mod functions
 from mod import *
+# Character lines
+from characters import *
 
 description = """SizeBot"""
 
@@ -68,6 +70,11 @@ async def goodbye(interaction: discord.Interaction, target: discord.Member):
 @tree.command(name = "about-sizebot", description = "Get info about SizeBot and the system it's running on.")
 async def about_sizebot(interaction: discord.Interaction):
     await about_message(data_store, interaction)
+
+# === Character commands ===
+@tree.command(name = "scara", description = "Say a random scaramouche elemental burst line.")
+async def scara(interaction: discord.Interaction):
+    await character_scara(data_store, interaction)
 
 # === Mod-only commands ===
 @tree.command(name="set-sizebot-variable", description = "Set a server-specific variable to be replaced in SizeBot messages.")
