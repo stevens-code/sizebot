@@ -79,7 +79,7 @@ async def sizeray_stats_chart_for(data_store: DataStore, interaction: discord.In
     rows = cursor.fetchall()
     action_counts = {}
     for row in rows:
-        action_counts[row[0]] = row[1]``
+        action_counts[row[0]] = row[1]
     
     if len(action_counts) == 0:
         await say(interaction, f"There are no stats available for {no_ping(target)}.", True)
