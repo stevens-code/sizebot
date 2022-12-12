@@ -83,7 +83,7 @@ async def stats_last_10(interaction: discord.Interaction):
 async def stats_chart_all(interaction: discord.Interaction):
     await sizeray_stats_chart(data_store, interaction)
 
-@tree.command(name = "stats-target", description = "Show the size ray actions for someone.")
+@tree.command(name = "stats-target", description = "Show the size ray actions that happened to a target.")
 async def stats_chart_for(interaction: discord.Interaction, target: discord.Member):
     await sizeray_stats_chart_for(data_store, interaction, target)
 
