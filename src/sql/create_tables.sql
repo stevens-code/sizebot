@@ -24,3 +24,15 @@ guild           INT         NOT NULL,
 timestamp       TIMESTAMP   NOT NULL,
 role            INT         NOT NULL
 );
+
+-- If a guild has an entry, welcome messages are disabled
+CREATE TABLE greeter_disable_welcome(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL
+);
+
+-- If a guild has an entry, goodbye messages are disabled
+CREATE TABLE greeter_disable_goodbye(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL
+);

@@ -32,10 +32,30 @@ data_store = DataStore()
 intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
+intents.presences = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
-# === Sizebot commands ===
+# === Events ===
+# Automatically send a message when someone joins
+@client.event
+async def on_member_join(member: discord.Member):
+    guild = member.guild
+    channel = member.guild.system_channel # Get the channel to send notifications in
+    if channel.permissions_for(guild.me).send_messages: # Check for permissions
+        await greeter_welcome(data_store, channel, member)
+    print(f'"{member.display_name}" has joined the server "{guild.name}"')
+
+# Automatically send a message when someone leaves
+@client.event
+async def on_member_remove(member: discord.Member):
+    guild = member.guild
+    channel = member.guild.system_channel # Get the channel to send notifications in
+    if channel.permissions_for(guild.me).send_messages: # Check for permissions
+        await greeter_goodbye(data_store, channel, member)
+    print(f'"{member.display_name}" has left the server "{guild.name}"')
+
+# === Size ray commands ===
 @tree.command(name = "shrink", description = "Fires a shrink ray at someone.")
 async def shrink(interaction: discord.Interaction, target: discord.Member):
     await sizeray_shrink(data_store, interaction, target)
@@ -73,7 +93,7 @@ async def welcome(interaction: discord.Interaction, target: discord.Member):
 
 @tree.command(name = "goodbye", description = "Say goodbye to a user.")
 async def goodbye(interaction: discord.Interaction, target: discord.Member):
-    await greeter_say_goodbye(data_store, interaction, target)
+    await greeter_goodbye(data_store, interaction, target)
 
 # === About commands ===
 @tree.command(name = "about-sizebot", description = "Get info about SizeBot and the system it's running on.")
@@ -121,10 +141,34 @@ async def reset_sizebot_goodbye(interaction: discord.Interaction):
 async def set_sizeray_immunity_role(interaction: discord.Interaction, role: discord.Role):
     await mod_set_sizeray_immunity_role(data_store, interaction, role)
 
+@tree.command(name="enable-sizebot-welcome", description = "Allow SizeBot to send welcome messages.")
+@has_permissions(administrator = True)
+async def enable_sizebot_welcome(interaction: discord.Interaction):
+    await mod_enable_sizebot_welcome(data_store, interaction)
+
+@tree.command(name="disable-sizebot-welcome", description = "Don't allow SizeBot to send welcome messages.")
+@has_permissions(administrator = True)
+async def disable_sizebot_welcome(interaction: discord.Interaction):
+    await mod_disable_sizebot_welcome(data_store, interaction)
+
+@tree.command(name="enable-sizebot-goodbye", description = "Allow SizeBot to send goodbye messages.")
+@has_permissions(administrator = True)
+async def enable_sizebot_goodbye(interaction: discord.Interaction):
+    await mod_enable_sizebot_goodbye(data_store, interaction)
+
+@tree.command(name="disable-sizebot-goodbye", description = "Don't allow SizeBot to send goodbye messages.")
+@has_permissions(administrator = True)
+async def disable_sizebot_goodbye(interaction: discord.Interaction):
+    await mod_disable_sizebot_goodbye(data_store, interaction)
+
 @client.event
 async def on_ready():
     print(f"Logged in as {client.user} (ID: {client.user.id})")
     print("------")
+
+    # Get guilds
+    for guild in client.guilds:
+        print(guild.id)
 
     # Sync slash commands
     for guild in data_store.guilds:

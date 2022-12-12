@@ -125,3 +125,51 @@ async def mod_set_sizeray_immunity_role(data_store: DataStore, interaction: disc
 
     # Respond with the current list of variables for the guild
     await say(interaction, f"The role for size ray immunity now is ***{role.name}***")
+
+async def mod_enable_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
+    """Allow SizeBot to send welcome messages."""
+
+    cursor=data_store.db_connection.cursor()
+    # Delete disable entry if it exists
+    cursor.execute("DELETE FROM greeter_disable_welcome WHERE guild = ?", (interaction.guild.id, ))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    await say(interaction, "The automatic welcome message is now enabled for this server.")
+
+async def mod_disable_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
+    """Don't allow SizeBot to send welcome messages."""
+
+    cursor=data_store.db_connection.cursor()
+    # Delete disable entry if it exists
+    cursor.execute("DELETE FROM greeter_disable_welcome WHERE guild = ?", (interaction.guild.id, ))
+    # Add a new disable entry
+    cursor.execute("INSERT INTO greeter_disable_welcome(guild, timestamp) VALUES (?, ?)", (interaction.guild.id, datetime.now()))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    await say(interaction, "The automatic welcome message is now disabled for this server.")
+
+async def mod_enable_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction):
+    """Allow SizeBot to send goodbye messages."""
+
+    cursor=data_store.db_connection.cursor()
+    # Delete disable entry if it exists
+    cursor.execute("DELETE FROM greeter_disable_goodbye WHERE guild = ?", (interaction.guild.id, ))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    await say(interaction, "The automatic goodbye message is now enabled for this server.")
+
+async def mod_disable_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction):
+    """Don't allow SizeBot to send goodbye messages."""
+
+    cursor=data_store.db_connection.cursor()
+    # Delete disable entry if it exists
+    cursor.execute("DELETE FROM greeter_disable_goodbye WHERE guild = ?", (interaction.guild.id, ))
+    # Add a new disable entry
+    cursor.execute("INSERT INTO greeter_disable_goodbye(guild, timestamp) VALUES (?, ?)", (interaction.guild.id, datetime.now()))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    await say(interaction, "The automatic goodbye message is now disabled for this server.")

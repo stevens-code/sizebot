@@ -65,7 +65,7 @@ class DataStore:
         # Non-committal responses from the Magic 8 Ball
         self.magic8_noncommittal_messages = []
 
-        # A list of Discord guild id that the bot targets
+        # A list of Discord guild ids that the bot targets
         self.guild_ids = []
         # A list of Discord guilds that the bot targets (created from guild_ids)
         self.guilds = []

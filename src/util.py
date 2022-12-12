@@ -1,6 +1,7 @@
 import discord
 import os
 from datetime import datetime
+from typing import Union
 
 # Various helper functions and constants
 DISCORD_SUPPORTED_FILE_EXTS = [".jpg", ".jpeg", ".png", ".gif", ".gifv", ".webm", ".webp", ".mp4", ".wav", ".mp3", ".ogg"]
@@ -10,23 +11,30 @@ def format_datetime(time: datetime) -> str:
 
     return datetime.strftime(time, f"%I:%M %p ({time.astimezone().tzname()}) on %m/%d/%Y")
 
-async def say(interaction: discord.Interaction, text: str, is_followup = False):
+async def say(sender: Union[discord.Interaction, discord.TextChannel], text: str, is_followup = False):
     """Wrapper for sending a plain text message."""
 
-    if is_followup:
-        await interaction.followup.send(text)
+    if isinstance(sender, discord.Interaction):
+        if is_followup:
+            await sender.followup.send(text)
+        else:
+            await sender.response.send_message(text)
     else:
-        await interaction.response.send_message(text)
+        await sender.send(text)
 
-async def say_with_image(interaction: discord.Interaction, text: str, image_path: str, is_followup = False):
+
+async def say_with_image(sender: Union[discord.Interaction, discord.TextChannel], text: str, image_path: str, is_followup = False):
     """Wrapper for sending a text message with an attached image."""
 
     file_name = os.path.basename(image_path)
     image_file = discord.File(image_path, filename=file_name)
-    if is_followup:
-        await interaction.followup.send(text, file=image_file)
+    if isinstance(sender, discord.Interaction):
+        if is_followup:
+            await sender.followup.send(text, file = image_file)
+        else:
+            await sender.response.send_message(text, file = image_file)
     else:
-        await interaction.response.send_message(text, file=image_file)
+        await sender.send(text, file = image_file)
 
 async def get_user(interaction: discord.Integration, id: int) -> discord.Member:
     """Get a member by ID."""

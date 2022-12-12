@@ -1,6 +1,7 @@
 import discord
 
 from data_store import *
+from typing import Union
 
 def get_guild_variables(data_store: DataStore, guild_id: int) -> dict:
     """A list of all variables for a guild."""
@@ -21,13 +22,13 @@ def variable_format(variable_name: str) -> str:
 
     return "{{" + variable_name + "}}"
 
-def variable_replace(text: str, interaction: discord.Interaction, data_store: DataStore, target_user: discord.Member = None):
+def variable_replace(text: str, sender: Union[discord.Interaction, discord.TextChannel], data_store: DataStore, target_user: discord.Member = None):
     """Replaces context-specific variables in text."""
 
     result = text
 
     # Replace variables with guild-specific values
-    variable_dict = get_guild_variables(data_store, interaction.guild.id)
+    variable_dict = get_guild_variables(data_store, sender.guild.id)
     for variable_name in variable_dict:
         result = result.replace(variable_format(variable_name), variable_dict[variable_name])
 
@@ -42,6 +43,7 @@ def variable_replace(text: str, interaction: discord.Interaction, data_store: Da
     # with strings mentioning the target and author members
     if target_user is not None:
         result = result.replace(variable_format("target"), target_user.mention)
-    result = result.replace(variable_format("author"), interaction.user.mention)
+    if isinstance(sender, discord.Interaction):
+        result = result.replace(variable_format("author"), sender.user.mention)
 
     return result
