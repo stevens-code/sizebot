@@ -65,32 +65,16 @@ class DataStore:
         # Non-committal responses from the Magic 8 Ball
         self.magic8_noncommittal_messages = []
 
-        # A list of Discord guild ids that the bot targets
-        self.guild_ids = []
-        # A list of Discord guilds that the bot targets (created from guild_ids)
-        self.guilds = []
-
         # Discord bot token - Provided in the data/token.txt file, which is a plain text file including the token 
         # Discord provides you for running a bot. If this is not defined, the bot cannot run.
         self.discord_bot_token = ""
 
         # Load the token
         self.load_discord_token()
-        # Load guilds
-        self.load_guilds()
         # Load data from messages
         self.load_messages()
         # Load database
         self.db_connection = self.load_db()
-
-    def load_guilds(self):
-        """Load guilds that this bot is targeting."""
-
-        self.guild_ids = data_read_list_file(DataStore.GUILDS_LIST_PATH, True)
-        for guild_id in self.guild_ids:
-            self.guilds.append(discord.Object(id=guild_id))
-        print("Loaded list of guilds:")
-        print(self.guild_ids)
 
     def load_messages(self):
         """Load all message files from their folder into their lists."""

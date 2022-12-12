@@ -166,12 +166,8 @@ async def on_ready():
     print(f"Logged in as {client.user} (ID: {client.user.id})")
     print("------")
 
-    # Get guilds
+    # Get guilds and add the slash commands to them
     for guild in client.guilds:
-        print(guild.id)
-
-    # Sync slash commands
-    for guild in data_store.guilds:
         print(f"Syncing tree for guild {guild.id}")
         tree.copy_global_to(guild=guild)
         await tree.sync(guild= guild)
