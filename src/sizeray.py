@@ -1,6 +1,5 @@
 import discord
 import random
-from discord.utils import get
 
 from variables import *
 from data_store import *
@@ -70,34 +69,6 @@ async def sizeray_sizeray(data_store: DataStore, interaction: discord.Interactio
             await sizeray_grow(data_store, interaction, target)
         else: # malfunction
             await sizeray_malfunction(data_store, interaction, target)
-
-async def sizeray_get_last_10(data_store: DataStore, interaction: discord.Interaction):
-    """Lists the last 10 size ray actions"""
-
-    lines = ["**The last 10 size ray actions were:**"];
-
-    cursor = data_store.db_connection.execute(f"SELECT * from sizeray_actions WHERE guild = ? ORDER BY timestamp DESC LIMIT 10", (interaction.guild.id, ))    
-    rows = cursor.fetchall()
-    i = 1
-    for row in rows:
-        time = format_datetime(row[1])
-        action = row[2]
-        target = await get_user(interaction, row[3])
-        author = await get_user(interaction, row[4])
-
-        if author is not None and target is not None:
-            if action == "malfunction":
-                lines.append(f"({i}) The size ray *malfunctioned* on {no_ping(author)} while they were trying to use it on {no_ping(target)} at {time}")            
-            elif action == "shrink":
-                lines.append(f"({i}) {no_ping(author)} *shrank* {no_ping(target)} at {time}")     
-            elif action == "grow":
-                lines.append(f"({i}) {no_ping(author)} *grew* {no_ping(target)} at {time}")  
-        else:
-            lines.append(f"({i}) Sadly, the author or target of this action has left us")
-        
-        i += 1
-    
-    await say(interaction, "\n".join(lines))
 
 async def sizeray_immunity_notice(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):     
     await say(interaction, variable_replace("{{size_shield}} " + f"The size ray has no effect! {no_ping(target)} has size ray immunity!", interaction, data_store, target))

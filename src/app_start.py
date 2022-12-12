@@ -6,11 +6,13 @@ from discord import app_commands
 
 # Includes functions to load data from the system (including messages from the data/messages files)
 from data_store import *
-# Includes all the size ray functionality
+# Size ray functionality
 from sizeray import *
-# Includes all the Magic 8 Ball functionality
+# Show stats about the size ray
+from sizeray_stats import *
+# Magic 8 Ball functionality
 from magic8 import *
-# Includes all the dice functionality
+# Dice functionality
 from dice import *
 # Includes all greeter functionality
 from greeter import *
@@ -64,17 +66,30 @@ async def shrink(interaction: discord.Interaction, target: discord.Member):
 async def grow(interaction: discord.Interaction, target: discord.Member):
     await sizeray_grow(data_store, interaction, target)
 
-@tree.command( name = "sizeray", description = "Fires the size ray at someone.")
+@tree.command(name = "sizeray", description = "Fires the size ray at someone.")
 async def sizeray(interaction: discord.Interaction, target: discord.Member):
     await sizeray_sizeray(data_store, interaction, target)
 
-@tree.command( name = "toggle-immunity", description = "Toggles your size ray immunity.")
+@tree.command(name = "toggle-immunity", description = "Toggles your size ray immunity.")
 async def toggle_immunity(interaction: discord.Interaction):
     await sizeray_toggle_immunity(data_store, interaction)
 
-@tree.command( name = "sizeray-last-10", description = "Get a list of the last 10 size ray actions.")
-async def sizeray_last_10(interaction: discord.Interaction):
-    await sizeray_get_last_10(data_store, interaction)
+# === Size ray stats ===
+@tree.command(name = "stats-last-10", description = "Get a list of the last 10 size ray actions.")
+async def stats_last_10(interaction: discord.Interaction):
+    await sizeray_stats_last_10(data_store, interaction)
+
+@tree.command(name = "stats-all", description = "Show the size ray actions stats for a whole server.")
+async def stats_chart_all(interaction: discord.Interaction):
+    await sizeray_stats_chart(data_store, interaction)
+
+@tree.command(name = "stats-target", description = "Show the size ray actions for someone.")
+async def stats_chart_for(interaction: discord.Interaction, target: discord.Member):
+    await sizeray_stats_chart_for(data_store, interaction, target)
+
+@tree.command(name = "stats-biggest-users", description = "Show who the 10 biggest users and targets of the size ray are.")
+async def stats_biggest_users(interaction: discord.Interaction):
+    await sizeray_stats_biggest_users(data_store, interaction)
 
 # === Dice commands ===
 @tree.command(name = "roll", description = "Rolls a X sided die for up to a 100 rolls. Defaults to a single roll of a 6 sided die.")
