@@ -74,7 +74,7 @@ async def sizeray_stats_chart_for(data_store: DataStore, interaction: discord.In
     """Show the size ray actions stats in a chart for member."""
 
     # Fetch the data
-    await say(interaction, f"Generating size ray stats chart for {target.mention}...")
+    await say(interaction, f"Generating size ray stats chart for {no_ping(target)}...")
     cursor = data_store.db_connection.execute(f"SELECT [action], COUNT(*) [count] from sizeray_actions WHERE guild = ? AND target = ? GROUP BY [action] ORDER BY [action] ASC", (interaction.guild.id, target.id))    
     rows = cursor.fetchall()
     action_counts = {}
@@ -82,7 +82,7 @@ async def sizeray_stats_chart_for(data_store: DataStore, interaction: discord.In
         action_counts[row[0]] = row[1]
     
     if len(action_counts) == 0:
-        await say(interaction, "There are no stats available for this server.", True)
+        await say(interaction, f"There are no stats available for {no_ping(target)}.", True)
     else:
         # Generate the chart
         keys = list(action_counts.keys())
