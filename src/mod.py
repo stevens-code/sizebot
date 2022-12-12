@@ -111,3 +111,17 @@ async def mod_reset_sizebot_goodbye(data_store: DataStore, interaction: discord.
         os.remove(old_path)
     
     await say_with_image(interaction, "Reset goodbye image back to default:", "data/images/fallen.png")
+
+async def mod_set_sizeray_immunity_role(data_store: DataStore, interaction: discord.Interaction, role: discord.Role):
+    """Set the size ray immunity role for a guild."""
+
+    cursor=data_store.db_connection.cursor()
+    # Delete role if it exists 
+    cursor.execute("DELETE FROM sizeray_immunity_roles WHERE guild = ?", (interaction.guild.id, ))
+    # Add variable
+    cursor.execute("INSERT INTO sizeray_immunity_roles(guild, timestamp, role) VALUES (?, ?, ?)", (interaction.guild.id, datetime.now(), role.id))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    # Respond with the current list of variables for the guild
+    await say(interaction, f"The role for size ray immunity now is ***{role.name}***")

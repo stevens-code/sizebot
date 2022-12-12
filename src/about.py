@@ -17,7 +17,7 @@ async def about_message(data_store: DataStore, interaction: discord.Interaction)
     await say(interaction, f"""**SizeBot Version:** {SIZEBOT_VERSION}
 **GitHub Repository:** stevens-code/sizebot
 **Python Version:** {sys.version}
-**Local Time:** {format_datetime(datetime.now())}
+**Current Local Time:** {format_datetime(datetime.now())}
 **Running Since:** {format_datetime(datetime.fromtimestamp(process.create_time()))} 
 **Operating System:** {platform.system()} {platform.release()} 
 **CPU:** {platform.platform()} with {psutil.cpu_count()} cores at {psutil.cpu_percent()}% utilization

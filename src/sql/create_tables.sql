@@ -17,3 +17,10 @@ action          TEXT        NOT NULL,
 target          INT         NOT NULL,
 author          INT         NOT NULL
 );
+
+-- Store the size ray immunity role for each guild
+CREATE TABLE sizeray_immunity_roles(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+role            INT         NOT NULL
+);

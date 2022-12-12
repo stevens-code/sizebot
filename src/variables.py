@@ -36,6 +36,7 @@ def variable_replace(text: str, interaction: discord.Interaction, data_store: Da
     result = result.replace(variable_format("growth_ray"), "🔫⏫")
     result = result.replace(variable_format("shrink_ray"), "🔫⏬")
     result = result.replace(variable_format("size_ray"), "🔫")
+    result = result.replace(variable_format("size_shield"), "🛡️")
     
     # Takes text and replaces variables {{target}} and {{author}} (if specified in function call) 
     # with strings mentioning the target and author members

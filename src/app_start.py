@@ -48,6 +48,10 @@ async def grow(interaction: discord.Interaction, target: discord.Member):
 async def sizeray(interaction: discord.Interaction, target: discord.Member):
     await sizeray_sizeray(data_store, interaction, target)
 
+@tree.command( name = "toggle-immunity", description = "Toggles your size ray immunity.")
+async def toggle_immunity(interaction: discord.Interaction):
+    await sizeray_toggle_immunity(data_store, interaction)
+
 @tree.command( name = "sizeray-last-10", description = "Get a list of the last 10 size ray actions.")
 async def sizeray_last_10(interaction: discord.Interaction):
     await sizeray_get_last_10(data_store, interaction)
@@ -111,6 +115,11 @@ async def set_sizebot_goodbye(interaction: discord.Interaction, file: discord.At
 @has_permissions(administrator = True)
 async def reset_sizebot_goodbye(interaction: discord.Interaction):
     await mod_reset_sizebot_goodbye(data_store, interaction)
+
+@tree.command(name="set-sizeray-immunity-role", description = "Set the size ray immunity role.")
+@has_permissions(administrator = True)
+async def set_sizeray_immunity_role(interaction: discord.Interaction, role: discord.Role):
+    await mod_set_sizeray_immunity_role(data_store, interaction, role)
 
 @client.event
 async def on_ready():

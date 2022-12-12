@@ -1,5 +1,6 @@
 import discord
 import random
+from discord.utils import get
 
 from variables import *
 from data_store import *
@@ -27,9 +28,11 @@ async def sizeray_malfunction(data_store: DataStore, interaction: discord.Intera
 
 async def sizeray_shrink(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):
     """Generate a message for shrinking a member."""
-
+    
     if sizeray_is_bot_targeted(interaction, target):
         await sizeray_malfunction(data_store, interaction, target)
+    elif sizeray_has_immunity(data_store, target):
+        await sizeray_immunity_notice(data_store, interaction, target)
     else:
         random_message = random.choice(data_store.shrink_messages);
         message_format = "{{shrink_ray}} ✨⚡ {{target}} has been zapped by the shrink ray! " + random_message + " ⚡✨"
@@ -41,6 +44,8 @@ async def sizeray_grow(data_store: DataStore, interaction: discord.Interaction, 
 
     if sizeray_is_bot_targeted(interaction, target):
         await sizeray_malfunction(data_store, interaction, target)
+    elif sizeray_has_immunity(data_store, target):
+        await sizeray_immunity_notice(data_store, interaction, target)
     else:
         random_message = random.choice(data_store.grow_messages);
         message_format = "{{growth_ray}} ✨⚡ {{target}} has been zapped by the growth ray! " + random_message + " ⚡✨"   
@@ -52,6 +57,8 @@ async def sizeray_sizeray(data_store: DataStore, interaction: discord.Interactio
 
     if sizeray_is_bot_targeted(interaction, target):
         await sizeray_malfunction(data_store, interaction, target)
+    elif sizeray_has_immunity(data_store, target):
+        await sizeray_immunity_notice(data_store, interaction, target)
     else:
         # Include shrink and grow twice so they're more likely to occur than malfunction
         options = ['shrink', 'grow', 'shrink', 'grow', 'malfunction']
@@ -92,15 +99,46 @@ async def sizeray_get_last_10(data_store: DataStore, interaction: discord.Intera
     
     await say(interaction, "\n".join(lines))
 
+async def sizeray_immunity_notice(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):     
+    await say(interaction, variable_replace("{{size_shield}} " + f"The size ray has no effect! {no_ping(target)} has size ray immunity!", interaction, data_store, target))
+
 def sizeray_log_action(data_store: DataStore, guild_id: int, action: str, target: discord.Member, author: discord.Member):
         cursor=data_store.db_connection.cursor()
         cursor.execute("INSERT INTO sizeray_actions(guild, timestamp, action, target, author) VALUES (?, ?, ?, ?, ?)", (guild_id, datetime.now(), action, target.id, author.id))
         data_store.db_connection.commit()
 
-def sizeray_has_shield(data_store: DataStore, member: discord.Member) -> bool:
-    return False
+def sizeray_get_immunity_role(data_store: DataStore, guild_id: int) -> int:
+    """Fetches the immunity role for a guild from the database."""
 
-def sizeray_toggle_shield(data_store: DataStore, interaction: discord.Interaction, target: discord.Member) -> str:
-    """Turn the shield on for a user."""
+    cursor = data_store.db_connection.execute(f"SELECT * from sizeray_immunity_roles WHERE guild = ? ", (guild_id, ))    
+    result = cursor.fetchone()
+    if result is not None:
+        return result[2]
+    else:
+        return None
 
-    return ""
+def sizeray_has_immunity(data_store: DataStore, member: discord.Member) -> bool:
+    """Check if a member has size ray immunity"""
+
+    role_id = sizeray_get_immunity_role(data_store, member.guild.id)
+    if role_id is not None:
+        return has_role(member, role_id)
+    else: # If no role is defined, no one has immunity
+        return False
+
+async def sizeray_toggle_immunity(data_store: DataStore, interaction: discord.Interaction) -> str:
+    """Turn size ray immunity on or off for a user."""
+
+    role_id = sizeray_get_immunity_role(data_store, interaction.guild.id)
+    if role_id is None:
+        await say(interaction, f"🚨 **Error:** Cannot toggle size ray immunity. The role is not defined for this server. 🚨")
+    else:
+        matching_role = interaction.guild.get_role(role_id)
+        if has_role(interaction.user, role_id):
+            # Turn it off if they have it
+            await interaction.user.remove_roles(matching_role)
+            await say(interaction, variable_replace("{{size_shield}} 🔴 Your size ray immunity has been disabled {{author}}.", interaction, data_store))
+        else:
+            # Turn it on if they don't
+            await interaction.user.add_roles(matching_role)
+            await say(interaction, variable_replace("{{size_shield}} 🟢 You now have size ray immunity, {{author}}.", interaction, data_store))

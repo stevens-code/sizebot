@@ -53,3 +53,12 @@ def find_file_with_supported_ext(folder: str, file_name: str) -> str:
             return path
 
     return ""
+
+def has_role(member: discord.Member, role_id: int) -> bool:
+    """Check if a member has a role."""
+
+    for role in member.roles:
+        if role.id == role_id:
+            return True
+    
+    return False
