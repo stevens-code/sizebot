@@ -137,8 +137,8 @@ async def sizeray_toggle_immunity(data_store: DataStore, interaction: discord.In
         if has_role(interaction.user, role_id):
             # Turn it off if they have it
             await interaction.user.remove_roles(matching_role)
-            await say(interaction, variable_replace("{{size_shield}} 🔴 Your size ray immunity has been disabled {{author}}.", interaction, data_store))
+            await say(interaction, variable_replace("{{size_shield}}🔴 Your size ray immunity has been disabled {{author}}. 🔴{{size_shield}}", interaction, data_store))
         else:
             # Turn it on if they don't
             await interaction.user.add_roles(matching_role)
-            await say(interaction, variable_replace("{{size_shield}} 🟢 You now have size ray immunity, {{author}}.", interaction, data_store))
+            await say(interaction, variable_replace("{{size_shield}}🟢 You now have size ray immunity, {{author}}. 🟢{{size_shield}}", interaction, data_store))
