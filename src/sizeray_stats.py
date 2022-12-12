@@ -51,23 +51,24 @@ async def sizeray_stats_chart(data_store: DataStore, interaction: discord.Intera
     for row in rows:
         action_counts[row[0]] = row[1]
     
-    # Generate the chart
-    keys = list(action_counts.keys())
-    vals = [int(action_counts[k]) for k in keys]
-    palette = seaborn.color_palette(ACTIONS_PALETTE)
-    seaborn.barplot(x=keys, y=vals, palette=palette) 
-    temp_chart_path = f"data/images/temp/stats_{random.randint(0, 100000)}.png"
-    pyplot.title(f'Size ray stats for "{interaction.guild.name}"')
-    pyplot.xlabel("Action type", color='#555555')
-    pyplot.ylabel("Count", color='#555555')
-    pyplot.isinteractive = False
-    pyplot.savefig(temp_chart_path)
-
-    # Post it
-    await say_with_image(interaction, "", temp_chart_path, True)
-
-    # Delete once it's done
-    os.remove(temp_chart_path)
+    if len(action_counts) == 0:
+        await say(interaction, "There are no stats available for this server.", True)
+    else:
+        # Generate the chart
+        keys = list(action_counts.keys())
+        vals = [int(action_counts[k]) for k in keys]
+        palette = seaborn.color_palette(ACTIONS_PALETTE)
+        seaborn.barplot(x=keys, y=vals, palette=palette) 
+        temp_chart_path = f"data/images/temp/stats_{random.randint(0, 100000)}.png"
+        pyplot.title(f'Size ray stats for "{interaction.guild.name}"')
+        pyplot.xlabel("Action type", color='#555555')
+        pyplot.ylabel("Count", color='#555555')
+        pyplot.isinteractive = False
+        pyplot.savefig(temp_chart_path)
+        # Post it
+        await say_with_image(interaction, "", temp_chart_path, True)
+        # Delete once it's done
+        os.remove(temp_chart_path)
 
 async def sizeray_stats_chart_for(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):
     """Show the size ray actions stats in a chart for member."""
@@ -80,23 +81,24 @@ async def sizeray_stats_chart_for(data_store: DataStore, interaction: discord.In
     for row in rows:
         action_counts[row[0]] = row[1]
     
-    # Generate the chart
-    keys = list(action_counts.keys())
-    vals = [int(action_counts[k]) for k in keys]
-    palette = seaborn.color_palette(ACTIONS_PALETTE)
-    seaborn.barplot(x=keys, y=vals, palette=palette) 
-    temp_chart_path = f"data/images/temp/stats_{random.randint(0, 100000)}.png"
-    pyplot.title(f'Size ray stats for "{target.display_name}"')
-    pyplot.xlabel("Action type", color='#555555')
-    pyplot.ylabel("Times targeted", color='#555555')
-    pyplot.isinteractive = False
-    pyplot.savefig(temp_chart_path)
-
-    # Post it
-    await say_with_image(interaction, "", temp_chart_path, True)
-
-    # Delete once it's done
-    os.remove(temp_chart_path)
+    if len(action_counts) == 0:
+        await say(interaction, "There are no stats available for this server.", True)
+    else:
+        # Generate the chart
+        keys = list(action_counts.keys())
+        vals = [int(action_counts[k]) for k in keys]
+        palette = seaborn.color_palette(ACTIONS_PALETTE)
+        seaborn.barplot(x=keys, y=vals, palette=palette) 
+        temp_chart_path = f"data/images/temp/stats_{random.randint(0, 100000)}.png"
+        pyplot.title(f'Size ray stats for "{target.display_name}"')
+        pyplot.xlabel("Action type", color='#555555')
+        pyplot.ylabel("Times targeted", color='#555555')
+        pyplot.isinteractive = False
+        pyplot.savefig(temp_chart_path)
+        # Post it
+        await say_with_image(interaction, "", temp_chart_path, True)
+        # Delete once it's done
+        os.remove(temp_chart_path)
 
 
 async def sizeray_stats_biggest_users(data_store: DataStore, interaction: discord.Interaction):
