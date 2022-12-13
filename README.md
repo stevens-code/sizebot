@@ -54,3 +54,10 @@ There are a variety of mod-specific commands to set settinging on SizeBot. For e
 
 ### Server variables:
 To set custom emojis for the server to use in messages, use the ***set-sizebot-variable*** command. The variables that matter currently are: growth_ray (growth ray emoji), shrink_ray (shrink ray emoji), size_ray (size ray emoji), and size_shield (size immunity shield emoji).
+
+Setting the custom emoji variables:   
+<img width="652" alt="Setting Variables" src="https://user-images.githubusercontent.com/120059830/207391663-7264f845-82e8-4b64-89df-07626a70156e.png">
+
+The emojis in use by the bot:
+<img width="1097" alt="Custom Emojis" src="https://user-images.githubusercontent.com/120059830/207391505-7e7f0147-7757-45df-880d-243a56242ff6.png">
+
