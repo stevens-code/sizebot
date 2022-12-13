@@ -35,11 +35,11 @@ To restrict commands, you can go to the server settings and under Apps > Integra
 <img width="1133" alt="ManagingCommands" src="https://user-images.githubusercontent.com/120059830/207387125-4b7f5165-e218-4f85-8afb-8ee3c93fa7c5.png">
 <img width="1133" alt="RestrictingCommands" src="https://user-images.githubusercontent.com/120059830/207387157-106e3713-47f8-4319-a5f5-94e13a3af7b3.png">
 
-### Mod settings:
+### Mod settings
 There are a variety of mod-specific commands to set settinging on SizeBot. For example this one sets the welcome image that greets new users:
 <img width="1133" alt="CustomWelcom" src="https://user-images.githubusercontent.com/120059830/207387644-4200d53b-d1f6-41fd-9a7d-b87fab996470.png">
 
-#### Current mod commands:
+#### Current mod commands
 ***set-sizebot-variable:*** Set a server-specific variable to be replaced in SizeBot messages.   
 ***delete-sizebot-variable:*** Delete a server-specific variable from SizeBot.   
 ***set-sizebot-welcome:*** Set the SizeBot welcome image.   
@@ -52,7 +52,7 @@ There are a variety of mod-specific commands to set settinging on SizeBot. For e
 ***enable-sizebot-goodbye:*** Allow SizeBot to send goodbye messages.   
 ***disable-sizebot-goodbye:*** Don't allow SizeBot to send goodbye messages.  
 
-### Server variables:
+### Server variables
 To set custom emojis for the server to use in messages, use the ***set-sizebot-variable*** command. The variables that matter currently are: growth_ray (growth ray emoji), shrink_ray (shrink ray emoji), size_ray (size ray emoji), and size_shield (size immunity shield emoji).
 
 Setting the custom emoji variables:   
@@ -60,4 +60,12 @@ Setting the custom emoji variables:
 
 The emojis in use by the bot:
 <img width="1097" alt="Custom Emojis" src="https://user-images.githubusercontent.com/120059830/207391505-7e7f0147-7757-45df-880d-243a56242ff6.png">
+
+### Changing the bot's name
+To change the bot's name in your server, right click on the bot and select "Change Nickname..." and type in the new name:
+<img width="604" alt="ChangeNickname" src="https://user-images.githubusercontent.com/120059830/207395955-f3dce7b0-7226-4611-9b46-1be07570f1d9.png">
+<img width="604" alt="ChangeNicknameDialog" src="https://user-images.githubusercontent.com/120059830/207395981-bf164fa8-595a-42b5-8127-d70af4746042.png">
+
+After clicking save, the new name should apply:  
+<img width="252" alt="NewNickname" src="https://user-images.githubusercontent.com/120059830/207396038-e9c2bbed-58ec-4087-ae3f-e88f26932f21.png">
 
