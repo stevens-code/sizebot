@@ -70,3 +70,9 @@ def has_role(member: discord.Member, role_id: int) -> bool:
             return True
     
     return False
+
+def create_folder_if_missing(folder: str):
+    """Create a folder if it doesn't already exist."""
+
+    if not os.path.exists(folder):
+        os.makedirs(folder)

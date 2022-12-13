@@ -181,6 +181,11 @@ async def on_ready():
     print(f"Logged in as {client.user} (ID: {client.user.id})")
     print("------")
 
+    # Create empty folders, if they don't exist
+    create_folder_if_missing("data/images/guild_custom/welcome")
+    create_folder_if_missing("data/images/guild_custom/goodbye")
+    create_folder_if_missing("data/images/temp")
+
     # Get guilds and add the slash commands to them
     for guild in client.guilds:
         print(f"Syncing tree for guild {guild.id}")
