@@ -15,3 +15,7 @@ In order for the bot to run, it needs to have a token from Discord. From the Bot
 
 ### Install Python packages
 python3 -m pip install -U discord.py pysqlite3 psutil Pillow numpy pandas matplotlib seaborn
+
+### Bot invite
+The invite for the current version is:
+https://discord.com/api/oauth2/authorize?client_id=1050257321848217650&permissions=414733159488&scope=bot%20applications.commands
