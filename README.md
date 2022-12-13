@@ -61,6 +61,10 @@ Setting the custom emoji variables:
 The emojis in use by the bot:
 <img width="1097" alt="Custom Emojis" src="https://user-images.githubusercontent.com/120059830/207391505-7e7f0147-7757-45df-880d-243a56242ff6.png">
 
+### Set the size ray immunity role
+***Size ray immunity will not work*** on your server until the bot knows which role should be the role for size ray immunity. To do that, run /set-sizeray-immunity-role and pick the role you want for it:
+<img width="735" alt="Immunity" src="https://user-images.githubusercontent.com/120059830/207460473-42e2dfbf-8eef-41c8-b7d2-fdb85304dfb0.png">
+
 ### Changing the bot's name
 To change the bot's name in your server, right click on the bot and select "Change Nickname..." and type in the new name:
 <img width="604" alt="ChangeNickname" src="https://user-images.githubusercontent.com/120059830/207395955-f3dce7b0-7226-4611-9b46-1be07570f1d9.png">
