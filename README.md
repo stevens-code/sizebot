@@ -1,14 +1,16 @@
 # SizeBot
 
 ## Setup
+I currently have the bot running off of an old laptop I used during college that I was no longer using, so you won't have to run it locally on your own computer if you don't want to, but you can run it off your own computer if you want to (see the "Running locally" section at the bottom).   
+<img width="256" alt="Screenshot 2022-12-14 at 8 56 35 AM" src="https://user-images.githubusercontent.com/120059830/207646061-b81ff644-e78d-4878-8c5a-84f5447ab7ab.png"> <img width="256" alt="Screenshot 2022-12-14 at 8 56 53 AM" src="https://user-images.githubusercontent.com/120059830/207646121-01ccf4f8-a95d-4742-b901-a45b622d4795.png">   
+SizeBot in all its glory.
 
 ### Bot invite
-The invite for the current version I have running is:  
-https://discord.com/api/oauth2/authorize?client_id=1050257321848217650&permissions=414733159488&scope=bot%20applications.commands
-
+Here is the link to invite the bot to your server:  
+https://discord.com/api/oauth2/authorize?client_id=1050257321848217650&permissions=414733159488&scope=bot%20applications.commands     
 
 ### Permissions
-To allow the users to access the application commands, make sure they have the "Use Application Commands" permission and make sure the channels you want to have the bot run in have that permsision enabled as well.
+To allow the users to access the bot's commands, make sure they have the "Use Application Commands" permission and make sure the channels you want to have the bot run in have that permsision enabled as well.
 <img width="1025" alt="Permissions" src="https://user-images.githubusercontent.com/120059830/207387248-8f817a75-ed25-42da-b10c-3f2ad39482c3.png">
 
 When users have the correct permissions, they should have this pop up after typing "/" into Discord listing the available commands:
@@ -57,8 +59,10 @@ To change the bot's name in your server, right click on the bot and select "Chan
 After clicking save, the new name should apply:  
 <img width="252" alt="NewNickname" src="https://user-images.githubusercontent.com/120059830/207396038-e9c2bbed-58ec-4087-ae3f-e88f26932f21.png">
 
-# Running locally
-### Create a bot account
+## Running locally
+If you don't want to use the version running off my machine, here's how to get it running locally on your own machine.
+
+### Create a bot account:
 https://discordpy.readthedocs.io/en/stable/discord.html
 
 ### Create invite link
