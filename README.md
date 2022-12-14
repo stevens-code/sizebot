@@ -25,7 +25,7 @@ To restrict commands, you can go to the server settings and under Apps > Integra
 There are a variety of mod-specific commands to set settinging on SizeBot. For example this one sets the welcome image that greets new users:    
 <img width="1133" alt="CustomWelcom" src="https://user-images.githubusercontent.com/120059830/207387644-4200d53b-d1f6-41fd-9a7d-b87fab996470.png">
 
-#### Current mod commands
+### Current mod commands
 ***set-sizebot-variable:*** Set a server-specific variable to be replaced in SizeBot messages.   
 ***delete-sizebot-variable:*** Delete a server-specific variable from SizeBot.   
 ***set-sizebot-welcome:*** Set the SizeBot welcome image.   
