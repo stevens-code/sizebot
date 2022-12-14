@@ -1,7 +1,7 @@
 # SizeBot
 
 ## Setup
-I currently have the bot running off of an old laptop I used during college that I was no longer using, so you won't have to run it locally on your own computer if you don't want to, but you can run it off your own computer if you want to (see the "Running locally" section at the bottom).   
+I currently have the bot running off of an old laptop I used during college that I was no longer using, so you won't have to run it locally on your own computer if you don't want to, but you can run it off your own computer (see the "Running locally" section at the bottom for how to do this).   
 <img width="256" alt="Screenshot 2022-12-14 at 8 56 35 AM" src="https://user-images.githubusercontent.com/120059830/207646061-b81ff644-e78d-4878-8c5a-84f5447ab7ab.png"> <img width="256" alt="Screenshot 2022-12-14 at 8 56 53 AM" src="https://user-images.githubusercontent.com/120059830/207646121-01ccf4f8-a95d-4742-b901-a45b622d4795.png">   
 SizeBot in all its glory.
 
