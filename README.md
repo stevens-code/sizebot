@@ -80,4 +80,6 @@ SizeBot is written in Python and requires these packages. After installing Pytho
 If you are setting up SizeBot to run off of your own machine the settings would look like this:   
 <img width="1728" alt="OAuth" src="https://user-images.githubusercontent.com/120059830/207387978-550403db-07d7-4a27-88ff-f0efff84afa0.png">
 
-Using these settings, you can generate the invite link to invite the bot you have running off your machine into your server.
+Using these settings, you can generate the invite link to invite the bot you have running off your machine into your server. To bring the bot online, run the Python script *app_start.py*, which will start uo the bot. If it is configured correctly it should now show as online like this:   
+<img width="246" alt="Screenshot 2022-12-14 at 9 17 15 AM" src="https://user-images.githubusercontent.com/120059830/207649911-b2df0633-e4e7-4d74-9053-427d300fe92d.png">
+
