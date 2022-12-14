@@ -1,27 +1,11 @@
 # SizeBot
 
-
 ## Setup
-### Create a bot account
-https://discordpy.readthedocs.io/en/stable/discord.html
-
-### Create invite link
-Go to the OAuth2/URL Generator in Discord's application settings.
-Scopes: bot, applications.commands
-Bot Permissions: manage roles, read messages/view channels, send messages, send messages in threads, embed links, attach files, read message history, use external emojis, use external stickers, add reactions, use slash commands
-
-### Add token.txt
-In order for the bot to run, it needs to have a token from Discord. From the Bot section in Discord's application settings, click the "Reset Token" button and copy the token generated into a file called "data/token.txt". Now the Bot will log into Discor using a token.
-
-### Install Python packages
-python3 -m pip install -U discord.py pysqlite3 psutil Pillow numpy pandas matplotlib seaborn
 
 ### Bot invite
-The invite for the current version is:
+The invite for the current version I have running is:  
 https://discord.com/api/oauth2/authorize?client_id=1050257321848217650&permissions=414733159488&scope=bot%20applications.commands
 
-If you are setting up SizeBot to run off of your own machine the settings would look like this:
-<img width="1728" alt="OAuth" src="https://user-images.githubusercontent.com/120059830/207387978-550403db-07d7-4a27-88ff-f0efff84afa0.png">
 
 ### Permissions
 To allow the users to access the application commands, make sure they have the "Use Application Commands" permission and make sure the channels you want to have the bot run in have that permsision enabled as well.
@@ -73,3 +57,20 @@ To change the bot's name in your server, right click on the bot and select "Chan
 After clicking save, the new name should apply:  
 <img width="252" alt="NewNickname" src="https://user-images.githubusercontent.com/120059830/207396038-e9c2bbed-58ec-4087-ae3f-e88f26932f21.png">
 
+# Running locally
+### Create a bot account
+https://discordpy.readthedocs.io/en/stable/discord.html
+
+### Create invite link
+Go to the OAuth2/URL Generator in Discord's application settings.
+Scopes: bot, applications.commands
+Bot Permissions: manage roles, read messages/view channels, send messages, send messages in threads, embed links, attach files, read message history, use external emojis, use external stickers, add reactions, use slash commands
+
+### Add token.txt
+In order for the bot to run, it needs to have a token from Discord. From the Bot section in Discord's application settings, click the "Reset Token" button and copy the token generated into a file called "data/token.txt". Now the Bot will log into Discor using a token.
+
+### Install Python packages
+python3 -m pip install -U discord.py pysqlite3 psutil Pillow numpy pandas matplotlib seaborn
+
+If you are setting up SizeBot to run off of your own machine the settings would look like this:
+<img width="1728" alt="OAuth" src="https://user-images.githubusercontent.com/120059830/207387978-550403db-07d7-4a27-88ff-f0efff84afa0.png">
