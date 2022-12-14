@@ -71,10 +71,11 @@ Scopes: bot, applications.commands
 Bot Permissions: manage roles, read messages/view channels, send messages, send messages in threads, embed links, attach files, read message history, use external emojis, use external stickers, add reactions, use slash commands
 
 ### Add token.txt
-In order for the bot to run, it needs to have a token from Discord. From the Bot section in Discord's application settings, click the "Reset Token" button and copy the token generated into a file called "data/token.txt". Now the Bot will log into Discor using a token.
+In order for the bot to run, it needs to have a token from Discord. From the Bot section in Discord's application settings, click the "Reset Token" button and copy the token generated into a file called "data/token.txt". Now the Bot will log into Discord using a token. Note: I have only run it on macOS and Ubuntu Linux, theoretically it should run the same on Windows, I just haven't tried.
 
 ### Install Python packages
-python3 -m pip install -U discord.py pysqlite3 psutil Pillow numpy pandas matplotlib seaborn
+SizeBot is written in Python and requires these packages. After installing Python and Pip (Python's package manager), run this to install its dependencies: 
+> python3 -m pip install -U discord.py pysqlite3 psutil Pillow numpy pandas matplotlib seaborn
 
 If you are setting up SizeBot to run off of your own machine the settings would look like this:   
 <img width="1728" alt="OAuth" src="https://user-images.githubusercontent.com/120059830/207387978-550403db-07d7-4a27-88ff-f0efff84afa0.png">
