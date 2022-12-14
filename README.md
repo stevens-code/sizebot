@@ -70,7 +70,7 @@ Go to the OAuth2/URL Generator in Discord's application settings.
 Scopes: bot, applications.commands
 Bot Permissions: manage roles, read messages/view channels, send messages, send messages in threads, embed links, attach files, read message history, use external emojis, use external stickers, add reactions, use slash commands.   
 
-If you are setting up SizeBot to run off of your own machine the settings would look like this:    
+The settings should look like this:    
 <img width="1728" alt="OAuth" src="https://user-images.githubusercontent.com/120059830/207387978-550403db-07d7-4a27-88ff-f0efff84afa0.png">   
 
 ### Add token.txt
