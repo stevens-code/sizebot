@@ -76,3 +76,13 @@ def create_folder_if_missing(folder: str):
 
     if not os.path.exists(folder):
         os.makedirs(folder)
+
+def is_mod(member: discord.Member):
+    """Check if a member is a mod."""
+
+    return member.guild_permissions.administrator 
+
+async def deny_non_mod(sender: Union[discord.Interaction, discord.TextChannel]):
+    """Send a message denying a non-mod member a certain action"""
+
+    await say(sender, "🚨 **Error:** This is a mod-only command. 🚨")
