@@ -38,25 +38,6 @@ intents.presences = True
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
-# === Events ===
-# Automatically send a message when someone joins
-@client.event
-async def on_member_join(member: discord.Member):
-    guild = member.guild
-    channel = member.guild.system_channel # Get the channel to send notifications in
-    if channel.permissions_for(guild.me).send_messages: # Check for permissions
-        await greeter_welcome(data_store, channel, member)
-    print(f'"{member.display_name}" has joined the server "{guild.name}"')
-
-# Automatically send a message when someone leaves
-@client.event
-async def on_member_remove(member: discord.Member):
-    guild = member.guild
-    channel = member.guild.system_channel # Get the channel to send notifications in
-    if channel.permissions_for(guild.me).send_messages: # Check for permissions
-        await greeter_goodbye(data_store, channel, member)
-    print(f'"{member.display_name}" has left the server "{guild.name}"')
-
 # === Size ray commands ===
 @tree.command(name = "shrink", description = "Fires a shrink ray at someone.")
 async def shrink(interaction: discord.Interaction, target: discord.Member):
@@ -176,9 +157,11 @@ async def enable_sizebot_goodbye(interaction: discord.Interaction):
 async def disable_sizebot_goodbye(interaction: discord.Interaction):
     await mod_disable_sizebot_goodbye(data_store, interaction)
 
+# === Events ===
+# When the bot has loaded
 @client.event
 async def on_ready():
-    print(f"Logged in as {client.user} (ID: {client.user.id})")
+    print(f"Logged in as {client.user} (Id: {client.user.id})")
     print("------")
 
     # Create empty folders, if they don't exist
@@ -193,6 +176,36 @@ async def on_ready():
         await tree.sync(guild= guild)
 
     print("Finished all tree syncs")
+
+# Automatically send a message when someone joins
+@client.event
+async def on_member_join(member: discord.Member):
+    guild = member.guild
+    channel = member.guild.system_channel # Get the channel to send notifications in
+    if channel.permissions_for(guild.me).send_messages: # Check for permissions
+        await greeter_welcome(data_store, channel, member)
+    print(f'"{member.display_name}" has joined the server "{guild.name}"')
+
+# Automatically send a message when someone leaves
+@client.event
+async def on_member_remove(member: discord.Member):
+    guild = member.guild
+    channel = member.guild.system_channel # Get the channel to send notifications in
+    if guild.me is not None: # Don't wanna have the bot try and send a goodbye message for itself
+        if channel.permissions_for(guild.me).send_messages: # Check for permissions
+            await greeter_goodbye(data_store, channel, member)
+        print(f'"{member.display_name}" has left the server "{guild.name}"')
+
+# When the bot joins a new guild
+@client.event
+async def on_guild_join(guild: discord.Guild):
+    print(f'Joined new guild: "{guild.name}" (Id: {guild.id})')
+
+    # Sync the command tree with the new guild
+    tree.copy_global_to(guild=guild)
+    await tree.sync(guild= guild)
+
+    print("Finish syncing commands to new guild")
 
 # Launch the app
 client.run(data_store.discord_bot_token)
