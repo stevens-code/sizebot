@@ -14,9 +14,10 @@ async def greeter_welcome(data_store: DataStore, sender: Union[discord.Interacti
         return
 
     # Send message
-    welcome_image = get_welcome_image(sender.guild.id)
     random_message = random.choice(data_store.greeter_welcome_messages);
-    await say_with_image(sender, variable_replace(random_message, sender, data_store, target), welcome_image)
+    await say(sender, variable_replace(random_message, sender, data_store, target))
+    welcome_image = get_welcome_image(sender.guild.id)
+    await say_with_image(sender, "", welcome_image, True)
 
 async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interaction, discord.TextChannel], target: discord.Member):
     """Generates an image for a member leaving and attaches it to a message saying goodbye. If a custom image is specified, uses that instead."""
