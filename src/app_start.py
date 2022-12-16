@@ -24,6 +24,8 @@ from util import *
 from mod import *
 # Character lines
 from characters import *
+# Bot ratings
+from bot_rate import *
 
 description = """SizeBot"""
 
@@ -90,6 +92,15 @@ async def welcome(interaction: discord.Interaction, target: discord.Member):
 @tree.command(name = "goodbye", description = "Say goodbye to a user.")
 async def goodbye(interaction: discord.Interaction, target: discord.Member):
     await greeter_goodbye(data_store, interaction, target)
+
+# === Bot rate commands ===
+@tree.command(name = "good-bot", description = "Tell SizeBot it's been good.")
+async def good_bot(interaction: discord.Interaction):
+    await bot_rate_good(data_store, interaction)
+
+@tree.command(name = "bad-bot", description = "Tell SizeBot it's been bad.")
+async def bad_bot(interaction: discord.Interaction):
+    await bot_rate_bad(data_store, interaction)
 
 # === About commands ===
 @tree.command(name = "about-sizebot", description = "Get info about SizeBot and the system it's running on.")
