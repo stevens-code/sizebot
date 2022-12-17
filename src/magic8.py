@@ -6,7 +6,7 @@ from data_store import *
 from util import *
 
 async def magic8_ask(data_store: DataStore, interaction: discord.Interaction, question: str):
-    """Generate a message for a random size ray operation."""
+    """Generate a message for a random Magic 8 ball result."""
 
     lines = []
 
