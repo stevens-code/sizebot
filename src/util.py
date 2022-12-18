@@ -50,7 +50,7 @@ async def get_user(interaction: discord.Integration, id: int) -> discord.Member:
 def no_ping(member: discord.Member):
     """Format a member name for a meesage where you don't want to ping them."""
 
-    return f"***{member.name}***";
+    return f"***{member.display_name}***";
 
 def find_file_with_supported_ext(folder: str, file_name: str) -> str:
     """Searches a folder for a file name that has one of Discord's supported file extensions."""

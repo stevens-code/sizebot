@@ -17,7 +17,7 @@ When users have the correct permissions, they should have this pop up after typi
 <img width="1151" alt="AvailableCommannds" src="https://user-images.githubusercontent.com/120059830/207387494-cffdbdca-fcdc-4282-8cd2-d13fa8ae04a5.png">
 
 ### Restricting commands
-To restrict commands, you can go to the server settings and under Apps > Integrations, click on SizeBot and it will display a list of commands. Since it uses Discord's slash commands for all of it's commands, SizeBot's commands can all be managed from here. This includes restricting certain commands to certain channels or only allowing certain commands to be run by certain roles/users.   
+To restrict commands, you can go to the server settings and under Apps > Integrations, click on SizeBot and it will display a list of commands. Since it uses Discord's slash commands for all of its commands, SizeBot's commands can all be managed from here. This includes restricting certain commands to certain channels or only allowing certain commands to be run by certain roles/users.   
 <img width="1133" alt="ManagingCommands" src="https://user-images.githubusercontent.com/120059830/207387125-4b7f5165-e218-4f85-8afb-8ee3c93fa7c5.png">
 <img width="1133" alt="RestrictingCommands" src="https://user-images.githubusercontent.com/120059830/207387157-106e3713-47f8-4319-a5f5-94e13a3af7b3.png">
 

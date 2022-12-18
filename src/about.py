@@ -8,7 +8,7 @@ from variables import *
 from data_store import *
 from util import *
 
-SIZEBOT_VERSION = 1.2
+SIZEBOT_VERSION = 1.3
 
 async def about_message(data_store: DataStore, interaction: discord.Interaction):
     """Responds with a message about SizeBot."""
