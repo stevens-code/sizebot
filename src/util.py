@@ -11,30 +11,30 @@ def format_datetime(time: datetime) -> str:
 
     return datetime.strftime(time, f"%I:%M %p ({time.astimezone().tzname()}) on %m/%d/%Y")
 
-async def say(sender: Union[discord.Interaction, discord.TextChannel], text: str, is_followup = False):
+async def say(sender: Union[discord.Interaction, discord.TextChannel], text: str, is_followup = False, ephemeral = False):
     """Wrapper for sending a plain text message."""
 
     if isinstance(sender, discord.Interaction):
         if is_followup:
-            await sender.followup.send(text)
+            await sender.followup.send(text, ephemeral = ephemeral)
         else:
-            await sender.response.send_message(text)
+            await sender.response.send_message(text, ephemeral = ephemeral)
     else:
         await sender.send(text)
 
 
-async def say_with_image(sender: Union[discord.Interaction, discord.TextChannel], text: str, image_path: str, is_followup = False):
+async def say_with_image(sender: Union[discord.Interaction, discord.TextChannel], text: str, image_path: str, is_followup = False, ephemeral = False):
     """Wrapper for sending a text message with an attached image."""
 
     file_name = os.path.basename(image_path)
     image_file = discord.File(image_path, filename=file_name)
     if isinstance(sender, discord.Interaction):
         if is_followup:
-            await sender.followup.send(text, file = image_file)
+            await sender.followup.send(text, file = image_file, ephemeral = ephemeral)
         else:
-            await sender.response.send_message(text, file = image_file)
+            await sender.response.send_message(text, file = image_file, ephemeral = ephemeral)
     else:
-        await sender.send(text, file = image_file)
+        await sender.send(text, file = image_file, ephemeral = ephemeral)
 
 async def get_user(interaction: discord.Integration, id: int) -> discord.Member:
     """Get a member by ID."""

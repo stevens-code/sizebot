@@ -11,7 +11,7 @@ async def mod_set_sizebot_variable(data_store: DataStore, interaction: discord.I
     """Set a variable in a guild's settings."""
 
     if variable_name in ["author", 'target']:
-        await say(interaction, '🚨 **Error:** Cannot set that variable. The variables "author" and "target" are reserved for SizeBot. 🚨')
+        await say(interaction, '🚨 **Error:** Cannot set that variable. The variables "author" and "target" are reserved for SizeBot. 🚨', ephemeral = True)
     else:
         cursor=data_store.db_connection.cursor()
         # Delete variable if it exists
@@ -24,13 +24,13 @@ async def mod_set_sizebot_variable(data_store: DataStore, interaction: discord.I
         # Respond with the current list of variables for the guild
         lines = [f'Variable "{variable_name}" set to "{variable_value}". You can now use it in message templates as {variable_format(variable_name)}"', "---", "**The server-specific variables can be used as:**"]
         lines.extend(get_variable_list(data_store, interaction.guild.id))
-        await say(interaction, "\n".join(lines))
+        await say(interaction, "\n".join(lines), ephemeral = True)
 
 async def mod_delete_sizebot_variable(data_store: DataStore, interaction: discord.Interaction, variable_name: str):
     """Delete a variable from a guild's settings."""
 
     if variable_name in ["author", 'target']:
-        await say(interaction, '🚨 **Error:** Cannot delete that variable. The variables "author" and "target" are reserved for SizeBot. 🚨')
+        await say(interaction, '🚨 **Error:** Cannot delete that variable. The variables "author" and "target" are reserved for SizeBot. 🚨', ephemeral = True)
     else:
         cursor=data_store.db_connection.cursor()
         # Delete variable
@@ -41,7 +41,7 @@ async def mod_delete_sizebot_variable(data_store: DataStore, interaction: discor
         # Respond with the current list of variables for the guild
         lines = [f'Variable "{variable_name}" was deleted.', "---", "**The server-specific variables that remain are:**"]
         lines.extend(get_variable_list(data_store, interaction.guild.id))
-        await say(interaction, "\n".join(lines))
+        await say(interaction, "\n".join(lines), ephemeral = True)
 
 def get_variable_list(data_store: DataStore, guild_id: int) -> list[str]:
     """Create a formated list of lines for a guild."""
@@ -57,7 +57,7 @@ async def mod_set_sizebot_welcome(data_store: DataStore, interaction: discord.In
 
     ext = pathlib.Path(file_attachment.filename).suffix.lower() 
     if ext not in DISCORD_SUPPORTED_FILE_EXTS:
-        await say(interaction, f"🚨 **Error:** Not a supported file type. The supported types are: {DISCORD_SUPPORTED_FILE_EXTS}. 🚨")
+        await say(interaction, f"🚨 **Error:** Not a supported file type. The supported types are: {DISCORD_SUPPORTED_FILE_EXTS}. 🚨", ephemeral = True)
     else:
         guild_id = f"{interaction.guild.id}"
 
@@ -66,12 +66,12 @@ async def mod_set_sizebot_welcome(data_store: DataStore, interaction: discord.In
         if os.path.exists(old_path):
             os.remove(old_path)
 
-        await say(interaction, "Uploading new welcome image...")
+        await say(interaction, "Uploading new welcome image...", ephemeral = True)
 
         # Set the new one and send it back as a message
         file_path = f"data/images/guild_custom/welcome/{guild_id}{ext}"
         await file_attachment.save(file_path)
-        await say_with_image(interaction, "Set new welcome image to:", file_path, True)
+        await say_with_image(interaction, "Set new welcome image to:", file_path, is_followup = True, ephemeral = True)
 
 async def mod_reset_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
     """Delete the custom SizeBot welcome image and reset to default."""
@@ -80,14 +80,14 @@ async def mod_reset_sizebot_welcome(data_store: DataStore, interaction: discord.
     if os.path.exists(old_path):
         os.remove(old_path)
     
-    await say_with_image(interaction, "Reset welcome image back to default:", "data/images/welcome.jpg")
+    await say_with_image(interaction, "Reset welcome image back to default:", "data/images/welcome.jpg", ephemeral = True)
 
 async def mod_set_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction, file_attachment: discord.Attachment):
     """Set the SizeBot goodbye image."""
 
     ext = pathlib.Path(file_attachment.filename).suffix.lower() 
     if ext not in DISCORD_SUPPORTED_FILE_EXTS:
-        await say(interaction, f"🚨 **Error:** Not a supported file type. The supported types are: {DISCORD_SUPPORTED_FILE_EXTS}. 🚨")
+        await say(interaction, f"🚨 **Error:** Not a supported file type. The supported types are: {DISCORD_SUPPORTED_FILE_EXTS}. 🚨", ephemeral = True)
     else:
         guild_id = f"{interaction.guild.id}"
 
@@ -96,12 +96,12 @@ async def mod_set_sizebot_goodbye(data_store: DataStore, interaction: discord.In
         if os.path.exists(old_path):
             os.remove(old_path)
 
-        await say(interaction, "Uploading new goodbye image...")
+        await say(interaction, "Uploading new goodbye image...", ephemeral = True)
 
         # Set the new one and send it back as a message
         file_path = f"data/images/guild_custom/goodbye/{guild_id}{ext}"
         await file_attachment.save(file_path)
-        await say_with_image(interaction, "Set new goodbye image to:", file_path, True)
+        await say_with_image(interaction, "Set new goodbye image to:", file_path, is_followup = True, ephemeral = True)
 
 async def mod_reset_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction):
     """Delete the custom SizeBot goodbye image and reset to default."""
@@ -110,7 +110,7 @@ async def mod_reset_sizebot_goodbye(data_store: DataStore, interaction: discord.
     if os.path.exists(old_path):
         os.remove(old_path)
     
-    await say_with_image(interaction, "Reset goodbye image back to default:", "data/images/fallen.png")
+    await say_with_image(interaction, "Reset goodbye image back to default:", "data/images/fallen.png", ephemeral = True)
 
 async def mod_set_sizeray_immunity_role(data_store: DataStore, interaction: discord.Interaction, role: discord.Role):
     """Set the size ray immunity role for a guild."""
@@ -124,7 +124,7 @@ async def mod_set_sizeray_immunity_role(data_store: DataStore, interaction: disc
     data_store.db_connection.commit()  
 
     # Respond with the current list of variables for the guild
-    await say(interaction, f"The role for size ray immunity now is ***{role.name}***")
+    await say(interaction, f"The role for size ray immunity now is ***{role.name}***", ephemeral = True)
 
 async def mod_enable_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
     """Allow SizeBot to send welcome messages."""
@@ -135,7 +135,7 @@ async def mod_enable_sizebot_welcome(data_store: DataStore, interaction: discord
     # Commit changes
     data_store.db_connection.commit()  
 
-    await say(interaction, "The automatic welcome message is now enabled for this server.")
+    await say(interaction, "The automatic welcome message is now enabled for this server.", ephemeral = True)
 
 async def mod_disable_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
     """Don't allow SizeBot to send welcome messages."""
@@ -148,7 +148,7 @@ async def mod_disable_sizebot_welcome(data_store: DataStore, interaction: discor
     # Commit changes
     data_store.db_connection.commit()  
 
-    await say(interaction, "The automatic welcome message is now disabled for this server.")
+    await say(interaction, "The automatic welcome message is now disabled for this server.", ephemeral = True)
 
 async def mod_enable_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction):
     """Allow SizeBot to send goodbye messages."""
@@ -159,7 +159,7 @@ async def mod_enable_sizebot_goodbye(data_store: DataStore, interaction: discord
     # Commit changes
     data_store.db_connection.commit()  
 
-    await say(interaction, "The automatic goodbye message is now enabled for this server.")
+    await say(interaction, "The automatic goodbye message is now enabled for this server.", ephemeral = True)
 
 async def mod_disable_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction):
     """Don't allow SizeBot to send goodbye messages."""
@@ -172,4 +172,4 @@ async def mod_disable_sizebot_goodbye(data_store: DataStore, interaction: discor
     # Commit changes
     data_store.db_connection.commit()  
 
-    await say(interaction, "The automatic goodbye message is now disabled for this server.")
+    await say(interaction, "The automatic goodbye message is now disabled for this server.", ephemeral = True)
