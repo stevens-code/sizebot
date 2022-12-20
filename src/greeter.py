@@ -1,5 +1,6 @@
 import discord
 import random
+import asyncio
 from PIL import Image
 
 from variables import *
@@ -56,8 +57,8 @@ async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interacti
                 os.remove(temp_image_path)
                 os.remove(temp_avatar_path)
     except:
-        print("Error creating image")
-        await say(sender, variable_replace(random_message, sender, data_store, target))
+        print("Error creating image")        
+        await asyncio.sleep(0) # Return to caller
 
 def get_welcome_image(guild_id: int):
     """Get a guild-specific welcome image. Returns the default image if none is found."""
