@@ -3,6 +3,8 @@
 import discord
 from discord import app_commands
 from datetime import date
+from datetime import time
+from dateutil import tz
 from discord.ext import tasks
 
 # Includes functions to load data from the system (including messages from the data/messages files)
@@ -263,9 +265,10 @@ async def load_birthdays_task():
     # Load birthdays for each guild
     for guild in client.guilds:
         store_guild_birthdays(data_store, guild.id)
+    await asyncio.sleep(0) # Return to caller
 
-# Check for daily and monthly birthdays daily
-@tasks.loop(hours = 24)
+# Check for daily and monthly birthdays daily, running at 6AM MST
+@tasks.loop(time=time(hour=6, minute=0, tzinfo=tz.gettz("MST")))
 async def notify_birthdays_task():
     today = date.today()
 

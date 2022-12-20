@@ -11,6 +11,10 @@ MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "
 async def birthday_monthly_list(data_store: DataStore, sender: Union[discord.Interaction, discord.TextChannel], month: int):
     """Message the monthly birthdays."""
 
+    # If it's an automatic message and automatic messages are disabled
+    if isinstance(sender, discord.TextChannel) and not is_birthday_messages_enabled(data_store, sender.guild.id): 
+        await asyncio.sleep(0) # Return to caller
+
     birthday_list = get_monthly_birthday_list(data_store, sender.guild.id, month)
     lines = [f"🎂 Birthdays for {MONTH_NAMES[month - 1]}: "]
     lines.extend(birthday_list)
@@ -18,6 +22,10 @@ async def birthday_monthly_list(data_store: DataStore, sender: Union[discord.Int
 
 async def birthday_daily_list(data_store: DataStore, sender: Union[discord.Interaction, discord.TextChannel], month: int, day: int):
     """Message the daily birthdays."""
+
+    # If it's an automatic message and automatic messages are disabled
+    if isinstance(sender, discord.TextChannel) and not is_birthday_messages_enabled(data_store, sender.guild.id): 
+        await asyncio.sleep(0) # Return to caller
 
     birthday_list = get_guild_daily_birthdays(data_store, sender.guild.id, month, day)
 
@@ -41,6 +49,16 @@ async def birthday_get_info(data_store: DataStore, interaction: discord.Interact
         await say(interaction, variable_replace(info, interaction, data_store))
     else:
         await say(interaction, "The mods have not set any info on how to add/view birthdays from Google Sheets.")
+
+
+def is_birthday_messages_enabled(data_store: DataStore, guild_id: int) -> bool:
+    """Check if the automatic birthday message feature is enabled."""
+
+    cursor = data_store.db_connection.execute(f"SELECT * from birthday_disable WHERE guild = ? ", (guild_id, ))    
+    result = cursor.fetchone()
+
+    # If there is not entry in the disable table, it's enabled
+    return result is None
 
 def store_guild_birthdays(data_store: DataStore, guild_id: int) -> dict:
     """Read guild birthdays from Google Sheets and store them in the database."""

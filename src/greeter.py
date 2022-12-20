@@ -12,7 +12,7 @@ async def greeter_welcome(data_store: DataStore, sender: Union[discord.Interacti
 
     # If it's an automatic message and automatic messages are disabled
     if isinstance(sender, discord.TextChannel) and not is_greeter_welcome_enabled(data_store, sender.guild.id): 
-        return
+        await asyncio.sleep(0) # Return to caller 
 
     # Send message
     random_message = random.choice(data_store.greeter_welcome_messages);
@@ -25,7 +25,7 @@ async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interacti
 
     # If it's an automatic message and automatic messages are disabled
     if isinstance(sender, discord.TextChannel) and not is_greeter_goodbye_enabled(data_store, sender.guild.id): 
-        return
+        await asyncio.sleep(0) # Return to caller
 
     # Send message
     random_message = random.choice(data_store.greeter_goodbye_messages);
