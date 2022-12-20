@@ -1,10 +1,12 @@
 import discord
 import random
 import pathlib
+import pandas
 
 from util import *
 from data_store import *
 from variables import *
+from birthday import *
 
 # Mod-only commands
 async def mod_set_sizebot_variable(data_store: DataStore, interaction: discord.Interaction, variable_name: str, variable_value: str = ""):
@@ -44,7 +46,7 @@ async def mod_delete_sizebot_variable(data_store: DataStore, interaction: discor
         await say(interaction, "\n".join(lines), ephemeral = True)
 
 def get_variable_list(data_store: DataStore, guild_id: int) -> list[str]:
-    """Create a formated list of lines for a guild."""
+    """Create a formatted list of variables for a guild."""
 
     lines = []    
     variable_dict = get_guild_variables(data_store, guild_id)
@@ -118,12 +120,12 @@ async def mod_set_sizeray_immunity_role(data_store: DataStore, interaction: disc
     cursor=data_store.db_connection.cursor()
     # Delete role if it exists 
     cursor.execute("DELETE FROM sizeray_immunity_roles WHERE guild = ?", (interaction.guild.id, ))
-    # Add variable
+    # Add role
     cursor.execute("INSERT INTO sizeray_immunity_roles(guild, timestamp, role) VALUES (?, ?, ?)", (interaction.guild.id, datetime.now(), role.id))
     # Commit changes
     data_store.db_connection.commit()  
 
-    # Respond with the current list of variables for the guild
+    # Respond with the size ray immunity role for the guild
     await say(interaction, f"The role for size ray immunity now is ***{role.name}***", ephemeral = True)
 
 async def mod_enable_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
@@ -173,3 +175,96 @@ async def mod_disable_sizebot_goodbye(data_store: DataStore, interaction: discor
     data_store.db_connection.commit()  
 
     await say(interaction, "The automatic goodbye message is now disabled for this server.", ephemeral = True)
+
+async def mod_enable_sizebot_birthdays(data_store: DataStore, interaction: discord.Interaction):
+    """Allow SizeBot to send birthday messages."""
+
+    cursor=data_store.db_connection.cursor()
+    # Delete disable entry if it exists
+    cursor.execute("DELETE FROM birthday_disable WHERE guild = ?", (interaction.guild.id, ))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    await say(interaction, "The automatic birthday message is now enabled for this server.", ephemeral = True)
+
+async def mod_disable_sizebot_birthdays(data_store: DataStore, interaction: discord.Interaction):
+    """Don't allow SizeBot to send birthday messages."""
+
+    cursor=data_store.db_connection.cursor()
+    # Delete disable entry if it exists
+    cursor.execute("DELETE FROM birthday_disable WHERE guild = ?", (interaction.guild.id, ))
+    # Add a new disable entry
+    cursor.execute("INSERT INTO birthday_disable(guild, timestamp) VALUES (?, ?)", (interaction.guild.id, datetime.now()))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    await say(interaction, "The automatic birthday message is now disabled for this server.", ephemeral = True)
+
+async def mod_set_birthday_source(data_store: DataStore, interaction: discord.Interaction, sheets_key: str, name_column: str, birthday_column: str):
+    """Set the birthday data source in a guild's settings."""
+
+    url = f"https://docs.google.com/spreadsheets/d/{sheets_key}/export?format=csv"
+    await say(interaction, f'Setting birthday data source to "{url}"...', ephemeral = True)
+
+    try:
+        # Try and load the data, it will throw an exception if invalid
+        data = pandas.read_csv(url, usecols= [name_column, birthday_column])  
+
+        cursor=data_store.db_connection.cursor()
+        # Delete if it exists
+        cursor.execute("DELETE FROM birthday_settings WHERE guild = ?", (interaction.guild.id, ))
+        # Add birthday settings
+        cursor.execute("INSERT INTO birthday_settings(guild, timestamp, sheets_key, sheets_name_column, sheets_birthday_column) VALUES (?, ?, ?, ?, ?)", (interaction.guild.id, datetime.now(), sheets_key, name_column, birthday_column))
+        # Commit changes
+        data_store.db_connection.commit()  
+
+        # Respond with the current list of birthdays for the guild
+        store_guild_birthdays(data_store, interaction.guild.id)
+        birthday_list = get_birthday_list(data_store, interaction.guild.id)
+        lines = [f'SizeBot will now download birthdays from "{url}".', "---", "**The birthdays on this server are:**"]
+        lines.extend(birthday_list)
+        result = "\n".join(lines)
+        await say(interaction, result + "...", ephemeral = True, is_followup = True)
+    except:
+        await say(interaction, f'🚨 **Error:** The url "{url}" does not return data that SizeBot can use. 🚨', ephemeral = True, is_followup = True)
+
+async def mod_set_birthday_info(data_store: DataStore, interaction: discord.Interaction, info: str):
+    """Set message to send memebers about how to add their birthdays."""
+
+    cursor=data_store.db_connection.cursor()
+    # Delete if it exists 
+    cursor.execute("DELETE FROM birthday_source_info WHERE guild = ?", (interaction.guild.id, ))
+    # Add the info
+    cursor.execute("INSERT INTO birthday_source_info(guild, timestamp, info) VALUES (?, ?, ?)", (interaction.guild.id, datetime.now(), info))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    # Respond with the new channel name
+    await say(interaction, f"The info that appears when running /birthday-info is: \n {info}", ephemeral = True)
+
+async def mod_set_notifications_channel(data_store: DataStore, interaction: discord.Interaction, channel: discord.channel.TextChannel):
+    """Set the notifications channel for SizeBot."""
+
+    cursor=data_store.db_connection.cursor()
+    # Delete channel setting if it exists 
+    cursor.execute("DELETE FROM notifications_channel WHERE guild = ?", (interaction.guild.id, ))
+    # Add channel
+    cursor.execute("INSERT INTO notifications_channel(guild, timestamp, channel) VALUES (?, ?, ?)", (interaction.guild.id, datetime.now(), channel.id))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    # Respond with the new channel name
+    await say(interaction, f"The channel for SizeBot notifications is now ***{channel.name}***", ephemeral = True)
+
+
+async def mod_reset_notifications_channel(data_store: DataStore, interaction: discord.Interaction):
+    """Reset the notifications channel for SizeBot back to the Discord default notifications channel."""
+
+    cursor=data_store.db_connection.cursor()
+    # Delete channel setting if it exists 
+    cursor.execute("DELETE FROM notifications_channel WHERE guild = ?", (interaction.guild.id, ))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    # Respond with the new channel name
+    await say(interaction, f"The channel for SizeBot notifications is now reset to Discord's default notification channel.", ephemeral = True)

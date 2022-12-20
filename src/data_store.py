@@ -103,12 +103,10 @@ class DataStore:
         This stores server specific data for the bot."""
 
         print("Loading database...")
-        existing_db = os.path.exists(DataStore.DATABASE_PATH)
         connection = sqlite3.connect(DataStore.DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES)
 
-        # Create the tables if the database file was not found
-        if not existing_db:
-            self.create_db(connection)
+        # Create the tables
+        self.create_db(connection)
 
         return connection
 

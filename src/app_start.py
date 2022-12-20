@@ -1,8 +1,9 @@
 # This requires the 'members' and 'message_content' privileged intents to function.
 
 import discord
-from discord.ext.commands import has_permissions
 from discord import app_commands
+from datetime import date
+from discord.ext import tasks
 
 # Includes functions to load data from the system (including messages from the data/messages files)
 from data_store import *
@@ -26,6 +27,8 @@ from mod import *
 from characters import *
 # Bot ratings
 from bot_rate import *
+# Birthdays
+from birthday import *
 
 description = """SizeBot"""
 
@@ -112,6 +115,27 @@ async def about_sizebot(interaction: discord.Interaction):
 async def scara(interaction: discord.Interaction):
     await character_scara(data_store, interaction)
 
+# === Birthday commands ===
+@tree.command(name = "birthdays", description = "Get a list of birthdays for a month (1-12, defaults to the current month).")
+async def birthdays(interaction: discord.Interaction, month: int = -1):
+    selected_month = month if month >= 1 and month <= 12 else date.today().month
+    await birthday_monthly_list(data_store, interaction, selected_month)
+
+@tree.command(name = "birthdays-today", description = "Get a list of birthdays for today.")
+async def birthdays_today(interaction: discord.Interaction):
+    today = date.today()
+    await birthday_daily_list(data_store, interaction, today.month, today.day)
+
+@tree.command(name = "refresh-birthdays", description = "SizeBot will automatically check Google Sheets for updates daily, but this forces it to check now.")
+async def refresh_birthdays(interaction: discord.Interaction):   
+    print(f'Manually refreshing birthdays for "{interaction.guild.name}" ({interaction.guild.id})') 
+    store_guild_birthdays(data_store, interaction.guild.id)
+    await say(interaction, "Birthdays have been refreshed.", ephemeral=True)
+
+@tree.command(name = "birthday-info", description = "Get the info for how to add/view birthdays (Google Sheets/Forms link).")
+async def birthday_info(interaction: discord.Interaction):
+    await birthday_get_info(data_store, interaction)
+
 # === Mod-only commands ===
 @tree.command(name="set-sizebot-variable", description = "Mod-only: Set a server-specific variable to be replaced in SizeBot messages.")
 async def set_sizebot_variable(interaction: discord.Interaction, variable_name: str, variable_value: str):
@@ -190,6 +214,73 @@ async def disable_sizebot_goodbye(interaction: discord.Interaction):
     else:
         await deny_non_mod(interaction)
 
+@tree.command(name="enable-sizebot-birthdays", description = "Mod-only: Allow SizeBot to send birthday messages.")
+async def enable_sizebot_birthdays(interaction: discord.Interaction):
+    if is_mod(interaction.user):
+        await mod_enable_sizebot_birthdays(data_store, interaction)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name="disable-sizebot-birthdays", description = "Mod-only: Don't allow SizeBot to send birthday messages.")
+async def disable_sizebot_birthdays(interaction: discord.Interaction):
+    if is_mod(interaction.user):
+        await mod_disable_sizebot_birthdays(data_store, interaction)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name="set-sizebot-birthday-source", description = "Mod-only: Set the Google Sheets data source for birthdays.")
+async def set_sizebot_birthday_source(interaction: discord.Interaction, sheets_key: str, name_column: str, birthday_column: str):
+    if is_mod(interaction.user):
+        await mod_set_birthday_source(data_store, interaction, sheets_key, name_column, birthday_column)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name="set-sizebot-birthday-info", description = "Mod-only: Set the info for how to add/view birthdays (Google Sheets/Forms link).")
+async def set_sizebot_birthday_info(interaction: discord.Interaction, info: str):
+    if is_mod(interaction.user):
+        await mod_set_birthday_info(data_store, interaction, info)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name="set-sizebot-notify-channel", description = "Mod-only: Set the channel for SizeBot notifications (welcome, goodbye, etc..).")
+async def set_sizebot_notifications_channel(interaction: discord.Interaction, channel: discord.channel.TextChannel):
+    if is_mod(interaction.user):
+        await mod_set_notifications_channel(data_store, interaction, channel)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name="reset-sizebot-notify-channel", description = "Mod-only: Reset the channel for SizeBot notifications (welcome, goodbye, etc..).")
+async def reset_sizebot_notifications_channel(interaction: discord.Interaction):
+    if is_mod(interaction.user):
+        await mod_reset_notifications_channel(data_store, interaction)
+    else:
+        await deny_non_mod(interaction)
+
+# === Background tasks ===
+# Check for birthdays every 12 hours
+@tasks.loop(hours = 12)
+async def load_birthdays_task():
+    # Load birthdays for each guild
+    for guild in client.guilds:
+        store_guild_birthdays(data_store, guild.id)
+
+# Check for daily and monthly birthdays daily
+@tasks.loop(hours = 24)
+async def notify_birthdays_task():
+    today = date.today()
+
+    for guild in client.guilds:
+        channel = get_notifications_channel(data_store, guild)
+        if channel is not None and is_birthday_notify_enabled(data_store, guild.id):
+            can_notify = channel.permissions_for(guild.me).send_messages
+            # Send a monthly birthday list on the 1st of each month
+            if today.day == 1 and can_notify:
+                await birthday_monthly_list(data_store, channel)
+
+            # Send a daily birthday list if there are any
+            if can_notify:
+                await birthday_daily_list(data_store, channel, today.month, today.day)
+
 # === Events ===
 # When the bot has loaded
 @client.event
@@ -202,11 +293,15 @@ async def on_ready():
     create_folder_if_missing("data/images/guild_custom/goodbye")
     create_folder_if_missing("data/images/temp")
 
+    # Start tasks
+    load_birthdays_task.start()
+    notify_birthdays_task.start()
+
     # Get guilds and add the slash commands to them
     for guild in client.guilds:
         print(f"Syncing tree for guild {guild.id}")
         tree.copy_global_to(guild=guild)
-        await tree.sync(guild= guild)
+        await tree.sync(guild=guild)
 
     print("Finished all tree syncs")
 
@@ -214,8 +309,8 @@ async def on_ready():
 @client.event
 async def on_member_join(member: discord.Member):
     guild = member.guild
-    channel = member.guild.system_channel # Get the channel to send notifications in
-    if channel.permissions_for(guild.me).send_messages: # Check for permissions
+    channel = get_notifications_channel(data_store, guild)
+    if channel is not None and channel.permissions_for(guild.me).send_messages:
         await greeter_welcome(data_store, channel, member)
     print(f'"{member.display_name}" has joined the server "{guild.name}"')
 
@@ -223,9 +318,9 @@ async def on_member_join(member: discord.Member):
 @client.event
 async def on_member_remove(member: discord.Member):
     guild = member.guild
-    channel = member.guild.system_channel # Get the channel to send notifications in
-    if guild.me is not None: # Don't wanna have the bot try and send a goodbye message for itself
-        if channel.permissions_for(guild.me).send_messages: # Check for permissions
+    channel = get_notifications_channel(data_store, guild)
+    if guild.me is not None and channel is not None: # Don't wanna have the bot try and send a goodbye message for itself
+        if channel.permissions_for(guild.me).send_messages:
             await greeter_goodbye(data_store, channel, member)
         print(f'"{member.display_name}" has left the server "{guild.name}"')
 
@@ -236,7 +331,7 @@ async def on_guild_join(guild: discord.Guild):
 
     # Sync the command tree with the new guild
     tree.copy_global_to(guild=guild)
-    await tree.sync(guild= guild)
+    await tree.sync(guild=guild)
 
     print("Finish syncing commands to new guild")
 
