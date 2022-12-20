@@ -40,7 +40,7 @@ async def say_with_image(sender: Union[discord.Interaction, discord.TextChannel]
         else:
             await sender.response.send_message(c_text, file = image_file, ephemeral = ephemeral)
     else:
-        await sender.send(c_text, file = image_file, ephemeral = ephemeral)
+        await sender.send(c_text, file = image_file)
 
 async def get_user(interaction: discord.Integration, id: int) -> discord.Member:
     """Get a member by ID."""
