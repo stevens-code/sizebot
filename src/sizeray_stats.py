@@ -44,7 +44,7 @@ async def sizeray_stats_chart(data_store: DataStore, interaction: discord.Intera
     """Show the size ray actions stats in a chart."""
 
     # Fetch the data
-    await say(interaction, "Generating size ray stats chart...")
+    await send_bot_thinking_response(interaction)
     cursor = data_store.db_connection.execute(f"SELECT [action], COUNT(*) [count] from sizeray_actions WHERE guild = ? GROUP BY [action] ORDER BY [action] ASC", (interaction.guild.id, ))    
     rows = cursor.fetchall()
     action_counts = {}
@@ -66,7 +66,7 @@ async def sizeray_stats_chart(data_store: DataStore, interaction: discord.Intera
         pyplot.isinteractive = False
         pyplot.savefig(temp_chart_path)
         # Post it
-        await say_with_image(interaction, "", temp_chart_path, True)
+        await say_with_image(interaction, "", temp_chart_path, followup = True)
         # Delete once it's done
         os.remove(temp_chart_path)
 
@@ -74,7 +74,7 @@ async def sizeray_stats_chart_for(data_store: DataStore, interaction: discord.In
     """Show the size ray actions stats in a chart for member."""
 
     # Fetch the data
-    await say(interaction, f"Generating size ray stats chart for {no_ping(target)}...")
+    await send_bot_thinking_response(interaction)
     cursor = data_store.db_connection.execute(f"SELECT [action], COUNT(*) [count] from sizeray_actions WHERE guild = ? AND target = ? GROUP BY [action] ORDER BY [action] ASC", (interaction.guild.id, target.id))    
     rows = cursor.fetchall()
     action_counts = {}
@@ -96,7 +96,7 @@ async def sizeray_stats_chart_for(data_store: DataStore, interaction: discord.In
         pyplot.isinteractive = False
         pyplot.savefig(temp_chart_path)
         # Post it
-        await say_with_image(interaction, "", temp_chart_path, True)
+        await say_with_image(interaction, "", temp_chart_path, followup = True)
         # Delete once it's done
         os.remove(temp_chart_path)
 

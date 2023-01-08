@@ -8,5 +8,6 @@ from util import *
 async def character_scara(data_store: DataStore, interaction: discord.Interaction):
     """Say a random Scaramouche elemental burst line."""
 
+    await send_bot_thinking_response(interaction)
     random_message = random.choice(data_store.character_scara_messages);
-    await say_with_image(interaction, variable_replace(f"***{random_message}***", interaction, data_store), "data/images/scara.gif")
+    await say_with_image(interaction, variable_replace(f"***{random_message}***", interaction, data_store), "data/images/scara.gif", followup = True)

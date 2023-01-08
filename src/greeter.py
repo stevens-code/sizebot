@@ -15,10 +15,10 @@ async def greeter_welcome(data_store: DataStore, sender: Union[discord.Interacti
         await asyncio.sleep(0) # Return to caller 
 
     # Send message
-    random_message = random.choice(data_store.greeter_welcome_messages);
-    await say(sender, variable_replace(random_message, sender, data_store, target))
+    await send_bot_thinking_response(sender)
+    random_message = random.choice(data_store.greeter_welcome_messages)
     welcome_image = get_welcome_image(sender.guild.id)
-    await say_with_image(sender, "", welcome_image, True)
+    await say_with_image(sender, variable_replace(random_message, sender, data_store, target), welcome_image, followup = True)
 
 async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interaction, discord.TextChannel], target: discord.Member):
     """Generates an image for a member leaving and attaches it to a message saying goodbye. If a custom image is specified, uses that instead."""
@@ -28,18 +28,15 @@ async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interacti
         await asyncio.sleep(0) # Return to caller
 
     # Send message
-    random_message = random.choice(data_store.greeter_goodbye_messages);
-
+    await send_bot_thinking_response(sender)
+    random_message = variable_replace(random.choice(data_store.greeter_goodbye_messages), sender, data_store, target)
+    
     try:
         # If a custom image is specified for the guild, use that instead
         custom_image_path = find_file_with_supported_ext("data/images/guild_custom/goodbye", f"{sender.guild.id}")
         if os.path.exists(custom_image_path):
-            await say_with_image(sender, variable_replace(random_message, sender, data_store, target), custom_image_path)
+            await say_with_image(sender, random_message, custom_image_path)
         else:
-            # Some times image generation takes a second or two and Discord's API throws a fit if it
-            # doesn't get an immediate response, so send the text message first, then a followup message
-            # with the generate image when it's completed
-            await say(sender, variable_replace(random_message, sender, data_store, target))
             # If no custom image, generate an image from the member's avatar and say goodbye
             with Image.open("data/images/fallen.png") as fallen:
                 temp_image_path = f"data/images/temp/fallen_{target.id}.png"
@@ -51,7 +48,7 @@ async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interacti
                     generated_image.paste(resized_avatar, (1525, 455))
                     generated_image.paste(fallen, (0, 0), fallen)
                     generated_image.save(temp_image_path)
-                    await say_with_image(sender, "", temp_image_path, True)
+                    await say_with_image(sender, random_message, temp_image_path, followup = True)
 
                 # Delete the temp images
                 os.remove(temp_image_path)

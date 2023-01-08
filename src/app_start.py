@@ -278,7 +278,7 @@ async def notify_birthdays_task():
             can_notify = channel.permissions_for(guild.me).send_messages
             # Send a monthly birthday list on the 1st of each month
             if today.day == 1 and can_notify:
-                await birthday_monthly_list(data_store, channel)
+                await birthday_monthly_list(data_store, channel, date.today().month)
 
             # Send a daily birthday list if there are any
             if can_notify:

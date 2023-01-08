@@ -73,7 +73,7 @@ async def mod_set_sizebot_welcome(data_store: DataStore, interaction: discord.In
         # Set the new one and send it back as a message
         file_path = f"data/images/guild_custom/welcome/{guild_id}{ext}"
         await file_attachment.save(file_path)
-        await say_with_image(interaction, "Set new welcome image to:", file_path, is_followup = True, ephemeral = True)
+        await say_with_image(interaction, "Set new welcome image to:", file_path, followup = True, ephemeral = True)
 
 async def mod_reset_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
     """Delete the custom SizeBot welcome image and reset to default."""
@@ -103,7 +103,7 @@ async def mod_set_sizebot_goodbye(data_store: DataStore, interaction: discord.In
         # Set the new one and send it back as a message
         file_path = f"data/images/guild_custom/goodbye/{guild_id}{ext}"
         await file_attachment.save(file_path)
-        await say_with_image(interaction, "Set new goodbye image to:", file_path, is_followup = True, ephemeral = True)
+        await say_with_image(interaction, "Set new goodbye image to:", file_path, followup = True, ephemeral = True)
 
 async def mod_reset_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction):
     """Delete the custom SizeBot goodbye image and reset to default."""
@@ -224,9 +224,9 @@ async def mod_set_birthday_source(data_store: DataStore, interaction: discord.In
         lines = [f'SizeBot will now download birthdays from "{url}".', "---", "**The birthdays on this server are:**"]
         lines.extend(birthday_list)
         result = "\n".join(lines)
-        await say(interaction, result + "...", ephemeral = True, is_followup = True)
+        await say(interaction, result + "...", ephemeral = True, followup = True)
     except:
-        await say(interaction, f'🚨 **Error:** The url "{url}" does not return data that SizeBot can use. 🚨', ephemeral = True, is_followup = True)
+        await say(interaction, f'🚨 **Error:** The url "{url}" does not return data that SizeBot can use. 🚨', ephemeral = True, followup = True)
 
 async def mod_set_birthday_info(data_store: DataStore, interaction: discord.Interaction, info: str):
     """Set message to send memebers about how to add their birthdays."""

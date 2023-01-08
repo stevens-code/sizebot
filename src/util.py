@@ -14,13 +14,20 @@ def format_datetime(time: datetime) -> str:
 
     return datetime.strftime(time, f"%I:%M %p ({time.astimezone().tzname()}) on %m/%d/%Y")
 
-async def say(sender: Union[discord.Interaction, discord.TextChannel], text: str, is_followup = False, ephemeral = False):
+async def send_bot_thinking_response(sender: Union[discord.Interaction, discord.TextChannel]):
+    """Sends a bot thinking command."""
+
+    # Only needed slash commands (discord.Interaction)
+    if isinstance(sender, discord.Interaction):
+        await sender.response.defer()
+
+async def say(sender: Union[discord.Interaction, discord.TextChannel], text: str, followup = False, ephemeral = False):
     """Wrapper for sending a plain text message."""
 
     c_text = concat_text(text)
 
     if isinstance(sender, discord.Interaction):
-        if is_followup:
+        if followup:
             await sender.followup.send(c_text, ephemeral = ephemeral)
         else:
             await sender.response.send_message(c_text, ephemeral = ephemeral)
@@ -28,14 +35,14 @@ async def say(sender: Union[discord.Interaction, discord.TextChannel], text: str
         await sender.send(c_text)
 
 
-async def say_with_image(sender: Union[discord.Interaction, discord.TextChannel], text: str, image_path: str, is_followup = False, ephemeral = False):
+async def say_with_image(sender: Union[discord.Interaction, discord.TextChannel], text: str, image_path: str, followup = False, ephemeral = False):
     """Wrapper for sending a text message with an attached image."""
 
     c_text = concat_text(text)
     file_name = os.path.basename(image_path)
     image_file = discord.File(image_path, filename=file_name)
     if isinstance(sender, discord.Interaction):
-        if is_followup:
+        if followup:
             await sender.followup.send(c_text, file = image_file, ephemeral = ephemeral)
         else:
             await sender.response.send_message(c_text, file = image_file, ephemeral = ephemeral)
