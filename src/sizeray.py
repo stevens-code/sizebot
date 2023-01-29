@@ -46,7 +46,7 @@ async def sizeray_shrink(data_store: DataStore, interaction: discord.Interaction
     if sizeray_is_bot_targeted(interaction, target):
         await sizeray_malfunction(data_store, interaction, target)
     elif sizeray_has_immunity(data_store, target):
-        await sizeray_immunity_notice(data_store, interaction, target, followup = True)
+        await sizeray_immunity_notice(data_store, interaction, target)
     else:
         await send_bot_thinking_response(interaction)
         random_message = random.choice(data_store.shrink_messages)
@@ -61,7 +61,7 @@ async def sizeray_grow(data_store: DataStore, interaction: discord.Interaction, 
     if sizeray_is_bot_targeted(interaction, target):
         await sizeray_malfunction(data_store, interaction, target)
     elif sizeray_has_immunity(data_store, target):
-        await sizeray_immunity_notice(data_store, interaction, target, followup = True)
+        await sizeray_immunity_notice(data_store, interaction, target)
     else:
         await send_bot_thinking_response(interaction)
         random_message = random.choice(data_store.grow_messages)
