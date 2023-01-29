@@ -10,7 +10,7 @@ from util import *
 from log import *
 
 SIZEBOT_VERSION = 3.0
-SIZEBOT_VERSION_STR = f"{SIZEBOT_VERSION} Beta"
+SIZEBOT_VERSION_STR = f"{SIZEBOT_VERSION}"
 
 async def about_message(data_store: DataStore, interaction: discord.Interaction):
     """Responds with a message about SizeBot."""
