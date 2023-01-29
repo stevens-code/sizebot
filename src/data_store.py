@@ -2,6 +2,8 @@ import os
 import sys
 import sqlite3
 import discord
+from os.path import exists
+from datetime import timedelta, datetime
 
 # Handles loading data from files and environment
 def data_read_list_file(filename: str, enable_comments: bool = False) -> list[str]:
@@ -41,6 +43,7 @@ class DataStore:
     SIZERAY_GROW_MESSAGES_PATH = "data/messages/sizeray_grow.txt"
     SIZERAY_MALFUNCTION_MESSAGES_PATH = "data/messages/sizeray_malfunction.txt"
     CHARACTER_SCARA_MESSAGES_PATH = "data/messages/character_scara.txt"
+    CHARACTER_ZHONGLI_MESSAGES_PATH = "data/messages/character_zhongli.txt"
     GREETER_WELCOME_MESSAGES_PATH = "data/messages/greeter_welcome.txt"
     GREETER_GOODBYE_MESSAGES_PATH = "data/messages/greeter_goodbye.txt"
     MAGIC8_POSITIVE_MESSAGES_PATH = "data/messages/magic8_positive.txt"
@@ -82,7 +85,8 @@ class DataStore:
         self.shrink_messages = load_lines_file(DataStore.SIZERAY_SHRINK_MESSAGES_PATH, "Loaded size ray shrink messages")
         self.grow_messages = load_lines_file(DataStore.SIZERAY_GROW_MESSAGES_PATH, "Loaded size ray grow messages")
         self.malfunction_messages = load_lines_file(DataStore.SIZERAY_MALFUNCTION_MESSAGES_PATH, "Loaded size ray malfunction messages")
-        self.character_scara_messages = load_lines_file(DataStore.CHARACTER_SCARA_MESSAGES_PATH, "Loaded size ray malfunction messages")
+        self.character_scara_messages = load_lines_file(DataStore.CHARACTER_SCARA_MESSAGES_PATH, "Loaded Scaramouche messages")
+        self.character_zhongli_messages = load_lines_file(DataStore.CHARACTER_ZHONGLI_MESSAGES_PATH, "Loaded Zhongli messages")
         self.greeter_welcome_messages = load_lines_file(DataStore.GREETER_WELCOME_MESSAGES_PATH, "Loaded greeter welcome messages")
         self.greeter_goodbye_messages = load_lines_file(DataStore.GREETER_GOODBYE_MESSAGES_PATH, "Loaded greeter goodbye messages")
         self.magic8_positive_messages = load_lines_file(DataStore.MAGIC8_POSITIVE_MESSAGES_PATH, "Loaded Magic 8 positive messages")
@@ -118,3 +122,26 @@ class DataStore:
         with open(DataStore.CREATE_TABLES_SQL_PATH) as file:
             create_tables_sql = file.read()
             connection.executescript(create_tables_sql); 
+
+class DiscordMember:
+    def __init__(self, id: int, guild_id: int, name: str, avatar: str, last_cache: datetime):
+        self.id = id
+        self.guild_id = guild_id
+        self.name = name
+        self.avatar = avatar
+        self.last_cache = last_cache
+
+    def avatar_path(self):
+        """Get the path for an avatar"""
+
+        return f"data/images/avatar_cache/{self.avatar}"
+
+    def avatar_exists(self):
+        """Check if the avatar file exists"""
+
+        return exists(self.avatar_path())
+
+    def is_old(self):
+        """Check if the avatar file is older than a time limit (2 days)"""
+
+        return self.last_cache < datetime.now() + timedelta(days = -2)

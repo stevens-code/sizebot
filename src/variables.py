@@ -1,6 +1,7 @@
 import discord
 
 from data_store import *
+from util import *
 from typing import Union
 
 def get_guild_variables(data_store: DataStore, guild_id: int) -> dict:
@@ -22,7 +23,7 @@ def variable_format(variable_name: str) -> str:
 
     return "{{" + variable_name + "}}"
 
-def variable_replace(text: str, sender: Union[discord.Interaction, discord.TextChannel], data_store: DataStore, target_user: discord.Member = None):
+def variable_replace(text: str, sender: Union[discord.Interaction, discord.TextChannel], data_store: DataStore, target_user: discord.Member = None, target_no_ping: str = None):
     """Replaces context-specific variables in text."""
 
     result = text
@@ -45,5 +46,7 @@ def variable_replace(text: str, sender: Union[discord.Interaction, discord.TextC
         result = result.replace(variable_format("target"), target_user.mention)
     if isinstance(sender, discord.Interaction):
         result = result.replace(variable_format("author"), sender.user.mention)
+    if target_no_ping is not None:
+        result = result.replace(variable_format("target_no_ping"), target_no_ping)
 
     return result

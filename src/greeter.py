@@ -6,6 +6,7 @@ from PIL import Image
 from variables import *
 from data_store import *
 from util import *
+from user_cache import *
 
 async def greeter_welcome(data_store: DataStore, sender: Union[discord.Interaction, discord.TextChannel], target: discord.Member):
     """Says hello to a new user."""
@@ -29,9 +30,18 @@ async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interacti
 
     # Send message
     await send_bot_thinking_response(sender)
-    random_message = variable_replace(random.choice(data_store.greeter_goodbye_messages), sender, data_store, target)
     
     try:
+        # Grab member from cache if an automatic message
+        member = None 
+        if isinstance(sender, discord.TextChannel):
+            member = await get_cached_member(data_store, sender.guild, target.id)
+        else:
+            avatar_file = get_avatar_name(target.display_avatar, sender.guild.id, target.id)
+            member = DiscordMember(target.id, sender.guild.id, target.display_name, avatar_file, datetime.min)
+            await target.display_avatar.save(member.avatar_path())
+        
+        random_message = variable_replace(random.choice(data_store.greeter_goodbye_messages), sender, data_store, target_no_ping = member.name)
         # If a custom image is specified for the guild, use that instead
         custom_image_path = find_file_with_supported_ext("data/images/guild_custom/goodbye", f"{sender.guild.id}")
         if os.path.exists(custom_image_path):
@@ -40,9 +50,7 @@ async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interacti
             # If no custom image, generate an image from the member's avatar and say goodbye
             with Image.open("data/images/fallen.png") as fallen:
                 temp_image_path = f"data/images/temp/fallen_{target.id}.png"
-                temp_avatar_path = f"data/images/temp/avatar_{target.id}.png"
-                await target.avatar.save(temp_avatar_path)
-                with Image.open(temp_avatar_path) as avatar:
+                with Image.open(member.avatar_path()) as avatar:
                     resized_avatar = avatar.resize((536,536))
                     generated_image = Image.new("RGBA", (fallen.width, fallen.height))  
                     generated_image.paste(resized_avatar, (1525, 455))
@@ -52,9 +60,9 @@ async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interacti
 
                 # Delete the temp images
                 os.remove(temp_image_path)
-                os.remove(temp_avatar_path)
-    except:
-        print("Error creating image")        
+    except Exception as e:
+        print("Error creating image:")   
+        print(str(e))     
         await asyncio.sleep(0) # Return to caller
 
 def get_welcome_image(guild_id: int):

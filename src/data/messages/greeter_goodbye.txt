@@ -1,1 +1,1 @@
-Goodbye {{target}}!
+Goodbye ***{{target_no_ping}}***!

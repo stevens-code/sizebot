@@ -23,8 +23,8 @@ async def sizeray_stats_last_10(data_store: DataStore, interaction: discord.Inte
     for row in rows:
         time = format_datetime(row[1])
         action = row[2]
-        target = await get_user(interaction, row[3])
-        author = await get_user(interaction, row[4])
+        target = await get_member(interaction, row[3])
+        author = await get_member(interaction, row[4])
 
         if author is not None and target is not None:
             if action == "malfunction":
@@ -108,7 +108,7 @@ async def sizeray_stats_biggest_users(data_store: DataStore, interaction: discor
     lines = ["**The top 10 biggest size ray users were:**"]
     i = 1
     for row in rows:
-        user: discord.Member = await get_user(interaction, row[0])        
+        user: discord.Member = await get_member(interaction, row[0])        
         if user is not None:
             lines.append(f"({i}) {no_ping(user)}, who used the size ray {row[1]} time(s).")
         else:
@@ -121,7 +121,7 @@ async def sizeray_stats_biggest_users(data_store: DataStore, interaction: discor
     lines.append("\n**The top 10 biggest size ray targets were:**")
     i = 1
     for row in rows:
-        user: discord.Member = await get_user(interaction, row[0])        
+        user: discord.Member = await get_member(interaction, row[0])        
         if user is not None:
             lines.append(f"({i}) {no_ping(user)}, who was hit by the size ray {row[1]} time(s).")
         else:

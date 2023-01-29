@@ -75,3 +75,12 @@ guild           INT         NOT NULL,
 timestamp       TIMESTAMP   NOT NULL,
 channel         INT         NOT NULL
 );
+
+-- Store user names and avatars
+CREATE TABLE IF NOT EXISTS member_cache(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+id              INT         NOT NULL,
+name            TEXT        NOT NULL,
+avatar          TEXT        NOT NULL
+);

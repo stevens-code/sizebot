@@ -31,6 +31,8 @@ from characters import *
 from bot_rate import *
 # Birthdays
 from birthday import *
+# User cache
+from user_cache import *
 
 description = """SizeBot"""
 
@@ -42,7 +44,7 @@ intents = discord.Intents.default()
 intents.members = True
 intents.message_content = True
 intents.presences = True
-client = discord.Client(intents=intents)
+client = discord.Client(intents = intents)
 tree = app_commands.CommandTree(client)
 
 # === Size ray commands ===
@@ -113,9 +115,13 @@ async def about_sizebot(interaction: discord.Interaction):
     await about_message(data_store, interaction)
 
 # === Character commands ===
-@tree.command(name = "scara", description = "Say a random scaramouche elemental burst line.")
+@tree.command(name = "scara", description = "Say a random Scaramouche elemental burst line.")
 async def scara(interaction: discord.Interaction):
     await character_scara(data_store, interaction)
+
+@tree.command(name = "zhongli", description = "Say a random Zhongli elemental burst line.")
+async def zhongli(interaction: discord.Interaction):
+    await character_zhongli(data_store, interaction)
 
 # === Birthday commands ===
 @tree.command(name = "birthdays", description = "Get a list of birthdays for a month (1-12, defaults to the current month).")
@@ -132,126 +138,126 @@ async def birthdays_today(interaction: discord.Interaction):
 async def refresh_birthdays(interaction: discord.Interaction):   
     print(f'Manually refreshing birthdays for "{interaction.guild.name}" ({interaction.guild.id})') 
     store_guild_birthdays(data_store, interaction.guild.id)
-    await say(interaction, "Birthdays have been refreshed.", ephemeral=True)
+    await say(interaction, "Birthdays have been refreshed.", ephemeral = True)
 
 @tree.command(name = "birthday-info", description = "Get the info for how to add/view birthdays (Google Sheets/Forms link).")
 async def birthday_info(interaction: discord.Interaction):
     await birthday_get_info(data_store, interaction)
 
 # === Mod-only commands ===
-@tree.command(name="set-sizebot-variable", description = "Mod-only: Set a server-specific variable to be replaced in SizeBot messages.")
+@tree.command(name = "set-sizebot-variable", description = "Mod-only: Set a server-specific variable to be replaced in SizeBot messages.")
 async def set_sizebot_variable(interaction: discord.Interaction, variable_name: str, variable_value: str):
     if is_mod(interaction.user):
         await mod_set_sizebot_variable(data_store, interaction, variable_name, variable_value)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="delete-sizebot-variable", description = "Mod-only: Delete a server-specific variable from SizeBot.")
+@tree.command(name = "delete-sizebot-variable", description = "Mod-only: Delete a server-specific variable from SizeBot.")
 async def delete_sizebot_variable(interaction: discord.Interaction, variable_name: str):
     if is_mod(interaction.user):
         await mod_delete_sizebot_variable(data_store, interaction, variable_name)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="set-sizebot-welcome", description = "Mod-only: Set the SizeBot welcome image.")
+@tree.command(name = "set-sizebot-welcome", description = "Mod-only: Set the SizeBot welcome image.")
 async def set_sizebot_welcome(interaction: discord.Interaction, file: discord.Attachment):
     if is_mod(interaction.user):
         await mod_set_sizebot_welcome(data_store, interaction, file)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="reset-sizebot-welcome", description = "Mod-only: Delete the custom SizeBot welcome image and reset to default.")
+@tree.command(name = "reset-sizebot-welcome", description = "Mod-only: Delete the custom SizeBot welcome image and reset to default.")
 async def reset_sizebot_welcome(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_reset_sizebot_welcome(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="set-sizebot-goodbye", description = "Mod-only: Set the SizeBot goodbye image.")
+@tree.command(name = "set-sizebot-goodbye", description = "Mod-only: Set the SizeBot goodbye image.")
 async def set_sizebot_goodbye(interaction: discord.Interaction, file: discord.Attachment):
     if is_mod(interaction.user):
         await mod_set_sizebot_goodbye(data_store, interaction, file)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="reset-sizebot-goodbye", description = "Mod-only: Delete the custom SizeBot goodbye image and reset to default.")
+@tree.command(name = "reset-sizebot-goodbye", description = "Mod-only: Delete the custom SizeBot goodbye image and reset to default.")
 async def reset_sizebot_goodbye(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_reset_sizebot_goodbye(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="set-sizeray-immunity-role", description = "Mod-only: Set the size ray immunity role.")
+@tree.command(name = "set-sizeray-immunity-role", description = "Mod-only: Set the size ray immunity role.")
 async def set_sizeray_immunity_role(interaction: discord.Interaction, role: discord.Role):
     if is_mod(interaction.user):
         await mod_set_sizeray_immunity_role(data_store, interaction, role)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="enable-sizebot-welcome", description = "Mod-only: Allow SizeBot to send welcome messages.")
+@tree.command(name = "enable-sizebot-welcome", description = "Mod-only: Allow SizeBot to send welcome messages.")
 async def enable_sizebot_welcome(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_enable_sizebot_welcome(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="disable-sizebot-welcome", description = "Mod-only: Don't allow SizeBot to send welcome messages.")
+@tree.command(name = "disable-sizebot-welcome", description = "Mod-only: Don't allow SizeBot to send welcome messages.")
 async def disable_sizebot_welcome(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_disable_sizebot_welcome(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="enable-sizebot-goodbye", description = "Mod-only: Allow SizeBot to send goodbye messages.")
+@tree.command(name = "enable-sizebot-goodbye", description = "Mod-only: Allow SizeBot to send goodbye messages.")
 async def enable_sizebot_goodbye(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_enable_sizebot_goodbye(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="disable-sizebot-goodbye", description = "Mod-only: Don't allow SizeBot to send goodbye messages.")
+@tree.command(name = "disable-sizebot-goodbye", description = "Mod-only: Don't allow SizeBot to send goodbye messages.")
 async def disable_sizebot_goodbye(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_disable_sizebot_goodbye(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="enable-sizebot-birthdays", description = "Mod-only: Allow SizeBot to send birthday messages.")
+@tree.command(name = "enable-sizebot-birthdays", description = "Mod-only: Allow SizeBot to send birthday messages.")
 async def enable_sizebot_birthdays(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_enable_sizebot_birthdays(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="disable-sizebot-birthdays", description = "Mod-only: Don't allow SizeBot to send birthday messages.")
+@tree.command(name = "disable-sizebot-birthdays", description = "Mod-only: Don't allow SizeBot to send birthday messages.")
 async def disable_sizebot_birthdays(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_disable_sizebot_birthdays(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="set-sizebot-birthday-source", description = "Mod-only: Set the Google Sheets data source for birthdays.")
+@tree.command(name = "set-sizebot-birthday-source", description = "Mod-only: Set the Google Sheets data source for birthdays.")
 async def set_sizebot_birthday_source(interaction: discord.Interaction, sheets_key: str, name_column: str, birthday_column: str):
     if is_mod(interaction.user):
         await mod_set_birthday_source(data_store, interaction, sheets_key, name_column, birthday_column)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="set-sizebot-birthday-info", description = "Mod-only: Set the info for how to add/view birthdays (Google Sheets/Forms link).")
+@tree.command(name = "set-sizebot-birthday-info", description = "Mod-only: Set the info for how to add/view birthdays (Google Sheets/Forms link).")
 async def set_sizebot_birthday_info(interaction: discord.Interaction, info: str):
     if is_mod(interaction.user):
         await mod_set_birthday_info(data_store, interaction, info)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="set-sizebot-notify-channel", description = "Mod-only: Set the channel for SizeBot notifications (welcome, goodbye, etc..).")
+@tree.command(name = "set-sizebot-notify-channel", description = "Mod-only: Set the channel for SizeBot notifications (welcome, goodbye, etc..).")
 async def set_sizebot_notifications_channel(interaction: discord.Interaction, channel: discord.channel.TextChannel):
     if is_mod(interaction.user):
         await mod_set_notifications_channel(data_store, interaction, channel)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name="reset-sizebot-notify-channel", description = "Mod-only: Reset the channel for SizeBot notifications (welcome, goodbye, etc..).")
+@tree.command(name = "reset-sizebot-notify-channel", description = "Mod-only: Reset the channel for SizeBot notifications (welcome, goodbye, etc..).")
 async def reset_sizebot_notifications_channel(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_reset_notifications_channel(data_store, interaction)
@@ -268,7 +274,7 @@ async def load_birthdays_task():
     await asyncio.sleep(0) # Return to caller
 
 # Check for daily and monthly birthdays daily, running at 6AM MST
-@tasks.loop(time=time(hour=6, minute=0, tzinfo=tz.gettz("MST")))
+@tasks.loop(time = time(hour = 6, minute = 0, tzinfo = tz.gettz("MST")))
 async def notify_birthdays_task():
     today = date.today()
 
@@ -283,6 +289,14 @@ async def notify_birthdays_task():
             # Send a daily birthday list if there are any
             if can_notify:
                 await birthday_daily_list(data_store, channel, today.month, today.day)
+
+# Update members cache every few hours
+@tasks.loop(hours = 8)
+async def update_member_cache_task():
+    for guild in client.guilds:        
+        print(f'Updating member cache for guild: "{guild.name}" (Id: {guild.id})')
+        await update_member_cache(data_store, guild)
+    print("Finished all member cache updates")
 
 # === Events ===
 # When the bot has loaded
@@ -299,14 +313,19 @@ async def on_ready():
     # Start tasks
     load_birthdays_task.start()
     notify_birthdays_task.start()
+    update_member_cache_task.start()
 
     # Get guilds and add the slash commands to them
     for guild in client.guilds:
         print(f"Syncing tree for guild {guild.id}")
-        tree.copy_global_to(guild=guild)
-        await tree.sync(guild=guild)
-
+        tree.copy_global_to(guild = guild)
+        await tree.sync(guild = guild)
     print("Finished all tree syncs")
+    
+    # Change status
+    print("Updating the bot's status")
+    activity = discord.Activity(type = discord.ActivityType.playing, name = f"Version {SIZEBOT_VERSION}")
+    await client.change_presence(status = discord.Status.online, activity = activity)
 
 # Automatically send a message when someone joins
 @client.event
@@ -316,6 +335,9 @@ async def on_member_join(member: discord.Member):
     if channel is not None and channel.permissions_for(guild.me).send_messages:
         await greeter_welcome(data_store, channel, member)
     print(f'"{member.display_name}" has joined the server "{guild.name}"')
+
+    # Update cache
+    await update_member_cache(data_store, member.guild)
 
 # Automatically send a message when someone leaves
 @client.event
@@ -333,8 +355,8 @@ async def on_guild_join(guild: discord.Guild):
     print(f'Joined new guild: "{guild.name}" (Id: {guild.id})')
 
     # Sync the command tree with the new guild
-    tree.copy_global_to(guild=guild)
-    await tree.sync(guild=guild)
+    tree.copy_global_to(guild = guild)
+    await tree.sync(guild = guild)
 
     print("Finish syncing commands to new guild")
 

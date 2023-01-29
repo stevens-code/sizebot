@@ -34,7 +34,6 @@ async def say(sender: Union[discord.Interaction, discord.TextChannel], text: str
     else:
         await sender.send(c_text)
 
-
 async def say_with_image(sender: Union[discord.Interaction, discord.TextChannel], text: str, image_path: str, followup = False, ephemeral = False):
     """Wrapper for sending a text message with an attached image."""
 
@@ -49,7 +48,7 @@ async def say_with_image(sender: Union[discord.Interaction, discord.TextChannel]
     else:
         await sender.send(c_text, file = image_file)
 
-async def get_user(interaction: discord.Integration, id: int) -> discord.Member:
+async def get_member(interaction: discord.Integration, id: int) -> discord.Member:
     """Get a member by ID."""
     
     # Try to find member in cache first (way faster)
@@ -116,3 +115,9 @@ def get_notifications_channel(data_store: DataStore, guild: discord.Guild) -> di
         return guild.get_channel(channel_id)
     else:
         return guild.system_channel
+
+def get_avatar_name(avatar: discord.Asset, guild_id: int, member_id: int) -> str:
+    """Get an avatar's file name"""
+
+    avatar_format = "gif" if avatar.is_animated() else "png"
+    return f"{guild_id}_{member_id}.{avatar_format}"

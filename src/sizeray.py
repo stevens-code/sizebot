@@ -74,7 +74,7 @@ async def sizeray_immunity_notice(data_store: DataStore, interaction: discord.In
     await say(interaction, variable_replace("{{size_shield}} " + f"The size ray has no effect! {no_ping(target)} has size ray immunity!", interaction, data_store, target))
 
 def sizeray_log_action(data_store: DataStore, guild_id: int, action: str, target: discord.Member, author: discord.Member):
-        cursor=data_store.db_connection.cursor()
+        cursor = data_store.db_connection.cursor()
         cursor.execute("INSERT INTO sizeray_actions(guild, timestamp, action, target, author) VALUES (?, ?, ?, ?, ?)", (guild_id, datetime.now(), action, target.id, author.id))
         data_store.db_connection.commit()
 

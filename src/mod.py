@@ -15,7 +15,7 @@ async def mod_set_sizebot_variable(data_store: DataStore, interaction: discord.I
     if variable_name in ["author", 'target']:
         await say(interaction, '🚨 **Error:** Cannot set that variable. The variables "author" and "target" are reserved for SizeBot. 🚨', ephemeral = True)
     else:
-        cursor=data_store.db_connection.cursor()
+        cursor = data_store.db_connection.cursor()
         # Delete variable if it exists
         cursor.execute("DELETE FROM text_variables WHERE guild = ? AND variable_name = ?", (interaction.guild.id, variable_name))
         # Add variable
@@ -34,7 +34,7 @@ async def mod_delete_sizebot_variable(data_store: DataStore, interaction: discor
     if variable_name in ["author", 'target']:
         await say(interaction, '🚨 **Error:** Cannot delete that variable. The variables "author" and "target" are reserved for SizeBot. 🚨', ephemeral = True)
     else:
-        cursor=data_store.db_connection.cursor()
+        cursor = data_store.db_connection.cursor()
         # Delete variable
         cursor.execute("DELETE FROM text_variables WHERE guild = ? AND variable_name = ?", (interaction.guild.id, variable_name))
         # Commit changes
@@ -117,7 +117,7 @@ async def mod_reset_sizebot_goodbye(data_store: DataStore, interaction: discord.
 async def mod_set_sizeray_immunity_role(data_store: DataStore, interaction: discord.Interaction, role: discord.Role):
     """Set the size ray immunity role for a guild."""
 
-    cursor=data_store.db_connection.cursor()
+    cursor = data_store.db_connection.cursor()
     # Delete role if it exists 
     cursor.execute("DELETE FROM sizeray_immunity_roles WHERE guild = ?", (interaction.guild.id, ))
     # Add role
@@ -131,7 +131,7 @@ async def mod_set_sizeray_immunity_role(data_store: DataStore, interaction: disc
 async def mod_enable_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
     """Allow SizeBot to send welcome messages."""
 
-    cursor=data_store.db_connection.cursor()
+    cursor = data_store.db_connection.cursor()
     # Delete disable entry if it exists
     cursor.execute("DELETE FROM greeter_disable_welcome WHERE guild = ?", (interaction.guild.id, ))
     # Commit changes
@@ -142,7 +142,7 @@ async def mod_enable_sizebot_welcome(data_store: DataStore, interaction: discord
 async def mod_disable_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
     """Don't allow SizeBot to send welcome messages."""
 
-    cursor=data_store.db_connection.cursor()
+    cursor = data_store.db_connection.cursor()
     # Delete disable entry if it exists
     cursor.execute("DELETE FROM greeter_disable_welcome WHERE guild = ?", (interaction.guild.id, ))
     # Add a new disable entry
@@ -155,7 +155,7 @@ async def mod_disable_sizebot_welcome(data_store: DataStore, interaction: discor
 async def mod_enable_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction):
     """Allow SizeBot to send goodbye messages."""
 
-    cursor=data_store.db_connection.cursor()
+    cursor = data_store.db_connection.cursor()
     # Delete disable entry if it exists
     cursor.execute("DELETE FROM greeter_disable_goodbye WHERE guild = ?", (interaction.guild.id, ))
     # Commit changes
@@ -166,7 +166,7 @@ async def mod_enable_sizebot_goodbye(data_store: DataStore, interaction: discord
 async def mod_disable_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction):
     """Don't allow SizeBot to send goodbye messages."""
 
-    cursor=data_store.db_connection.cursor()
+    cursor = data_store.db_connection.cursor()
     # Delete disable entry if it exists
     cursor.execute("DELETE FROM greeter_disable_goodbye WHERE guild = ?", (interaction.guild.id, ))
     # Add a new disable entry
@@ -179,7 +179,7 @@ async def mod_disable_sizebot_goodbye(data_store: DataStore, interaction: discor
 async def mod_enable_sizebot_birthdays(data_store: DataStore, interaction: discord.Interaction):
     """Allow SizeBot to send birthday messages."""
 
-    cursor=data_store.db_connection.cursor()
+    cursor = data_store.db_connection.cursor()
     # Delete disable entry if it exists
     cursor.execute("DELETE FROM birthday_disable WHERE guild = ?", (interaction.guild.id, ))
     # Commit changes
@@ -190,7 +190,7 @@ async def mod_enable_sizebot_birthdays(data_store: DataStore, interaction: disco
 async def mod_disable_sizebot_birthdays(data_store: DataStore, interaction: discord.Interaction):
     """Don't allow SizeBot to send birthday messages."""
 
-    cursor=data_store.db_connection.cursor()
+    cursor = data_store.db_connection.cursor()
     # Delete disable entry if it exists
     cursor.execute("DELETE FROM birthday_disable WHERE guild = ?", (interaction.guild.id, ))
     # Add a new disable entry
@@ -210,7 +210,7 @@ async def mod_set_birthday_source(data_store: DataStore, interaction: discord.In
         # Try and load the data, it will throw an exception if invalid
         data = pandas.read_csv(url, usecols= [name_column, birthday_column])  
 
-        cursor=data_store.db_connection.cursor()
+        cursor = data_store.db_connection.cursor()
         # Delete if it exists
         cursor.execute("DELETE FROM birthday_settings WHERE guild = ?", (interaction.guild.id, ))
         # Add birthday settings
@@ -231,7 +231,7 @@ async def mod_set_birthday_source(data_store: DataStore, interaction: discord.In
 async def mod_set_birthday_info(data_store: DataStore, interaction: discord.Interaction, info: str):
     """Set message to send memebers about how to add their birthdays."""
 
-    cursor=data_store.db_connection.cursor()
+    cursor = data_store.db_connection.cursor()
     # Delete if it exists 
     cursor.execute("DELETE FROM birthday_source_info WHERE guild = ?", (interaction.guild.id, ))
     # Add the info
@@ -245,7 +245,7 @@ async def mod_set_birthday_info(data_store: DataStore, interaction: discord.Inte
 async def mod_set_notifications_channel(data_store: DataStore, interaction: discord.Interaction, channel: discord.channel.TextChannel):
     """Set the notifications channel for SizeBot."""
 
-    cursor=data_store.db_connection.cursor()
+    cursor = data_store.db_connection.cursor()
     # Delete channel setting if it exists 
     cursor.execute("DELETE FROM notifications_channel WHERE guild = ?", (interaction.guild.id, ))
     # Add channel
@@ -260,7 +260,7 @@ async def mod_set_notifications_channel(data_store: DataStore, interaction: disc
 async def mod_reset_notifications_channel(data_store: DataStore, interaction: discord.Interaction):
     """Reset the notifications channel for SizeBot back to the Discord default notifications channel."""
 
-    cursor=data_store.db_connection.cursor()
+    cursor = data_store.db_connection.cursor()
     # Delete channel setting if it exists 
     cursor.execute("DELETE FROM notifications_channel WHERE guild = ?", (interaction.guild.id, ))
     # Commit changes

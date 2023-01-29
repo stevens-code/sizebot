@@ -2,3 +2,4 @@
 .DS_Store?
 src/__pycache__
 src/data/token.txt
+src/data/images/avatar_cache
