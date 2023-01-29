@@ -309,6 +309,7 @@ async def on_ready():
     create_folder_if_missing("data/images/guild_custom/welcome")
     create_folder_if_missing("data/images/guild_custom/goodbye")
     create_folder_if_missing("data/images/temp")
+    create_folder_if_missing("data/images/avatar_cache")
 
     # Start tasks
     load_birthdays_task.start()
