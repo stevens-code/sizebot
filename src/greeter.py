@@ -7,6 +7,7 @@ from variables import *
 from data_store import *
 from util import *
 from user_cache import *
+from log import *
 
 async def greeter_welcome(data_store: DataStore, sender: Union[discord.Interaction, discord.TextChannel], target: discord.Member):
     """Says hello to a new user."""
@@ -61,8 +62,8 @@ async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interacti
                 # Delete the temp images
                 os.remove(temp_image_path)
     except Exception as e:
-        print("Error creating image:")   
-        print(str(e))     
+        log_message("Error creating image:")   
+        log_message(str(e))     
         await asyncio.sleep(0) # Return to caller
 
 def get_welcome_image(guild_id: int):
@@ -78,7 +79,7 @@ def get_welcome_image(guild_id: int):
 def is_greeter_welcome_enabled(data_store: DataStore, guild_id: int) -> bool:
     """Check if the automatic greeter welcome message is enabled."""
 
-    cursor = data_store.db_connection.execute(f"SELECT * from greeter_disable_welcome WHERE guild = ? ", (guild_id, ))    
+    cursor = data_store.db_connection.execute(f"SELECT * FROM greeter_disable_welcome WHERE guild = ?", (guild_id, ))    
     result = cursor.fetchone()
 
     # If there is not entry in the disable table, it's enabled
@@ -87,7 +88,7 @@ def is_greeter_welcome_enabled(data_store: DataStore, guild_id: int) -> bool:
 def is_greeter_goodbye_enabled(data_store: DataStore, guild_id: int) -> bool:
     """Check if the automatic greeter goodbye message is enabled."""
 
-    cursor = data_store.db_connection.execute(f"SELECT * from greeter_disable_goodbye WHERE guild = ? ", (guild_id, ))    
+    cursor = data_store.db_connection.execute(f"SELECT * FROM greeter_disable_goodbye WHERE guild = ?", (guild_id, ))    
     result = cursor.fetchone()
 
     # If there is not entry in the disable table, it's enabled

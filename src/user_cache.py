@@ -2,11 +2,12 @@ import discord
 
 from data_store import *
 from util import *
+from log import *
 
 async def get_cached_member(data_store: DataStore, guild: discord.Guild, user_id: int) -> DiscordMember:
     """Get a member from the cache, if none is available, call Discord's APIs"""
 
-    cursor = data_store.db_connection.execute(f"SELECT * from member_cache WHERE guild = ? AND id = ? ORDER BY timestamp DESC", (guild.id, user_id))
+    cursor = data_store.db_connection.execute(f"SELECT * FROM member_cache WHERE guild = ? AND id = ? ORDER BY timestamp DESC", (guild.id, user_id))
     result = cursor.fetchone()
 
     if result is not None:
@@ -45,8 +46,8 @@ async def update_member_cache(data_store: DataStore, guild: discord.Guild):
                 await member.display_avatar.save(f"data/images/avatar_cache/{avatar_file}")
             cursor.execute("INSERT INTO member_cache(guild, timestamp, id, name, avatar) VALUES (?, ?, ?, ?, ?)", (guild.id, datetime.now(), member.id, member.display_name, avatar_file))
         except Exception as e:
-            print("Error caching user:")   
-            print(str(e))    
+            log_message("Error caching user:")   
+            log_message(str(e))    
 
     # Commit changes
     data_store.db_connection.commit()  

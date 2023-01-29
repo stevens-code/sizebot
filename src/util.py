@@ -1,6 +1,5 @@
 import discord
 import os
-from datetime import datetime
 from typing import Union
 
 from data_store import *
@@ -8,11 +7,6 @@ from data_store import *
 # Various helper functions and constants
 DISCORD_SUPPORTED_FILE_EXTS = [".jpg", ".jpeg", ".png", ".gif", ".gifv", ".webm", ".webp", ".mp4", ".wav", ".mp3", ".ogg"]
 MAX_DISCORD_MESSAGE_LENGTH = 2000
-
-def format_datetime(time: datetime) -> str:
-    """Formats a date and time to a clean format."""
-
-    return datetime.strftime(time, f"%I:%M %p ({time.astimezone().tzname()}) on %m/%d/%Y")
 
 async def send_bot_thinking_response(sender: Union[discord.Interaction, discord.TextChannel]):
     """Sends a bot thinking command."""
@@ -67,7 +61,7 @@ def concat_text(text: str):
 def no_ping(member: discord.Member):
     """Format a member name for a meesage where you don't want to ping them."""
 
-    return f"***{member.display_name}***";
+    return f"***{member.display_name}***"
 
 def find_file_with_supported_ext(folder: str, file_name: str) -> str:
     """Searches a folder for a file name that has one of Discord's supported file extensions."""
@@ -108,7 +102,7 @@ async def deny_non_mod(sender: Union[discord.Interaction, discord.TextChannel]):
 def get_notifications_channel(data_store: DataStore, guild: discord.Guild) -> discord.channel.TextChannel:
     """Gets the custom notifications channel for a guild from the database, returns the default Discord text channel if there is none. Returns none if neither is set."""
 
-    cursor = data_store.db_connection.execute(f"SELECT * from notifications_channel WHERE guild = ? ", (guild.id, ))    
+    cursor = data_store.db_connection.execute(f"SELECT * FROM notifications_channel WHERE guild = ?", (guild.id, ))    
     result = cursor.fetchone()
     if result is not None:
         channel_id = result[2]

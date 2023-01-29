@@ -7,6 +7,7 @@ from util import *
 from data_store import *
 from variables import *
 from birthday import *
+from roles import *
 
 # Mod-only commands
 async def mod_set_sizebot_variable(data_store: DataStore, interaction: discord.Interaction, variable_name: str, variable_value: str = ""):
@@ -268,3 +269,42 @@ async def mod_reset_notifications_channel(data_store: DataStore, interaction: di
 
     # Respond with the new channel name
     await say(interaction, f"The channel for SizeBot notifications is now reset to Discord's default notification channel.", ephemeral = True)
+
+async def mod_set_sizebot_size_role(data_store: DataStore, interaction: discord.Interaction, role_name: str, role_id: int):
+    """Set a size ray role in a guild's settings."""
+
+    cursor = data_store.db_connection.cursor()
+    # Delete role if it exists
+    cursor.execute("DELETE FROM sizeray_roles WHERE guild = ? AND name = ?", (interaction.guild.id, role_name))
+    # Add role
+    cursor.execute("INSERT INTO sizeray_roles(guild, timestamp, id, name) VALUES (?, ?, ?, ?)", (interaction.guild.id, datetime.now(), role_id, role_name))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    # Respond with the current list of variables for the guild
+    await say(interaction, f'Role "{role_name}" set to id "{role_id}".', ephemeral = True)
+
+async def mod_delete_sizebot_size_role(data_store: DataStore, interaction: discord.Interaction, role_name: str):
+    """Delete a size ray role from a guild's settings."""
+
+    cursor = data_store.db_connection.cursor()
+    # Delete role
+    cursor.execute("DELETE FROM sizeray_roles WHERE guild = ? AND name = ?", (interaction.guild.id, role_name))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    await say(interaction, f'The role with name "{role_name}" was deleted".', ephemeral = True)
+
+async def mod_list_sizebot_size_roles(data_store: DataStore, interaction: discord.Interaction) -> list[str]:
+    """List the size roles for a guild."""
+
+    lines = ["**The size roles are:**"]
+    cursor = data_store.db_connection.execute(f"SELECT * FROM sizeray_roles WHERE guild = ?", (interaction.guild.id, ))
+    rows = cursor.fetchall()
+
+    for row in rows:
+        role_id = row[2]
+        role_name = row[3]
+        lines.append(f'*"{role_name}"* with the id "{role_id}"')
+
+    await say(interaction, "\n".join(lines), ephemeral = True)

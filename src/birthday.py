@@ -1,10 +1,11 @@
-import discord
+
 import pandas
 import asyncio
 
 from variables import *
 from data_store import *
 from util import *
+from log import *
 
 MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
@@ -42,7 +43,7 @@ async def birthday_daily_list(data_store: DataStore, sender: Union[discord.Inter
 async def birthday_get_info(data_store: DataStore, interaction: discord.Interaction):
     """Message the monthly birthdays."""
     
-    cursor = data_store.db_connection.execute(f"SELECT * from birthday_source_info WHERE guild = ? ", (interaction.guild.id, ))    
+    cursor = data_store.db_connection.execute(f"SELECT * FROM birthday_source_info WHERE guild = ?", (interaction.guild.id, ))    
     result = cursor.fetchone()
     if result is not None:
         info = result[2]
@@ -54,7 +55,7 @@ async def birthday_get_info(data_store: DataStore, interaction: discord.Interact
 def is_birthday_messages_enabled(data_store: DataStore, guild_id: int) -> bool:
     """Check if the automatic birthday message feature is enabled."""
 
-    cursor = data_store.db_connection.execute(f"SELECT * from birthday_disable WHERE guild = ? ", (guild_id, ))    
+    cursor = data_store.db_connection.execute(f"SELECT * FROM birthday_disable WHERE guild = ?", (guild_id, ))    
     result = cursor.fetchone()
 
     # If there is not entry in the disable table, it's enabled
@@ -64,7 +65,7 @@ def store_guild_birthdays(data_store: DataStore, guild_id: int) -> dict:
     """Read guild birthdays from Google Sheets and store them in the database."""
 
     # Get the birthday settings for the server
-    settings_cursor = data_store.db_connection.execute(f"SELECT * from birthday_settings WHERE guild = ? ", (guild_id, ))    
+    settings_cursor = data_store.db_connection.execute(f"SELECT * FROM birthday_settings WHERE guild = ?", (guild_id, ))    
     settings_result = settings_cursor.fetchone()
     if settings_result is not None:
         try:
@@ -89,16 +90,16 @@ def store_guild_birthdays(data_store: DataStore, guild_id: int) -> dict:
                     birthday_cursor.execute("INSERT INTO birthdays(guild, timestamp, name, month, day) VALUES (?, ?, ?, ?, ?)", (guild_id, datetime.now(), name, month, day))
             # Commit changes
             data_store.db_connection.commit()  
-            print(f"Loaded {len(data.index)} birthday(s) for {guild_id}.")
+            log_message(f"Loaded {len(data.index)} birthday(s) for {guild_id}")
         except:
-            print(f"Error fetching and storing birthday data for {guild_id}!")
+            log_message(f"Error fetching and storing birthday data for {guild_id}!")
     else:
-        print(f"No birthday settings for {guild_id}.")
+        log_message(f"No birthday settings for {guild_id}.")
 
 def is_birthday_notify_enabled(data_store: DataStore, guild_id: int) -> bool:
     """Check if automatic birthday notifications are enabled."""
 
-    cursor = data_store.db_connection.execute(f"SELECT * from birthday_disable WHERE guild = ? ", (guild_id, ))    
+    cursor = data_store.db_connection.execute(f"SELECT * FROM birthday_disable WHERE guild = ?", (guild_id, ))    
     result = cursor.fetchone()
 
     # If there is not entry in the disable table, it's enabled
@@ -107,9 +108,9 @@ def is_birthday_notify_enabled(data_store: DataStore, guild_id: int) -> bool:
 def get_guild_monthly_birthdays(data_store: DataStore, guild_id: int, search_month: int) -> dict:
     """A list of all birthdays for a guild in a month."""
 
-    results = {};
+    results = {}
 
-    cursor = data_store.db_connection.execute(f"SELECT * from birthdays WHERE guild = ? AND month = ? ORDER BY month ASC, day ASC", (guild_id, search_month))    
+    cursor = data_store.db_connection.execute(f"SELECT * FROM birthdays WHERE guild = ? AND month = ? ORDER BY month ASC, day ASC", (guild_id, search_month))    
     rows = cursor.fetchall()
     for row in rows:
         name = row[2]
@@ -122,9 +123,9 @@ def get_guild_monthly_birthdays(data_store: DataStore, guild_id: int, search_mon
 def get_guild_daily_birthdays(data_store: DataStore, guild_id: int, search_month: int, search_day: int) -> dict:
     """A list of all birthdays for a guild for a day."""
 
-    results = {};
+    results = {}
 
-    cursor = data_store.db_connection.execute(f"SELECT * from birthdays WHERE guild = ? AND month = ? AND day = ? ORDER BY month ASC, day ASC", (guild_id, search_month, search_day))    
+    cursor = data_store.db_connection.execute(f"SELECT * FROM birthdays WHERE guild = ? AND month = ? AND day = ? ORDER BY month ASC, day ASC", (guild_id, search_month, search_day))    
     rows = cursor.fetchall()
     for row in rows:
         name = row[2]
@@ -137,9 +138,9 @@ def get_guild_daily_birthdays(data_store: DataStore, guild_id: int, search_month
 def get_guild_birthdays(data_store: DataStore, guild_id: int) -> dict:
     """A list of all birthdays for a guild."""
 
-    results = {};
+    results = {}
 
-    cursor = data_store.db_connection.execute(f"SELECT * from birthdays WHERE guild = ? ORDER BY month ASC, day ASC", (guild_id, ))    
+    cursor = data_store.db_connection.execute(f"SELECT * FROM birthdays WHERE guild = ? ORDER BY month ASC, day ASC", (guild_id, ))    
     rows = cursor.fetchall()
     for row in rows:
         name = row[2]

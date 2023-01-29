@@ -7,14 +7,16 @@ from datetime import datetime
 from variables import *
 from data_store import *
 from util import *
+from log import *
 
-SIZEBOT_VERSION = 2.3
+SIZEBOT_VERSION = 3.0
+SIZEBOT_VERSION_STR = f"{SIZEBOT_VERSION} Beta"
 
 async def about_message(data_store: DataStore, interaction: discord.Interaction):
     """Responds with a message about SizeBot."""
 
     process = psutil.Process(os.getpid())
-    await say(interaction, f"""**SizeBot Version:** {SIZEBOT_VERSION}
+    await say(interaction, f"""**SizeBot Version:** {SIZEBOT_VERSION_STR}
 **GitHub Repository:** stevens-code/sizebot
 **Python Version:** {sys.version}
 **Current Local Time:** {format_datetime(datetime.now())}

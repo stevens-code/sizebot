@@ -33,6 +33,10 @@ from bot_rate import *
 from birthday import *
 # User cache
 from user_cache import *
+# Size ray roles
+from roles import *
+# Logging
+from log import *
 
 description = """SizeBot"""
 
@@ -136,7 +140,7 @@ async def birthdays_today(interaction: discord.Interaction):
 
 @tree.command(name = "refresh-birthdays", description = "SizeBot will automatically check Google Sheets for updates daily, but this forces it to check now.")
 async def refresh_birthdays(interaction: discord.Interaction):   
-    print(f'Manually refreshing birthdays for "{interaction.guild.name}" ({interaction.guild.id})') 
+    log_message(f'Manually refreshing birthdays for "{interaction.guild.name}" ({interaction.guild.id})') 
     store_guild_birthdays(data_store, interaction.guild.id)
     await say(interaction, "Birthdays have been refreshed.", ephemeral = True)
 
@@ -264,13 +268,35 @@ async def reset_sizebot_notifications_channel(interaction: discord.Interaction):
     else:
         await deny_non_mod(interaction)
 
+@tree.command(name = "set-sizebot-size-role", description = "Mod-only: Set a server-specific size role.")
+async def set_sizebot_size_role(interaction: discord.Interaction, name: str, role: discord.Role):
+    if is_mod(interaction.user):
+        await mod_set_sizebot_size_role(data_store, interaction, name, role.id)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name = "delete-sizebot-size-role", description = "Mod-only: Delete a server-specific size role from SizeBot.")
+async def delete_sizebot_size_role(interaction: discord.Interaction, name: str):
+    if is_mod(interaction.user):
+        await mod_delete_sizebot_size_role(data_store, interaction, name)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name = "list-sizebot-size-roles", description = "Mod-only: List all server-specific size roles.")
+async def list_sizebot_size_roles(interaction: discord.Interaction):
+    if is_mod(interaction.user):
+        await mod_list_sizebot_size_roles(data_store, interaction)
+    else:
+        await deny_non_mod(interaction)
+
 # === Background tasks ===
 # Check for birthdays every 12 hours
 @tasks.loop(hours = 12)
 async def load_birthdays_task():
     # Load birthdays for each guild
     for guild in client.guilds:
-        store_guild_birthdays(data_store, guild.id)
+        store_guild_birthdays(data_store, guild.id)    
+    log_message("Finished loading birthdays")
     await asyncio.sleep(0) # Return to caller
 
 # Check for daily and monthly birthdays daily, running at 6AM MST
@@ -294,16 +320,23 @@ async def notify_birthdays_task():
 @tasks.loop(hours = 8)
 async def update_member_cache_task():
     for guild in client.guilds:        
-        print(f'Updating member cache for guild: "{guild.name}" (Id: {guild.id})')
+        log_message(f'Updating member cache for guild: "{guild.name}" (Id: {guild.id})')
         await update_member_cache(data_store, guild)
-    print("Finished all member cache updates")
+    log_message("Finished all member cache updates")
+
+# Remove temp size ray roles every 15 minutes
+@tasks.loop(minutes = 15)
+async def update_roles_task():    
+    # Apply old roles and remove new ones
+    log_message("Updating temp size ray roles")
+    await apply_old_size_roles(data_store, client)
+    log_message("Finished updating temp size ray roles")
 
 # === Events ===
 # When the bot has loaded
 @client.event
 async def on_ready():
-    print(f"Logged in as {client.user} (Id: {client.user.id})")
-    print("------")
+    log_message(f"Logged in as {client.user} (Id: {client.user.id})")
 
     # Create empty folders, if they don't exist
     create_folder_if_missing("data/images/guild_custom/welcome")
@@ -315,18 +348,20 @@ async def on_ready():
     load_birthdays_task.start()
     notify_birthdays_task.start()
     update_member_cache_task.start()
+    update_roles_task.start()
 
     # Get guilds and add the slash commands to them
     for guild in client.guilds:
-        print(f"Syncing tree for guild {guild.id}")
+        log_message(f"Syncing tree for guild {guild.id}")
         tree.copy_global_to(guild = guild)
         await tree.sync(guild = guild)
-    print("Finished all tree syncs")
+    log_message("Finished all tree syncs")
     
     # Change status
-    print("Updating the bot's status")
-    activity = discord.Activity(type = discord.ActivityType.playing, name = f"Version {SIZEBOT_VERSION}")
+    log_message("Updating the bot's status")
+    activity = discord.Activity(type = discord.ActivityType.playing, name = f"Version {SIZEBOT_VERSION_STR}")
     await client.change_presence(status = discord.Status.online, activity = activity)
+    log_message("Finished updating bot's status")
 
 # Automatically send a message when someone joins
 @client.event
@@ -335,7 +370,7 @@ async def on_member_join(member: discord.Member):
     channel = get_notifications_channel(data_store, guild)
     if channel is not None and channel.permissions_for(guild.me).send_messages:
         await greeter_welcome(data_store, channel, member)
-    print(f'"{member.display_name}" has joined the server "{guild.name}"')
+    log_message(f'"{member.display_name}" has joined the server "{guild.name}"')
 
     # Update cache
     await update_member_cache(data_store, member.guild)
@@ -348,18 +383,16 @@ async def on_member_remove(member: discord.Member):
     if guild.me is not None and channel is not None: # Don't wanna have the bot try and send a goodbye message for itself
         if channel.permissions_for(guild.me).send_messages:
             await greeter_goodbye(data_store, channel, member)
-        print(f'"{member.display_name}" has left the server "{guild.name}"')
+        log_message(f'"{member.display_name}" has left the server "{guild.name}"')
 
 # When the bot joins a new guild
 @client.event
 async def on_guild_join(guild: discord.Guild):
-    print(f'Joined new guild: "{guild.name}" (Id: {guild.id})')
-
+    log_message(f'Joined new guild: "{guild.name}" (Id: {guild.id})')
     # Sync the command tree with the new guild
     tree.copy_global_to(guild = guild)
     await tree.sync(guild = guild)
-
-    print("Finish syncing commands to new guild")
+    log_message("Finish syncing commands to new guild")
 
 # Launch the app
 client.run(data_store.discord_bot_token)

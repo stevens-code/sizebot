@@ -84,3 +84,27 @@ id              INT         NOT NULL,
 name            TEXT        NOT NULL,
 avatar          TEXT        NOT NULL
 );
+
+-- Store the size ray roles for each guild
+CREATE TABLE IF NOT EXISTS sizeray_roles(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+id              INT         NOT NULL,
+name            TEXT        NOT NULL
+);
+
+-- Store the old roles after being changed by the size ray
+CREATE TABLE IF NOT EXISTS sizeray_old_roles(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+member          INT         NOT NULL,
+role            INT         NOT NULL
+);
+
+-- Store the temporary new roles after being changed by the size ray
+CREATE TABLE IF NOT EXISTS sizeray_new_roles(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+member          INT         NOT NULL,
+role            INT         NOT NULL
+);

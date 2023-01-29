@@ -4,6 +4,7 @@ import random
 from variables import *
 from data_store import *
 from util import *
+from roles import *
 
 # All of the command-related functions take 3 arguments:
 # - data_store: the data_store that is defined in app_start. This contains all the data, including messages that are loaded from 
@@ -20,23 +21,39 @@ def sizeray_is_bot_targeted(interaction: discord.Interaction, target: discord.Me
 async def sizeray_malfunction(data_store: DataStore, interaction: discord.Interaction, target: discord.Member) -> str:
     """Generate a message for a size ray malfunction."""
 
-    random_message = random.choice(data_store.malfunction_messages);
-    message_format = "{{size_ray}} 🔥⚠ The size ray's *malfunctioned*!! ⚠🔥  ⚡✨\n{{size_ray}} " + random_message  
+    await send_bot_thinking_response(interaction)
+
+    random_line = random.choice(data_store.malfunction_messages)
+    rows = random_line.split("///")
+    target_new_role = rows[0]
+    author_new_role = rows[1]
+    message = rows[2]
+    message_format = "{{size_ray}} 🔥⚠ The size ray's *malfunctioned*!! ⚠🔥  ⚡✨\n{{size_ray}} " + message 
+
+    if target_new_role != "nothing":
+        await override_size_roles(data_store, target, interaction.guild, target_new_role)
+    if author_new_role != "nothing":
+        await override_size_roles(data_store, interaction.user, interaction.guild, author_new_role)
+
     sizeray_log_action(data_store, interaction.guild.id, "malfunction", target, interaction.user)   
-    await say(interaction, variable_replace(message_format, interaction, data_store, target))
+
+    await say(interaction, variable_replace(message_format, interaction, data_store, target), followup = True)
 
 async def sizeray_shrink(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):
     """Generate a message for shrinking a member."""
     
+
     if sizeray_is_bot_targeted(interaction, target):
         await sizeray_malfunction(data_store, interaction, target)
     elif sizeray_has_immunity(data_store, target):
-        await sizeray_immunity_notice(data_store, interaction, target)
+        await sizeray_immunity_notice(data_store, interaction, target, followup = True)
     else:
-        random_message = random.choice(data_store.shrink_messages);
+        await send_bot_thinking_response(interaction)
+        random_message = random.choice(data_store.shrink_messages)
         message_format = "{{shrink_ray}} ✨⚡ {{target}} has been zapped by the shrink ray! " + random_message + " ⚡✨"
-        sizeray_log_action(data_store, interaction.guild.id, "shrink", target, interaction.user) 
-        await say(interaction, variable_replace(message_format, interaction, data_store, target))
+        sizeray_log_action(data_store, interaction.guild.id, "shrink", target, interaction.user)
+        await override_size_roles(data_store, target, interaction.guild, "tiny")
+        await say(interaction, variable_replace(message_format, interaction, data_store, target), followup = True)
 
 async def sizeray_grow(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):
     """Generate a message for growing a member."""
@@ -44,12 +61,14 @@ async def sizeray_grow(data_store: DataStore, interaction: discord.Interaction, 
     if sizeray_is_bot_targeted(interaction, target):
         await sizeray_malfunction(data_store, interaction, target)
     elif sizeray_has_immunity(data_store, target):
-        await sizeray_immunity_notice(data_store, interaction, target)
+        await sizeray_immunity_notice(data_store, interaction, target, followup = True)
     else:
-        random_message = random.choice(data_store.grow_messages);
+        await send_bot_thinking_response(interaction)
+        random_message = random.choice(data_store.grow_messages)
         message_format = "{{growth_ray}} ✨⚡ {{target}} has been zapped by the growth ray! " + random_message + " ⚡✨"   
-        sizeray_log_action(data_store, interaction.guild.id, "grow", target, interaction.user) 
-        await say(interaction, variable_replace(message_format, interaction, data_store, target))
+        sizeray_log_action(data_store, interaction.guild.id, "grow", target, interaction.user)        
+        await override_size_roles(data_store, target, interaction.guild, "giant")
+        await say(interaction, variable_replace(message_format, interaction, data_store, target), followup = True)
 
 async def sizeray_sizeray(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):
     """Generate a message for a random size ray operation."""
@@ -61,7 +80,7 @@ async def sizeray_sizeray(data_store: DataStore, interaction: discord.Interactio
     else:
         # Include shrink and grow twice so they're more likely to occur than malfunction
         options = ['shrink', 'grow', 'shrink', 'grow', 'malfunction']
-        random_option = random.choice(options);
+        random_option = random.choice(options)
         
         if random_option == 'shrink':
             await sizeray_shrink(data_store, interaction, target)
@@ -81,7 +100,7 @@ def sizeray_log_action(data_store: DataStore, guild_id: int, action: str, target
 def sizeray_get_immunity_role(data_store: DataStore, guild_id: int) -> int:
     """Fetches the immunity role for a guild from the database."""
 
-    cursor = data_store.db_connection.execute(f"SELECT * from sizeray_immunity_roles WHERE guild = ? ", (guild_id, ))    
+    cursor = data_store.db_connection.execute(f"SELECT * FROM sizeray_immunity_roles WHERE guild = ?", (guild_id, ))    
     result = cursor.fetchone()
     if result is not None:
         return result[2]

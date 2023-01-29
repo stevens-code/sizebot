@@ -17,7 +17,7 @@ async def sizeray_stats_last_10(data_store: DataStore, interaction: discord.Inte
 
     lines = ["**The last 10 size ray actions were:**"]
 
-    cursor = data_store.db_connection.execute(f"SELECT * from sizeray_actions WHERE guild = ? ORDER BY timestamp DESC LIMIT 10", (interaction.guild.id, ))    
+    cursor = data_store.db_connection.execute(f"SELECT * FROM sizeray_actions WHERE guild = ? ORDER BY timestamp DESC LIMIT 10", (interaction.guild.id, ))    
     rows = cursor.fetchall()
     i = 1
     for row in rows:
@@ -61,8 +61,8 @@ async def sizeray_stats_chart(data_store: DataStore, interaction: discord.Intera
         seaborn.barplot(x=keys, y=vals, palette=palette) 
         temp_chart_path = f"data/images/temp/stats_{random.randint(0, 100000)}.png"
         pyplot.title(f'Size ray stats for "{interaction.guild.name}"')
-        pyplot.xlabel("Action type", color='#555555')
-        pyplot.ylabel("Count", color='#555555')
+        pyplot.xlabel("Action type", color = "#555555")
+        pyplot.ylabel("Count", color = "#555555")
         pyplot.isinteractive = False
         pyplot.savefig(temp_chart_path)
         # Post it
@@ -91,8 +91,8 @@ async def sizeray_stats_chart_for(data_store: DataStore, interaction: discord.In
         seaborn.barplot(x=keys, y=vals, palette=palette) 
         temp_chart_path = f"data/images/temp/stats_{random.randint(0, 100000)}.png"
         pyplot.title(f'Size ray stats for "{target.display_name}"')
-        pyplot.xlabel("Action type", color='#555555')
-        pyplot.ylabel("Times targeted", color='#555555')
+        pyplot.xlabel("Action type", color = "#555555")
+        pyplot.ylabel("Times targeted", color = "#555555")
         pyplot.isinteractive = False
         pyplot.savefig(temp_chart_path)
         # Post it

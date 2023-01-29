@@ -7,9 +7,9 @@ from typing import Union
 def get_guild_variables(data_store: DataStore, guild_id: int) -> dict:
     """A list of all variables for a guild."""
 
-    results = {};
+    results = {}
 
-    variable_cursor = data_store.db_connection.execute(f"SELECT * from text_variables WHERE guild = ?", (guild_id, ))    
+    variable_cursor = data_store.db_connection.execute(f"SELECT * FROM text_variables WHERE guild = ?", (guild_id, ))    
     variable_rows = variable_cursor.fetchall()
     for variable_row in variable_rows:
         variable_name = variable_row[2]

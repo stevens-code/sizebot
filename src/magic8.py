@@ -15,7 +15,7 @@ async def magic8_ask(data_store: DataStore, interaction: discord.Interaction, qu
         lines.append(f"***{question}***")
 
     # Choose an outcome and append the Magic 8 ball result
-    random_option = random.choice(['positive', 'negative', 'noncommittal']);
+    random_option = random.choice(['positive', 'negative', 'noncommittal'])
     if random_option == 'positive':
         lines.append(f"✨🎱💚 {random.choice(data_store.magic8_positive_messages)} 💚🎱✨")
     elif random_option == 'negative':

@@ -1,12 +1,12 @@
 import os
-import sys
 import sqlite3
-import discord
 from os.path import exists
 from datetime import timedelta, datetime
 
+from log import *
+
 # Handles loading data from files and environment
-def data_read_list_file(filename: str, enable_comments: bool = False) -> list[str]:
+def data_read_list_file(filename: str, enable_comments: bool = True) -> list[str]:
     """Helper function to read all lines from a file into a list of strings"""
 
     with open(filename) as file:
@@ -16,7 +16,7 @@ def data_read_list_file(filename: str, enable_comments: bool = False) -> list[st
         if enable_comments:
             stripped_lines = []
             for line in lines:
-                if not line.startswith("//"):
+                if not line.startswith("###"):
                     stripped_lines.append(line)
             return stripped_lines
         else:
@@ -24,8 +24,8 @@ def data_read_list_file(filename: str, enable_comments: bool = False) -> list[st
 
 def load_lines_file(path: str, message: str) -> list[str]:
     lines = data_read_list_file(path)
-    print(f"{message:}")
-    print(lines)
+    log_message(f"{message:}")
+    log_message(lines)
 
     return lines
 
@@ -106,22 +106,23 @@ class DataStore:
         """Load a SqlLite database file data/bot_data.db (this is created if it doesn't already exist).
         This stores server specific data for the bot."""
 
-        print("Loading database...")
+        log_message("Loading database...")
         connection = sqlite3.connect(DataStore.DATABASE_PATH, detect_types=sqlite3.PARSE_DECLTYPES)
 
         # Create the tables
         self.create_db(connection)
+        log_message("Finished loading database")
 
         return connection
 
     def create_db(self, connection: sqlite3.Connection):
         """Create database tables."""
 
-        print("Creating tables...")
-
+        log_message("Creating tables...")
         with open(DataStore.CREATE_TABLES_SQL_PATH) as file:
             create_tables_sql = file.read()
-            connection.executescript(create_tables_sql); 
+            connection.executescript(create_tables_sql)
+        log_message("Finished creating tables")
 
 class DiscordMember:
     def __init__(self, id: int, guild_id: int, name: str, avatar: str, last_cache: datetime):
