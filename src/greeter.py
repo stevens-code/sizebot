@@ -39,10 +39,10 @@ async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interacti
             member = await get_cached_member(data_store, sender.guild, target.id)
         else:
             avatar_file = get_avatar_name(target.display_avatar, sender.guild.id, target.id)
-            member = DiscordMember(target.id, sender.guild.id, target.display_name, avatar_file, datetime.min)
+            member = DiscordMember(target.id, sender.guild.id, target.display_name, avatar_file, str(target), datetime.min)
             await target.display_avatar.save(member.avatar_path())
         
-        random_message = variable_replace(random.choice(data_store.greeter_goodbye_messages), sender, data_store, target_no_ping = member.name)
+        random_message = variable_replace(random.choice(data_store.greeter_goodbye_messages), sender, data_store, target_no_ping = f"{member.name} ({member.handle})")
         # If a custom image is specified for the guild, use that instead
         custom_image_path = find_file_with_supported_ext("data/images/guild_custom/goodbye", f"{sender.guild.id}")
         if os.path.exists(custom_image_path):
