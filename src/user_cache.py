@@ -5,7 +5,7 @@ from util import *
 from log import *
 
 async def get_cached_member(data_store: DataStore, guild: discord.Guild, user_id: int) -> DiscordMember:
-    """Get a member from the cache, if none is available, call Discord's APIs"""
+    """Get a member from the cache, if none is available, call Discord's APIs."""
 
     cursor = data_store.db_connection.execute(f"SELECT * FROM member_cache WHERE guild = ? AND id = ? ORDER BY timestamp DESC", (guild.id, user_id))
     result = cursor.fetchone()
@@ -32,7 +32,7 @@ async def get_cached_member(data_store: DataStore, guild: discord.Guild, user_id
             return None
 
 async def update_member_cache(data_store: DataStore, guild: discord.Guild):
-    """Update the member cache for a server"""
+    """Update the member cache for a server."""
 
     cursor = data_store.db_connection.cursor()
 

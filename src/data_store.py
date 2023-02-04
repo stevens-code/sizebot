@@ -7,12 +7,12 @@ from log import *
 
 # Handles loading data from files and environment
 def data_read_list_file(filename: str, enable_comments: bool = True) -> list[str]:
-    """Helper function to read all lines from a file into a list of strings"""
+    """Helper function to read all lines from a file into a list of strings."""
 
     with open(filename) as file:
         lines = file.read().splitlines()
 
-        # Strip out comments (lines that start with "//"), if enabled
+        # Strip out comments (lines that start with "###"), if enabled
         if enable_comments:
             stripped_lines = []
             for line in lines:
@@ -134,16 +134,16 @@ class DiscordMember:
         self.last_cache = last_cache
 
     def avatar_path(self):
-        """Get the path for an avatar"""
+        """Get the path for an avatar."""
 
         return f"data/images/avatar_cache/{self.avatar}"
 
     def avatar_exists(self):
-        """Check if the avatar file exists"""
+        """Check if the avatar file exists."""
 
         return exists(self.avatar_path())
 
     def is_old(self):
-        """Check if the avatar file is older than a time limit (2 days)"""
+        """Check if the avatar file is older than a time limit (2 days)."""
 
         return self.last_cache < datetime.now() + timedelta(days = -2)

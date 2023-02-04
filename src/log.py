@@ -6,7 +6,7 @@ def format_datetime(time: datetime) -> str:
     return datetime.strftime(time, f"%I:%M %p ({time.astimezone().tzname()}) on %m/%d/%Y")
 
 def log_message(message: str):
-    """Log a message to the console"""
+    """Log a message to the console."""
 
     formatted_time = format_datetime(datetime.now())
     print(f"{formatted_time}: {message}")

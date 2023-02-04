@@ -5,7 +5,7 @@ from data_store import *
 from util import *
 
 async def apply_old_size_roles(data_store: DataStore, client: discord.Client):
-    """Apply the old size roles for a user"""
+    """Apply the old size roles for a user."""
     
     # Get the new roles and delete them
     cursor = data_store.db_connection.execute(f"SELECT * FROM sizeray_new_roles")
@@ -44,7 +44,7 @@ async def apply_old_size_roles(data_store: DataStore, client: discord.Client):
     data_store.db_connection.commit()
 
 def get_member_size_roles(data_store: DataStore, member: discord.Member) -> list[int]:
-    """Gets all roles a member has that are defined as a size ray role"""
+    """Gets all roles a member has that are defined as a size ray role."""
 
     matching_roles = []
     cursor = data_store.db_connection.execute(f"SELECT * FROM sizeray_roles")
@@ -58,7 +58,7 @@ def get_member_size_roles(data_store: DataStore, member: discord.Member) -> list
     return matching_roles
 
 def get_size_roles(data_store: DataStore, guild_id: int) -> list[int]:
-    """Gets all roles defined as a size role for a guild"""
+    """Gets all roles defined as a size role for a guild."""
 
     size_roles = []
     cursor = data_store.db_connection.execute(f"SELECT * FROM sizeray_roles WHERE guild = ?", (guild_id, ))
@@ -71,7 +71,7 @@ def get_size_roles(data_store: DataStore, guild_id: int) -> list[int]:
     return size_roles
 
 def get_size_role(data_store: DataStore, guild_id: int, role_name: str) -> int:
-    """Get a size role id by name"""
+    """Get a size role id by name."""
 
     cursor = data_store.db_connection.execute(f"SELECT * FROM sizeray_roles WHERE guild = ? AND name = ?", (guild_id, role_name))    
     result = cursor.fetchone()
@@ -89,7 +89,7 @@ def has_old_roles(data_store: DataStore, member: discord.Member, guild: discord.
     return result is not None
 
 async def swap_size_roles(data_store: DataStore, member: discord.Member, guild: discord.Guild, old_roles: list[int], new_roles: list[int]):
-    """Swap size roles for a member"""
+    """Swap size roles for a member."""
     
     cursor = data_store.db_connection.cursor()
     existing_roles = has_old_roles(data_store, member, guild)

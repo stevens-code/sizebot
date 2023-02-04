@@ -95,7 +95,7 @@ def is_mod(member: discord.Member):
     return member.guild_permissions.administrator or member.id == bot_creator_id
 
 async def deny_non_mod(sender: Union[discord.Interaction, discord.TextChannel]):
-    """Send a message denying a non-mod member a certain action"""
+    """Send a message denying a non-mod member a certain action."""
 
     await say(sender, "🚨 **Error:** This is a mod-only command. 🚨")
 
@@ -111,7 +111,7 @@ def get_notifications_channel(data_store: DataStore, guild: discord.Guild) -> di
         return guild.system_channel
 
 def get_avatar_name(avatar: discord.Asset, guild_id: int, member_id: int) -> str:
-    """Get an avatar's file name"""
+    """Get an avatar's file name."""
 
     avatar_format = "gif" if avatar.is_animated() else "png"
     return f"{guild_id}_{member_id}.{avatar_format}"

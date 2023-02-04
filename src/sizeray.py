@@ -41,7 +41,6 @@ async def sizeray_malfunction(data_store: DataStore, interaction: discord.Intera
 
 async def sizeray_shrink(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):
     """Generate a message for shrinking a member."""
-    
 
     if sizeray_is_bot_targeted(interaction, target):
         await sizeray_malfunction(data_store, interaction, target)
@@ -89,10 +88,14 @@ async def sizeray_sizeray(data_store: DataStore, interaction: discord.Interactio
         else: # malfunction
             await sizeray_malfunction(data_store, interaction, target)
 
-async def sizeray_immunity_notice(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):     
+async def sizeray_immunity_notice(data_store: DataStore, interaction: discord.Interaction, target: discord.Member):
+    """Notify the author of a size ray action that the target can't be targeted because they have immunity."""
+
     await say(interaction, variable_replace("{{size_shield}} " + f"The size ray has no effect! {no_ping(target)} has size ray immunity!", interaction, data_store, target))
 
 def sizeray_log_action(data_store: DataStore, guild_id: int, action: str, target: discord.Member, author: discord.Member):
+        """Log a size ray action into the database."""
+
         cursor = data_store.db_connection.cursor()
         cursor.execute("INSERT INTO sizeray_actions(guild, timestamp, action, target, author) VALUES (?, ?, ?, ?, ?)", (guild_id, datetime.now(), action, target.id, author.id))
         data_store.db_connection.commit()
@@ -108,7 +111,7 @@ def sizeray_get_immunity_role(data_store: DataStore, guild_id: int) -> int:
         return None
 
 def sizeray_has_immunity(data_store: DataStore, member: discord.Member) -> bool:
-    """Check if a member has size ray immunity"""
+    """Check if a member has size ray immunity."""
 
     role_id = sizeray_get_immunity_role(data_store, member.guild.id)
     if role_id is not None:

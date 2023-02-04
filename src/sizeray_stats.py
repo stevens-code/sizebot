@@ -13,7 +13,7 @@ from util import *
 ACTIONS_PALETTE = ["#ad0d2f", "#0749ad", "#78b116"]
 
 async def sizeray_stats_last_10(data_store: DataStore, interaction: discord.Interaction):
-    """Lists the last 10 size ray actions"""
+    """Lists the last 10 size ray actions."""
 
     lines = ["**The last 10 size ray actions were:**"]
 
@@ -100,8 +100,9 @@ async def sizeray_stats_chart_for(data_store: DataStore, interaction: discord.In
         # Delete once it's done
         os.remove(temp_chart_path)
 
-
 async def sizeray_stats_biggest_users(data_store: DataStore, interaction: discord.Interaction):
+    """Show the most common users and targets for size ray actions."""
+
     # Fetch the biggest users
     cursor = data_store.db_connection.execute(f"SELECT [author], COUNT(*) [count] from sizeray_actions WHERE guild = ? GROUP BY [author] ORDER BY [count] DESC LIMIT 10", (interaction.guild.id, ))    
     rows = cursor.fetchall()
