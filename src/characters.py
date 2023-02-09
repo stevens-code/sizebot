@@ -18,3 +18,10 @@ async def character_zhongli(data_store: DataStore, interaction: discord.Interact
     await send_bot_thinking_response(interaction)
     random_message = random.choice(data_store.character_zhongli_messages)
     await say_with_image(interaction, variable_replace(f"***{random_message}***", interaction, data_store), "data/images/zhongli.gif", followup = True)
+
+async def character_cat(data_store: DataStore, interaction: discord.Interaction):
+    """Say a random cat sound."""
+
+    await send_bot_thinking_response(interaction)
+    random_message = random.choice(data_store.character_cat_messages)
+    await say(interaction, variable_replace(f"*{random_message}*", interaction, data_store), followup = True)

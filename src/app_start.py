@@ -127,6 +127,10 @@ async def scara(interaction: discord.Interaction):
 async def zhongli(interaction: discord.Interaction):
     await character_zhongli(data_store, interaction)
 
+@tree.command(name = "meow", description = "Say meow.")
+async def meow(interaction: discord.Interaction):
+    await character_cat(data_store, interaction)
+
 # === Birthday commands ===
 @tree.command(name = "birthdays", description = "Get a list of birthdays for a month (1-12, defaults to the current month).")
 async def birthdays(interaction: discord.Interaction, month: int = -1):

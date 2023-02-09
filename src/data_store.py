@@ -44,6 +44,7 @@ class DataStore:
     SIZERAY_MALFUNCTION_MESSAGES_PATH = "data/messages/sizeray_malfunction.txt"
     CHARACTER_SCARA_MESSAGES_PATH = "data/messages/character_scara.txt"
     CHARACTER_ZHONGLI_MESSAGES_PATH = "data/messages/character_zhongli.txt"
+    CHARACTER_CAT_MESSAGES_PATH = "data/messages/character_cat.txt"
     GREETER_WELCOME_MESSAGES_PATH = "data/messages/greeter_welcome.txt"
     GREETER_GOODBYE_MESSAGES_PATH = "data/messages/greeter_goodbye.txt"
     MAGIC8_POSITIVE_MESSAGES_PATH = "data/messages/magic8_positive.txt"
@@ -87,6 +88,7 @@ class DataStore:
         self.malfunction_messages = load_lines_file(DataStore.SIZERAY_MALFUNCTION_MESSAGES_PATH, "Loaded size ray malfunction messages")
         self.character_scara_messages = load_lines_file(DataStore.CHARACTER_SCARA_MESSAGES_PATH, "Loaded Scaramouche messages")
         self.character_zhongli_messages = load_lines_file(DataStore.CHARACTER_ZHONGLI_MESSAGES_PATH, "Loaded Zhongli messages")
+        self.character_cat_messages = load_lines_file(DataStore.CHARACTER_CAT_MESSAGES_PATH, "Loaded cat messages")
         self.greeter_welcome_messages = load_lines_file(DataStore.GREETER_WELCOME_MESSAGES_PATH, "Loaded greeter welcome messages")
         self.greeter_goodbye_messages = load_lines_file(DataStore.GREETER_GOODBYE_MESSAGES_PATH, "Loaded greeter goodbye messages")
         self.magic8_positive_messages = load_lines_file(DataStore.MAGIC8_POSITIVE_MESSAGES_PATH, "Loaded Magic 8 positive messages")
