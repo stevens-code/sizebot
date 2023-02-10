@@ -320,6 +320,14 @@ async def notify_birthdays_task():
             if can_notify:
                 await birthday_daily_list(data_store, channel, today.month, today.day)
 
+# Update status
+@tasks.loop(hours = 1)
+async def update_status_task():
+    log_message("Updating the bot's status")
+    activity = discord.Activity(type = discord.ActivityType.playing, name = f"Version {SIZEBOT_VERSION_STR}")
+    await client.change_presence(status = discord.Status.online, activity = activity)
+    log_message("Finished updating bot's status")
+
 # Update members cache every few hours
 @tasks.loop(hours = 8)
 async def update_member_cache_task():
@@ -353,6 +361,7 @@ async def on_ready():
     notify_birthdays_task.start()
     update_member_cache_task.start()
     update_roles_task.start()
+    update_status_task.start()
 
     # Get guilds and add the slash commands to them
     for guild in client.guilds:
@@ -360,12 +369,6 @@ async def on_ready():
         tree.copy_global_to(guild = guild)
         await tree.sync(guild = guild)
     log_message("Finished all tree syncs")
-    
-    # Change status
-    log_message("Updating the bot's status")
-    activity = discord.Activity(type = discord.ActivityType.playing, name = f"Version {SIZEBOT_VERSION_STR}")
-    await client.change_presence(status = discord.Status.online, activity = activity)
-    log_message("Finished updating bot's status")
 
 # Automatically send a message when someone joins
 @client.event
