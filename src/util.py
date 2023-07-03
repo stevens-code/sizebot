@@ -115,3 +115,11 @@ def get_avatar_name(avatar: discord.Asset, guild_id: int, member_id: int) -> str
 
     avatar_format = "gif" if avatar.is_animated() else "png"
     return f"{guild_id}_{member_id}.{avatar_format}"
+
+def format_mention(mention: str) -> str:
+    """Deal with Discord's stupid username change."""
+
+    if mention.endswith("#0"):
+        return mention.removesuffix("#0")
+    else:
+        return mention
