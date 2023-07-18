@@ -37,6 +37,8 @@ from user_cache import *
 from roles import *
 # Logging
 from log import *
+# Floof
+from floof import *
 
 description = """SizeBot"""
 
@@ -112,6 +114,11 @@ async def good_bot(interaction: discord.Interaction):
 @tree.command(name = "bad-bot", description = "Tell SizeBot it's been bad.")
 async def bad_bot(interaction: discord.Interaction):
     await bot_rate_bad(data_store, interaction)
+
+# === Floof commands ===
+@tree.command(name = "floof", description = "Add/remove floof from someone.")
+async def floof(interaction: discord.Interaction, target: discord.Member, added_floof: int):
+    await add_floof_entry(data_store, interaction, added_floof, target)
 
 # === About commands ===
 @tree.command(name = "about-sizebot", description = "Get info about SizeBot and the system it's running on.")

@@ -109,3 +109,11 @@ timestamp       TIMESTAMP   NOT NULL,
 member          INT         NOT NULL,
 role            INT         NOT NULL
 );
+
+-- Store floof info
+CREATE TABLE IF NOT EXISTS floof_count(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+member          INT         NOT NULL,
+floof_count     INT         NOT NULL
+);
