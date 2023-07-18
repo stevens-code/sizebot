@@ -4,10 +4,11 @@ from variables import *
 from data_store import *
 from util import *
 
-
 async def add_floof_entry(data_store: DataStore, interaction: discord.Interaction, added_floof: int, target: discord.Member):
     if abs(added_floof) >= 100:
         await say(interaction, str(added_floof) + " is too much floof.")
+    elif interaction.user.id == target.id:
+        await say(interaction, "You can't add floof to yourself.")
     else:
         await add_floof(data_store, interaction, added_floof, target)
 
