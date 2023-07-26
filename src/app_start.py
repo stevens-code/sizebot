@@ -160,6 +160,14 @@ async def birthday_info(interaction: discord.Interaction):
     await birthday_get_info(data_store, interaction)
 
 # === Mod-only commands ===
+@tree.command(name = "update-sizebot-member-cache", description = "Mod-only: Update SizeBot member cache.")
+async def update_sizebot_member_cache(interaction: discord.Interaction):
+    if is_mod(interaction.user):
+        await say(interaction, f"Triggered member cache update for '{interaction.guild.name}'")
+        await update_member_cache(data_store, interaction.guild)
+    else:
+        await deny_non_mod(interaction)
+
 @tree.command(name = "set-sizebot-variable", description = "Mod-only: Set a server-specific variable to be replaced in SizeBot messages.")
 async def set_sizebot_variable(interaction: discord.Interaction, variable_name: str, variable_value: str):
     if is_mod(interaction.user):

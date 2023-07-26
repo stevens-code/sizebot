@@ -5,6 +5,11 @@ def format_datetime(time: datetime) -> str:
 
     return datetime.strftime(time, f"%I:%M %p ({time.astimezone().tzname()}) on %m/%d/%Y")
 
+def format_date(date: datetime) -> str:
+    """Formats a date to a clean format."""
+
+    return datetime.strftime(date, f"%m/%d/%Y")
+
 def log_message(message: str):
     """Log a message to the console."""
 

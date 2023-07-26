@@ -127,12 +127,13 @@ class DataStore:
         log_message("Finished creating tables")
 
 class DiscordMember:
-    def __init__(self, id: int, guild_id: int, name: str, avatar: str, handle: str, last_cache: datetime):
+    def __init__(self, id: int, guild_id: int, name: str, avatar: str, handle: str, joined_at: datetime, last_cache: datetime):
         self.id = id
         self.guild_id = guild_id
         self.name = name
         self.avatar = avatar
         self.handle = handle
+        self.joined_at = joined_at
         self.last_cache = last_cache
 
     def avatar_path(self):

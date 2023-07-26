@@ -83,7 +83,8 @@ timestamp       TIMESTAMP   NOT NULL,
 id              INT         NOT NULL,
 name            TEXT        NOT NULL,
 avatar          TEXT        NOT NULL,
-handle          TEXT        NOT NULL
+handle          TEXT        NOT NULL,
+joined_at       TIMESTAMP   NOT NULL
 );
 
 -- Store the size ray roles for each guild

@@ -17,7 +17,8 @@ async def get_cached_member(data_store: DataStore, guild: discord.Guild, user_id
         name = result[3]
         avatar = result[4]
         handle = result[5]
-        return DiscordMember(id, guild_id, name, avatar, handle, timestamp)
+        joined_at = result[6]
+        return DiscordMember(id, guild_id, name, avatar, handle, joined_at, timestamp)
     else: # No user in cache, fall back to calling server
         member = guild.get_member(user_id)
 
@@ -27,7 +28,8 @@ async def get_cached_member(data_store: DataStore, guild: discord.Guild, user_id
             name = member.display_name
             avatar = member.display_avatar
             handle = str(member)
-            return DiscordMember(id, guild_id, name, avatar, handle, datetime.min)
+            joined_at = member.joined_at
+            return DiscordMember(id, guild_id, name, avatar, handle, joined_at, datetime.min)
         else: # No user in cache or server
             return None
 
@@ -46,7 +48,7 @@ async def update_member_cache(data_store: DataStore, guild: discord.Guild):
             avatar_file = get_avatar_name(member.display_avatar, guild.id, member.id)
             if not cached_member.avatar_exists() or cached_member.is_old():
                 await member.display_avatar.save(f"data/images/avatar_cache/{avatar_file}")
-            cursor.execute("INSERT INTO member_cache(guild, timestamp, id, name, avatar, handle) VALUES (?, ?, ?, ?, ?, ?)", (guild.id, datetime.now(), member.id, member.display_name, avatar_file, str(member)))
+            cursor.execute("INSERT INTO member_cache(guild, timestamp, id, name, avatar, handle, joined_at) VALUES (?, ?, ?, ?, ?, ?, ?)", (guild.id, datetime.now(), member.id, member.display_name, avatar_file, str(member), member.joined_at))
         except Exception as e:
             log_message("Error caching user:")   
             log_message(str(e))    
