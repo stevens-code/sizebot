@@ -144,6 +144,15 @@ async def birthdays(interaction: discord.Interaction, month: int = -1):
     selected_month = month if month >= 1 and month <= 12 else date.today().month
     await birthday_monthly_list(data_store, interaction, selected_month)
 
+@tree.command(name = "birthdays-sheet", description = "Get a CSV file of birthdays for a month (1-12. If no month specified, returns all months).")
+async def birthdays_sheet(interaction: discord.Interaction, month: int = -1):
+    if month == -1:
+        await birthday_monthly_csv(data_store, interaction, -1)
+    else:
+        selected_month = month if month >= 1 and month <= 12 else date.today().month
+        await birthday_monthly_csv(data_store, interaction, selected_month)
+
+
 @tree.command(name = "birthdays-today", description = "Get a list of birthdays for today.")
 async def birthdays_today(interaction: discord.Interaction):
     today = date.today()
@@ -370,6 +379,7 @@ async def on_ready():
     create_folder_if_missing("data/images/guild_custom/goodbye")
     create_folder_if_missing("data/images/temp")
     create_folder_if_missing("data/images/avatar_cache")
+    create_folder_if_missing("data/temp")
 
     # Start tasks
     load_birthdays_task.start()

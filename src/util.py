@@ -21,11 +21,13 @@ async def say(sender: Union[discord.Interaction, discord.TextChannel], text: str
     c_text = concat_text(text)
 
     if isinstance(sender, discord.Interaction):
+        log_message(f"Saying '{c_text}' on server '{sender.guild.name}'")
         if followup:
             await sender.followup.send(c_text, ephemeral = ephemeral)
         else:
             await sender.response.send_message(c_text, ephemeral = ephemeral)
     else:
+        log_message(f"Saying '{c_text}' on server '{sender.guild.name}'")
         await sender.send(c_text)
 
 async def say_with_image(sender: Union[discord.Interaction, discord.TextChannel], text: str, image_path: str, followup = False, ephemeral = False):

@@ -19,7 +19,26 @@ async def birthday_monthly_list(data_store: DataStore, sender: Union[discord.Int
     birthday_list = get_monthly_birthday_list(data_store, sender.guild.id, month)
     lines = [f"🎂 Birthdays for {MONTH_NAMES[month - 1]}: "]
     lines.extend(birthday_list)
+
     await say(sender, "\n".join(lines))
+
+async def birthday_monthly_csv(data_store: DataStore, interaction: discord.Interaction, month: int):
+    """Export birthdays to a CSV."""
+
+    lines = ["NAME,BIRTHDAY"]    
+    birthday_list = get_guild_monthly_birthdays(data_store, interaction.guild.id, month)
+    for name in birthday_list:
+        birthday = birthday_list[name]
+        no_comma_name = name.replace(',', '').strip()
+        lines.append(f"{no_comma_name},{birthday[0]}/{birthday[1]}")
+
+    temp_csv_path = f"data/temp/birthday_csv_{interaction.id}.csv"
+    with open(temp_csv_path, "w") as f:
+        f.write("\n".join(lines))
+    
+    await interaction.response.send_message(file = discord.File(temp_csv_path))
+    log_message(f"Sending birthday sheet on server '{interaction.guild.name}'")
+    os.remove(temp_csv_path)
 
 async def birthday_daily_list(data_store: DataStore, sender: Union[discord.Interaction, discord.TextChannel], month: int, day: int):
     """Message the daily birthdays."""
@@ -106,19 +125,26 @@ def is_birthday_notify_enabled(data_store: DataStore, guild_id: int) -> bool:
     return result is None
 
 def get_guild_monthly_birthdays(data_store: DataStore, guild_id: int, search_month: int) -> dict:
-    """A list of all birthdays for a guild in a month."""
+    """A list of all birthdays for a guild in a month. If month is -1, returns all birthdays, ordered by month and day."""
 
     results = {}
 
-    cursor = data_store.db_connection.execute(f"SELECT * FROM birthdays WHERE guild = ? AND month = ? ORDER BY month ASC, day ASC", (guild_id, search_month))    
+    cursor = data_store.db_connection.execute(f"SELECT * FROM birthdays WHERE guild = ?", (guild_id, )) if search_month == -1 else data_store.db_connection.execute(f"SELECT * FROM birthdays WHERE guild = ? AND month = ?", (guild_id, search_month)) 
     rows = cursor.fetchall()
     for row in rows:
         name = row[2]
         month = row[3]
         day = row[4]
-        results[name] = (month, day)
+        results[name] = datetime(2000, month, day)
+
+    # Sort the results by date and create a new dictionary from it
+    sorted_results = dict(sorted(results.items(), key=lambda item: item[1]))    
+    returned_results = {}
+    for sorted_key in sorted_results:
+        sorted_result = sorted_results[sorted_key]
+        returned_results[sorted_key] = (sorted_result.month, sorted_result.day)
     
-    return results
+    return returned_results
 
 def get_guild_daily_birthdays(data_store: DataStore, guild_id: int, search_month: int, search_day: int) -> dict:
     """A list of all birthdays for a guild for a day."""
