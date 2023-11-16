@@ -296,6 +296,20 @@ async def reset_sizebot_notifications_channel(interaction: discord.Interaction):
     else:
         await deny_non_mod(interaction)
 
+@tree.command(name = "set-sizebot-birthday-channel", description = "Mod-only: Set the channel for SizeBot birthday notifications.")
+async def set_sizebot_birthday_channel(interaction: discord.Interaction, channel: discord.channel.TextChannel):
+    if is_mod(interaction.user):
+        await mod_set_birthdays_channel(data_store, interaction, channel)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name = "reset-sizebot-birthday-channel", description = "Mod-only: Reset the channel for SizeBot birthday notifications.")
+async def reset_sizebot_birthday_channel(interaction: discord.Interaction):
+    if is_mod(interaction.user):
+        await mod_reset_birthdays_channel(data_store, interaction)
+    else:
+        await deny_non_mod(interaction)
+
 @tree.command(name = "set-sizebot-size-role", description = "Mod-only: Set a server-specific size role.")
 async def set_sizebot_size_role(interaction: discord.Interaction, name: str, role: discord.Role):
     if is_mod(interaction.user):
@@ -333,8 +347,8 @@ async def notify_birthdays_task():
     today = date.today()
 
     for guild in client.guilds:
-        channel = get_notifications_channel(data_store, guild)
-        if channel is not None and is_birthday_notify_enabled(data_store, guild.id):
+        channel = get_birthday_notifications_channel(data_store, guild)
+        if channel is not None and is_birthday_notify_enabled(data_store, guild):
             can_notify = channel.permissions_for(guild.me).send_messages
             # Send a monthly birthday list on the 1st of each month
             if today.day == 1 and can_notify:
@@ -390,7 +404,7 @@ async def on_ready():
 
     # Get guilds and add the slash commands to them
     for guild in client.guilds:
-        log_message(f"Syncing tree for guild {guild.id}")
+        log_message(f"Syncing tree for guild {guild.id} ({guild.name})")
         tree.copy_global_to(guild = guild)
         await tree.sync(guild = guild)
     log_message("Finished all tree syncs")

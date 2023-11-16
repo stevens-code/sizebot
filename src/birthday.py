@@ -1,11 +1,12 @@
-
 import pandas
 import asyncio
+import discord
 
 from variables import *
 from data_store import *
 from util import *
 from log import *
+from settings import *
 
 MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
@@ -13,7 +14,7 @@ async def birthday_monthly_list(data_store: DataStore, sender: Union[discord.Int
     """Message the monthly birthdays."""
 
     # If it's an automatic message and automatic messages are disabled
-    if isinstance(sender, discord.TextChannel) and not is_birthday_messages_enabled(data_store, sender.guild.id): 
+    if isinstance(sender, discord.TextChannel) and not is_birthday_notify_enabled(data_store, sender.guild): 
         await asyncio.sleep(0) # Return to caller
 
     birthday_list = get_monthly_birthday_list(data_store, sender.guild.id, month)
@@ -44,7 +45,7 @@ async def birthday_daily_list(data_store: DataStore, sender: Union[discord.Inter
     """Message the daily birthdays."""
 
     # If it's an automatic message and automatic messages are disabled
-    if isinstance(sender, discord.TextChannel) and not is_birthday_messages_enabled(data_store, sender.guild.id): 
+    if isinstance(sender, discord.TextChannel) and not is_birthday_notify_enabled(data_store, sender.guild): 
         await asyncio.sleep(0) # Return to caller
 
     birthday_list = get_guild_daily_birthdays(data_store, sender.guild.id, month, day)
@@ -70,15 +71,11 @@ async def birthday_get_info(data_store: DataStore, interaction: discord.Interact
     else:
         await say(interaction, "The mods have not set any info on how to add/view birthdays from Google Sheets.")
 
-
-def is_birthday_messages_enabled(data_store: DataStore, guild_id: int) -> bool:
+def is_birthday_notify_enabled(data_store: DataStore, guild: discord.Guild) -> bool:
     """Check if the automatic birthday message feature is enabled."""
 
-    cursor = data_store.db_connection.execute(f"SELECT * FROM birthday_disable WHERE guild = ?", (guild_id, ))    
-    result = cursor.fetchone()
-
-    # If there is not entry in the disable table, it's enabled
-    return result is None
+    result = settings_get_bool(data_store, guild, "disable_birthdays")
+    return not result
 
 def store_guild_birthdays(data_store: DataStore, guild_id: int) -> dict:
     """Read guild birthdays from Google Sheets and store them in the database."""
@@ -114,15 +111,6 @@ def store_guild_birthdays(data_store: DataStore, guild_id: int) -> dict:
             log_message(f"Error fetching and storing birthday data for {guild_id}!")
     else:
         log_message(f"No birthday settings for {guild_id}.")
-
-def is_birthday_notify_enabled(data_store: DataStore, guild_id: int) -> bool:
-    """Check if automatic birthday notifications are enabled."""
-
-    cursor = data_store.db_connection.execute(f"SELECT * FROM birthday_disable WHERE guild = ?", (guild_id, ))    
-    result = cursor.fetchone()
-
-    # If there is not entry in the disable table, it's enabled
-    return result is None
 
 def get_guild_monthly_birthdays(data_store: DataStore, guild_id: int, search_month: int) -> dict:
     """A list of all birthdays for a guild in a month. If month is -1, returns all birthdays, ordered by month and day."""

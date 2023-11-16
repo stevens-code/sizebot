@@ -25,24 +25,6 @@ timestamp       TIMESTAMP   NOT NULL,
 role            INT         NOT NULL
 );
 
--- If a guild has an entry, welcome messages are disabled
-CREATE TABLE IF NOT EXISTS greeter_disable_welcome(
-guild           INT         NOT NULL,
-timestamp       TIMESTAMP   NOT NULL
-);
-
--- If a guild has an entry, goodbye messages are disabled
-CREATE TABLE IF NOT EXISTS greeter_disable_goodbye(
-guild           INT         NOT NULL,
-timestamp       TIMESTAMP   NOT NULL
-);
-
--- If a guild has an entry, birthday messages are disabled
-CREATE TABLE IF NOT EXISTS birthday_disable(
-guild           INT         NOT NULL,
-timestamp       TIMESTAMP   NOT NULL
-);
-
 -- Settings to fetch the birthday data from Google Sheets
 CREATE TABLE IF NOT EXISTS birthday_settings(
 guild                   INT         NOT NULL,
@@ -117,4 +99,36 @@ guild           INT         NOT NULL,
 timestamp       TIMESTAMP   NOT NULL,
 member          INT         NOT NULL,
 floof_count     INT         NOT NULL
+);
+
+-- Store channels for the bot
+CREATE TABLE IF NOT EXISTS settings_channel(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+key             TEXT        NOT NULL,
+value           INT         NULL
+);
+
+-- Store int values for the bot
+CREATE TABLE IF NOT EXISTS settings_int(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+key             TEXT        NOT NULL,
+value           INT         NULL
+);
+
+-- Store text values for the bot
+CREATE TABLE IF NOT EXISTS settings_text(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+key             TEXT        NOT NULL,
+value           TEXT        NULL
+);
+
+-- Store bool values for the bot
+CREATE TABLE IF NOT EXISTS settings_bool(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+key             TEXT        NOT NULL,
+value           BIT         NULL
 );

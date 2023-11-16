@@ -1,5 +1,4 @@
 import discord
-import random
 import pathlib
 import pandas
 
@@ -8,6 +7,7 @@ from data_store import *
 from variables import *
 from birthday import *
 from roles import *
+from settings import *
 
 # Mod-only commands
 async def mod_set_sizebot_variable(data_store: DataStore, interaction: discord.Interaction, variable_name: str, variable_value: str = ""):
@@ -132,73 +132,37 @@ async def mod_set_sizeray_immunity_role(data_store: DataStore, interaction: disc
 async def mod_enable_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
     """Allow SizeBot to send welcome messages."""
 
-    cursor = data_store.db_connection.cursor()
-    # Delete disable entry if it exists
-    cursor.execute("DELETE FROM greeter_disable_welcome WHERE guild = ?", (interaction.guild.id, ))
-    # Commit changes
-    data_store.db_connection.commit()  
-
+    settings_set_bool(data_store, interaction.guild, "disable_welcome", False)  
     await say(interaction, "The automatic welcome message is now enabled for this server.", ephemeral = True)
 
 async def mod_disable_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
     """Don't allow SizeBot to send welcome messages."""
 
-    cursor = data_store.db_connection.cursor()
-    # Delete disable entry if it exists
-    cursor.execute("DELETE FROM greeter_disable_welcome WHERE guild = ?", (interaction.guild.id, ))
-    # Add a new disable entry
-    cursor.execute("INSERT INTO greeter_disable_welcome(guild, timestamp) VALUES (?, ?)", (interaction.guild.id, datetime.now()))
-    # Commit changes
-    data_store.db_connection.commit()  
-
+    settings_set_bool(data_store, interaction.guild, "disable_welcome", True)
     await say(interaction, "The automatic welcome message is now disabled for this server.", ephemeral = True)
 
 async def mod_enable_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction):
     """Allow SizeBot to send goodbye messages."""
 
-    cursor = data_store.db_connection.cursor()
-    # Delete disable entry if it exists
-    cursor.execute("DELETE FROM greeter_disable_goodbye WHERE guild = ?", (interaction.guild.id, ))
-    # Commit changes
-    data_store.db_connection.commit()  
-
+    settings_set_bool(data_store, interaction.guild, "disable_goodbye", False)
     await say(interaction, "The automatic goodbye message is now enabled for this server.", ephemeral = True)
 
 async def mod_disable_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction):
     """Don't allow SizeBot to send goodbye messages."""
 
-    cursor = data_store.db_connection.cursor()
-    # Delete disable entry if it exists
-    cursor.execute("DELETE FROM greeter_disable_goodbye WHERE guild = ?", (interaction.guild.id, ))
-    # Add a new disable entry
-    cursor.execute("INSERT INTO greeter_disable_goodbye(guild, timestamp) VALUES (?, ?)", (interaction.guild.id, datetime.now()))
-    # Commit changes
-    data_store.db_connection.commit()  
-
+    settings_set_bool(data_store, interaction.guild, "disable_goodbye", True)
     await say(interaction, "The automatic goodbye message is now disabled for this server.", ephemeral = True)
 
 async def mod_enable_sizebot_birthdays(data_store: DataStore, interaction: discord.Interaction):
     """Allow SizeBot to send birthday messages."""
 
-    cursor = data_store.db_connection.cursor()
-    # Delete disable entry if it exists
-    cursor.execute("DELETE FROM birthday_disable WHERE guild = ?", (interaction.guild.id, ))
-    # Commit changes
-    data_store.db_connection.commit()  
-
+    settings_set_bool(data_store, interaction.guild, "disable_birthdays", False)
     await say(interaction, "The automatic birthday message is now enabled for this server.", ephemeral = True)
 
 async def mod_disable_sizebot_birthdays(data_store: DataStore, interaction: discord.Interaction):
     """Don't allow SizeBot to send birthday messages."""
 
-    cursor = data_store.db_connection.cursor()
-    # Delete disable entry if it exists
-    cursor.execute("DELETE FROM birthday_disable WHERE guild = ?", (interaction.guild.id, ))
-    # Add a new disable entry
-    cursor.execute("INSERT INTO birthday_disable(guild, timestamp) VALUES (?, ?)", (interaction.guild.id, datetime.now()))
-    # Commit changes
-    data_store.db_connection.commit()  
-
+    settings_set_bool(data_store, interaction.guild, "disable_birthdays", True)
     await say(interaction, "The automatic birthday message is now disabled for this server.", ephemeral = True)
 
 async def mod_set_birthday_source(data_store: DataStore, interaction: discord.Interaction, sheets_key: str, name_column: str, birthday_column: str):
@@ -257,7 +221,6 @@ async def mod_set_notifications_channel(data_store: DataStore, interaction: disc
     # Respond with the new channel name
     await say(interaction, f"The channel for SizeBot notifications is now ***{channel.name}***", ephemeral = True)
 
-
 async def mod_reset_notifications_channel(data_store: DataStore, interaction: discord.Interaction):
     """Reset the notifications channel for SizeBot back to the Discord default notifications channel."""
 
@@ -269,6 +232,20 @@ async def mod_reset_notifications_channel(data_store: DataStore, interaction: di
 
     # Respond with the new channel name
     await say(interaction, f"The channel for SizeBot notifications is now reset to Discord's default notification channel.", ephemeral = True)
+
+async def mod_set_birthdays_channel(data_store: DataStore, interaction: discord.Interaction, channel: discord.channel.TextChannel):
+    """Set the birthday notifications channel for SizeBot."""
+
+    # Set the channel
+    settings_set_channel(data_store, interaction.guild, "birthdays_channel", channel)
+    # Respond with the new channel name
+    await say(interaction, f"The channel for SizeBot birthday notifications is now ***{channel.name}***", ephemeral = True)
+
+async def mod_reset_birthdays_channel(data_store: DataStore, interaction: discord.Interaction):
+    """Reset the birthday notifications channel for SizeBot back to the Discord default notifications channel."""
+
+    settings_set_channel(data_store, interaction.guild, "birthdays_channel", None)
+    await say(interaction, f"The channel for SizeBot birthday notifications is now reset to Discord's default notification channel.", ephemeral = True)
 
 async def mod_set_sizebot_size_role(data_store: DataStore, interaction: discord.Interaction, role_name: str, role_id: int):
     """Set a size ray role in a guild's settings."""

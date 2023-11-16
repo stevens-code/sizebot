@@ -3,6 +3,7 @@ import os
 from typing import Union
 
 from data_store import *
+from settings import *
 
 # Various helper functions and constants
 DISCORD_SUPPORTED_FILE_EXTS = [".jpg", ".jpeg", ".png", ".gif", ".gifv", ".webm", ".webp", ".mp4", ".wav", ".mp3", ".ogg"]
@@ -116,6 +117,15 @@ def get_notifications_channel(data_store: DataStore, guild: discord.Guild) -> di
         return guild.get_channel(channel_id)
     else:
         return guild.system_channel
+    
+def get_birthday_notifications_channel(data_store: DataStore, guild: discord.Guild):
+    """Gets the birthday notifications channel for the server. If it is not set, return the notifications channel for the server."""
+
+    birthday_channel = settings_get_channel(data_store, guild, "birthdays_channel")
+    if birthday_channel == None:
+        return get_notifications_channel(data_store, guild)
+    else:
+        return birthday_channel
 
 def get_avatar_name(avatar: discord.Asset, guild_id: int, member_id: int) -> str:
     """Get an avatar's file name."""

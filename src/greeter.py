@@ -10,12 +10,13 @@ from data_store import *
 from util import *
 from user_cache import *
 from log import *
+from settings import *
 
 async def greeter_welcome(data_store: DataStore, sender: Union[discord.Interaction, discord.TextChannel], target: discord.Member):
     """Says hello to a new user."""
 
     # If it's an automatic message and automatic messages are disabled
-    if isinstance(sender, discord.TextChannel) and not is_greeter_welcome_enabled(data_store, sender.guild.id): 
+    if isinstance(sender, discord.TextChannel) and not is_greeter_welcome_enabled(data_store, sender.guild): 
         await asyncio.sleep(0) # Return to caller 
 
     # Send message
@@ -28,7 +29,7 @@ async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interacti
     """Generates an image for a member leaving and attaches it to a message saying goodbye. If a custom image is specified, uses that instead."""
 
     # If it's an automatic message and automatic messages are disabled
-    if isinstance(sender, discord.TextChannel) and not is_greeter_goodbye_enabled(data_store, sender.guild.id): 
+    if isinstance(sender, discord.TextChannel) and not is_greeter_goodbye_enabled(data_store, sender.guild): 
         await asyncio.sleep(0) # Return to caller
 
     # Send message
@@ -82,20 +83,14 @@ def get_welcome_image(guild_id: int):
     else:
         return "data/images/welcome.jpg"
 
-def is_greeter_welcome_enabled(data_store: DataStore, guild_id: int) -> bool:
+def is_greeter_welcome_enabled(data_store: DataStore, guild: discord.Guild) -> bool:
     """Check if the automatic greeter welcome message is enabled."""
 
-    cursor = data_store.db_connection.execute(f"SELECT * FROM greeter_disable_welcome WHERE guild = ?", (guild_id, ))    
-    result = cursor.fetchone()
+    result = settings_get_bool(data_store, guild, "disable_welcome")    
+    return not result
 
-    # If there is not entry in the disable table, it's enabled
-    return result is None
-
-def is_greeter_goodbye_enabled(data_store: DataStore, guild_id: int) -> bool:
+def is_greeter_goodbye_enabled(data_store: DataStore, guild: discord.Guild) -> bool:
     """Check if the automatic greeter goodbye message is enabled."""
 
-    cursor = data_store.db_connection.execute(f"SELECT * FROM greeter_disable_goodbye WHERE guild = ?", (guild_id, ))    
-    result = cursor.fetchone()
-
-    # If there is not entry in the disable table, it's enabled
-    return result is None
+    result = settings_get_bool(data_store, guild, "disable_goodbye")
+    return not result
