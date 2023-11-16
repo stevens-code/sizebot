@@ -4,8 +4,10 @@ from variables import *
 from data_store import *
 from util import *
 
+MAX_FLOOF_CHANGE = 1
+
 async def add_floof_entry(data_store: DataStore, interaction: discord.Interaction, added_floof: int, target: discord.Member):
-    if abs(added_floof) > 100:
+    if abs(added_floof) > MAX_FLOOF_CHANGE and not is_bot_creator(interaction.user):
         await say(interaction, str(added_floof) + " is too much floof.")
     elif interaction.user.id == target.id:
         await say(interaction, "You can't add floof to yourself.")

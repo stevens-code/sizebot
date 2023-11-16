@@ -89,12 +89,17 @@ def create_folder_if_missing(folder: str):
 
     if not os.path.exists(folder):
         os.makedirs(folder)
+        
+def is_bot_creator(member: discord.Member):
+    """Check if a member is the bot creator (Steven)."""
+
+    bot_creator_id = 585925109236367401
+    return member.id == bot_creator_id
 
 def is_mod(member: discord.Member):
     """Check if a member is a mod or the bot creator (Steven)."""
 
-    bot_creator_id = 585925109236367401
-    return member.guild_permissions.administrator or member.id == bot_creator_id
+    return member.guild_permissions.administrator or is_bot_creator(member)
 
 async def deny_non_mod(sender: Union[discord.Interaction, discord.TextChannel]):
     """Send a message denying a non-mod member a certain action."""
