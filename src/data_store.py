@@ -62,7 +62,7 @@ class DataStore:
         self.greeter_welcome_messages = []
         # These are the messages that are chosen from at random when saying goodbye to someone
         self.greeter_goodbye_messages = []
-        # Postive responses from the Magic 8 Ball
+        # Positive responses from the Magic 8 Ball
         self.magic8_positive_messages = []
         # Negative responses from the Magic 8 Ball
         self.magic8_negative_messages = []
@@ -140,6 +140,28 @@ class DiscordMember:
         """Get the path for an avatar."""
 
         return f"data/images/avatar_cache/{self.avatar}"
+
+    def avatar_exists(self):
+        """Check if the avatar file exists."""
+
+        return exists(self.avatar_path())
+
+    def is_old(self):
+        """Check if the avatar file is older than a time limit (2 days)."""
+
+        return self.last_cache < datetime.now() + timedelta(days = -2)
+
+class DiscordGuild:
+    def __init__(self, id: int, name: str, avatar: str, last_cache: datetime):
+        self.id = id
+        self.name = name
+        self.avatar = avatar
+        self.last_cache = last_cache
+
+    def avatar_path(self):
+        """Get the path for an avatar."""
+
+        return f"data/images/server_avatar_cache/{self.avatar}"
 
     def avatar_exists(self):
         """Check if the avatar file exists."""

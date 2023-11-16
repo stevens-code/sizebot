@@ -169,10 +169,11 @@ async def birthday_info(interaction: discord.Interaction):
     await birthday_get_info(data_store, interaction)
 
 # === Mod-only commands ===
-@tree.command(name = "update-sizebot-member-cache", description = "Mod-only: Update SizeBot member cache.")
-async def update_sizebot_member_cache(interaction: discord.Interaction):
+@tree.command(name = "update-sizebot-guild-caches", description = "Mod-only: Update SizeBot guild and member caches.")
+async def update_sizebot_guild_caches(interaction: discord.Interaction):
     if is_mod(interaction.user):
-        await say(interaction, f"Triggered member cache update for '{interaction.guild.name}'")
+        await say(interaction, f"Triggered cache updates for '{interaction.guild.name}'")
+        await update_guild_cache(data_store, interaction.guild, client)
         await update_member_cache(data_store, interaction.guild)
     else:
         await deny_non_mod(interaction)
@@ -366,13 +367,14 @@ async def update_status_task():
     await client.change_presence(status = discord.Status.online, activity = activity)
     log_message("Finished updating bot's status")
 
-# Update members cache every few hours
-@tasks.loop(hours = 8)
-async def update_member_cache_task():
+# Update guild and member caches every few hours
+@tasks.loop(hours = 6)
+async def update_caches_task():
     for guild in client.guilds:        
-        log_message(f'Updating member cache for guild: "{guild.name}" (Id: {guild.id})')
+        log_message(f'Updating caches for guild: "{guild.name}" (Id: {guild.id})')
+        await update_guild_cache(data_store, guild, client)
         await update_member_cache(data_store, guild)
-    log_message("Finished all member cache updates")
+    log_message("Finished all cache updates")
 
 # Remove temp size ray roles every 15 minutes
 @tasks.loop(minutes = 15)
@@ -393,12 +395,13 @@ async def on_ready():
     create_folder_if_missing("data/images/guild_custom/goodbye")
     create_folder_if_missing("data/images/temp")
     create_folder_if_missing("data/images/avatar_cache")
+    create_folder_if_missing("data/images/server_avatar_cache")
     create_folder_if_missing("data/temp")
 
     # Start tasks
     load_birthdays_task.start()
     notify_birthdays_task.start()
-    update_member_cache_task.start()
+    update_caches_task.start()
     update_roles_task.start()
     update_status_task.start()
 
@@ -439,6 +442,9 @@ async def on_guild_join(guild: discord.Guild):
     tree.copy_global_to(guild = guild)
     await tree.sync(guild = guild)
     log_message("Finish syncing commands to new guild")
+    # Update caches
+    await update_guild_cache(data_store, guild, client)
+    await update_member_cache(data_store, guild)
 
 # Launch the app
 client.run(data_store.discord_bot_token)

@@ -194,7 +194,7 @@ async def mod_set_birthday_source(data_store: DataStore, interaction: discord.In
         await say(interaction, f'🚨 **Error:** The url "{url}" does not return data that SizeBot can use. 🚨', ephemeral = True, followup = True)
 
 async def mod_set_birthday_info(data_store: DataStore, interaction: discord.Interaction, info: str):
-    """Set message to send memebers about how to add their birthdays."""
+    """Set message to send members about how to add their birthdays."""
 
     cursor = data_store.db_connection.cursor()
     # Delete if it exists 

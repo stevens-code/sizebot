@@ -69,6 +69,14 @@ handle          TEXT        NOT NULL,
 joined_at       TIMESTAMP   NOT NULL
 );
 
+-- Store guild names and avatars
+CREATE TABLE IF NOT EXISTS guild_cache(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+name            TEXT        NOT NULL,
+avatar          TEXT        NOT NULL
+);
+
 -- Store the size ray roles for each guild
 CREATE TABLE IF NOT EXISTS sizeray_roles(
 guild           INT         NOT NULL,

@@ -62,7 +62,7 @@ def concat_text(text: str):
     return text if len(text) <= MAX_DISCORD_MESSAGE_LENGTH else f"{text[:MAX_DISCORD_MESSAGE_LENGTH - 3]}..."
 
 def no_ping(member: discord.Member):
-    """Format a member name for a meesage where you don't want to ping them."""
+    """Format a member name for a message where you don't want to ping them."""
 
     return f"***{member.display_name}***"
 
@@ -132,6 +132,12 @@ def get_avatar_name(avatar: discord.Asset, guild_id: int, member_id: int) -> str
 
     avatar_format = "gif" if avatar.is_animated() else "png"
     return f"{guild_id}_{member_id}.{avatar_format}"
+
+def get_guild_avatar_name(avatar: discord.Asset, guild_id: int) -> str:
+    """Get a server avatar's file name."""
+
+    avatar_format = "gif" if avatar.is_animated() else "png"
+    return f"{guild_id}.{avatar_format}"
 
 def format_mention(mention: str) -> str:
     """Deal with Discord's stupid username change."""
