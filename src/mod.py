@@ -76,6 +76,118 @@ async def mod_set_sizebot_welcome(data_store: DataStore, interaction: discord.In
         await file_attachment.save(file_path)
         await say_with_image(interaction, "Set new welcome image to:", file_path, followup = True, ephemeral = True)
 
+async def mod_add_sizebot_character(data_store: DataStore, interaction: discord.Interaction, name: str, avatar: discord.Attachment):
+    """Set the SizeBot welcome image."""
+
+    ext = pathlib.Path(avatar.filename).suffix.lower() 
+    if ext not in DISCORD_SUPPORTED_FILE_EXTS:
+        await say(interaction, f"🚨 **Error:** Not a supported file type. The supported types are: {DISCORD_SUPPORTED_FILE_EXTS}. 🚨", ephemeral = True)
+    else:
+        guild_id = f"{interaction.guild.id}"
+
+        await say(interaction, "Adding character...", ephemeral = True)
+
+        # Save character to DB
+        cursor = data_store.db_connection.cursor()
+        # Delete character they exist 
+        cursor.execute("DELETE FROM characters WHERE guild = ? AND character_name = ?", (guild_id, name))
+        # Add character
+        cursor.execute("INSERT INTO characters(guild, timestamp, character_name) VALUES (?, ?, ?)", (interaction.guild.id, datetime.now(), name))
+        # Commit changes
+        data_store.db_connection.commit()  
+
+        # Delete the old character image if it exists
+        old_path = find_file_with_supported_ext("data/images/guild_custom/character_images/", f"{guild_id}_welcome_{name}")
+        if os.path.exists(old_path):
+            os.remove(old_path)
+
+        # Set the new one and send it back as a message
+        file_path = f"data/images/guild_custom/character_images/{guild_id}_welcome_{name}{ext}"
+        await avatar.save(file_path)
+        await say_with_image(interaction, f"Added character with the name \"{name}\":", file_path, followup = True, ephemeral = True)
+
+async def mod_remove_sizebot_character(data_store: DataStore, interaction: discord.Interaction, name: str):
+    """Remove a SizeBot character."""
+
+    guild_id = f"{interaction.guild.id}"
+
+    await say(interaction, "Removing character...", ephemeral = True)
+
+    # Delete character from DB
+    cursor = data_store.db_connection.cursor()
+    # Delete character if they exist 
+    cursor.execute("DELETE FROM characters WHERE guild = ? AND character_name = ?", (guild_id, name))
+    # Commit changes
+    data_store.db_connection.commit()  
+
+    # Delete the old character image
+    old_path = find_file_with_supported_ext("data/images/guild_custom/character_images/", f"{guild_id}_welcome_{name}")
+    if os.path.exists(old_path):
+        os.remove(old_path)
+
+    # Set the new one and send it back as a message
+    await say(interaction, f"Removed character with the name \"{name}\":", followup = True, ephemeral = True)
+
+async def mod_list_sizebot_characters(data_store: DataStore, interaction: discord.Interaction) -> list[str]:
+    """List the characters for a guild."""
+
+    lines = ["**The characters for this server are:**"]
+    cursor = data_store.db_connection.execute(f"SELECT * FROM characters WHERE guild = ?", (interaction.guild.id, ))
+    rows = cursor.fetchall()
+
+    for row in rows:
+        character_name = row[2]
+        lines.append(character_name)
+
+    await say(interaction, "\n".join(lines), ephemeral = True)
+
+async def mod_set_sizebot_character_messages(data_store: DataStore, interaction: discord.Interaction, character_name: str, message_type: str, messages: str):
+    """Add SizeBot character messages. Each message separated by |."""
+    lines = [f"**The character messages for \"{character_name}\" in this server are:**"]
+    split_messages = messages.split("|")
+    await say(interaction, "Adding character messages...", ephemeral = True)
+
+    # Save character message to DB
+    cursor = data_store.db_connection.cursor()
+    # Delete character messages if they exist
+    cursor.execute("DELETE FROM character_messages WHERE guild = ? AND message_character = ? AND message_type = ?", (interaction.guild.id, character_name, message_type))
+    # Add character messages
+    for message in split_messages:
+        lines.append(f"\"{message}\"")
+        cursor.execute("INSERT INTO character_messages(guild, timestamp, message_type, message_character, message_value) VALUES (?, ?, ?, ?, ?)", (interaction.guild.id, datetime.now(), message_type, character_name, message))
+    # Commit changes
+    data_store.db_connection.commit()
+
+    await say(interaction, "\n".join(lines), ephemeral = True, followup = True)
+
+async def mod_delete_sizebot_character_messages(data_store: DataStore, interaction: discord.Interaction, character_name: str, message_type: str):
+    """Delete SizeBot character messages."""
+    await say(interaction, "Removing character messages...", ephemeral = True)
+
+    cursor = data_store.db_connection.cursor()
+    # Delete character messages
+    cursor.execute("DELETE FROM character_messages WHERE guild = ? AND message_character = ? AND message_type = ?", (interaction.guild.id, character_name, message_type))
+    # Commit changes
+    data_store.db_connection.commit()
+
+    await say(interaction, f"Character messages for \"{character_name}\" removed.", ephemeral = True, followup = True)
+
+async def mod_list_sizebot_character_messages(data_store: DataStore, interaction: discord.Interaction, character_name: str, message_type: str):
+    """List SizeBot character messages."""
+    lines = [f"**The character messages for \"{character_name}\" in this server are:**"]
+
+    # Save character to DB
+    cursor = data_store.db_connection.cursor()
+    # Get the character messages
+    cursor = data_store.db_connection.execute("SELECT * FROM character_messages WHERE guild = ? AND message_character = ? AND message_type = ?", (interaction.guild.id, character_name, message_type))
+    # Add character messages
+    rows = cursor.fetchall()
+    for row in rows:
+        message = row[4]
+        lines.append(f"\"{message}\"")
+
+    await say(interaction, "\n".join(lines), ephemeral = True)
+
 async def mod_reset_sizebot_welcome(data_store: DataStore, interaction: discord.Interaction):
     """Delete the custom SizeBot welcome image and reset to default."""
 
@@ -140,6 +252,18 @@ async def mod_disable_sizebot_welcome(data_store: DataStore, interaction: discor
 
     settings_set_bool(data_store, interaction.guild, "disable_welcome", True)
     await say(interaction, "The automatic welcome message is now disabled for this server.", ephemeral = True)
+
+async def mod_enable_sizebot_welcome_characters(data_store: DataStore, interaction: discord.Interaction):
+    """Set SizeBot to send welcome messages with characters."""
+
+    settings_set_bool(data_store, interaction.guild, "welcome_message_characters", True)  
+    await say(interaction, "Welcome message characters are now enabled for this server.", ephemeral = True)
+
+async def mod_disable_sizebot_welcome_characters(data_store: DataStore, interaction: discord.Interaction):
+    """Turn off SizeBot welcome messages with characters."""
+
+    settings_set_bool(data_store, interaction.guild, "welcome_message_characters", False)
+    await say(interaction, "Welcome message characters are now disabled for this server.", ephemeral = True)
 
 async def mod_enable_sizebot_goodbye(data_store: DataStore, interaction: discord.Interaction):
     """Allow SizeBot to send goodbye messages."""

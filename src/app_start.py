@@ -169,7 +169,7 @@ async def birthday_info(interaction: discord.Interaction):
     await birthday_get_info(data_store, interaction)
 
 # === Mod-only commands ===
-@tree.command(name = "update-sizebot-guild-caches", description = "Mod-only: Update SizeBot guild and member caches.")
+@tree.command(name = "update-guild-caches", description = "Mod-only: Update SizeBot guild and member caches.")
 async def update_sizebot_guild_caches(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await say(interaction, f"Triggered cache updates for '{interaction.guild.name}'")
@@ -178,42 +178,84 @@ async def update_sizebot_guild_caches(interaction: discord.Interaction):
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "set-sizebot-variable", description = "Mod-only: Set a server-specific variable to be replaced in SizeBot messages.")
+@tree.command(name = "set-variable", description = "Mod-only: Set a server-specific variable to be replaced in SizeBot messages.")
 async def set_sizebot_variable(interaction: discord.Interaction, variable_name: str, variable_value: str):
     if is_mod(interaction.user):
         await mod_set_sizebot_variable(data_store, interaction, variable_name, variable_value)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "delete-sizebot-variable", description = "Mod-only: Delete a server-specific variable from SizeBot.")
+@tree.command(name = "delete-variable", description = "Mod-only: Delete a server-specific variable from SizeBot.")
 async def delete_sizebot_variable(interaction: discord.Interaction, variable_name: str):
     if is_mod(interaction.user):
         await mod_delete_sizebot_variable(data_store, interaction, variable_name)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "set-sizebot-welcome", description = "Mod-only: Set the SizeBot welcome image.")
+@tree.command(name = "set-welcome", description = "Mod-only: Set the SizeBot welcome image.")
 async def set_sizebot_welcome(interaction: discord.Interaction, file: discord.Attachment):
     if is_mod(interaction.user):
         await mod_set_sizebot_welcome(data_store, interaction, file)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "reset-sizebot-welcome", description = "Mod-only: Delete the custom SizeBot welcome image and reset to default.")
+@tree.command(name = "add-character", description = "Mod-only: Add a SizeBot character.")
+async def add_sizebot_character(interaction: discord.Interaction, name: str, avatar: discord.Attachment):
+    if is_mod(interaction.user):
+        await mod_add_sizebot_character(data_store, interaction, name, avatar)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name = "remove-character", description = "Mod-only: Remove a SizeBot character.")
+async def remove_sizebot_character(interaction: discord.Interaction, name: str):
+    if is_mod(interaction.user):
+        await mod_remove_sizebot_character(data_store, interaction, name)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name = "list-characters", description = "Mod-only: List all SizeBot characters.")
+async def list_sizebot_characters(interaction: discord.Interaction):
+    if is_mod(interaction.user):
+        await mod_list_sizebot_characters(data_store, interaction)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name = "set-welcome-messages", description = "Mod-only: Add SizeBot character welcome messages. Each message separated by \"|\".")
+async def set_sizebot_character_welcome_messages(interaction: discord.Interaction, character_name: str, messages: str):
+    if is_mod(interaction.user):
+        await mod_set_sizebot_character_messages(data_store, interaction, character_name, "welcome", messages)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name = "remove-welcome-messages", description = "Mod-only: Remove all SizeBot character welcome messages.")
+async def remove_sizebot_character_welcome_messages(interaction: discord.Interaction, character_name: str):
+    if is_mod(interaction.user):
+        await mod_delete_sizebot_character_messages(data_store, interaction, character_name, "welcome")
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name = "list-welcome-messages", description = "Mod-only: List all SizeBot character welcome messages.")
+async def remove_sizebot_character_welcome_messages(interaction: discord.Interaction, character_name: str):
+    if is_mod(interaction.user):
+        await mod_list_sizebot_character_messages(data_store, interaction, character_name, "welcome")
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name = "reset-welcome", description = "Mod-only: Delete the custom SizeBot welcome image and reset to default.")
 async def reset_sizebot_welcome(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_reset_sizebot_welcome(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "set-sizebot-goodbye", description = "Mod-only: Set the SizeBot goodbye image.")
+@tree.command(name = "set-goodbye", description = "Mod-only: Set the SizeBot goodbye image.")
 async def set_sizebot_goodbye(interaction: discord.Interaction, file: discord.Attachment):
     if is_mod(interaction.user):
         await mod_set_sizebot_goodbye(data_store, interaction, file)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "reset-sizebot-goodbye", description = "Mod-only: Delete the custom SizeBot goodbye image and reset to default.")
+@tree.command(name = "reset-goodbye", description = "Mod-only: Delete the custom SizeBot goodbye image and reset to default.")
 async def reset_sizebot_goodbye(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_reset_sizebot_goodbye(data_store, interaction)
@@ -227,105 +269,119 @@ async def set_sizeray_immunity_role(interaction: discord.Interaction, role: disc
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "enable-sizebot-welcome", description = "Mod-only: Allow SizeBot to send welcome messages.")
+@tree.command(name = "enable-welcome", description = "Mod-only: Allow SizeBot to send welcome messages.")
 async def enable_sizebot_welcome(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_enable_sizebot_welcome(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "disable-sizebot-welcome", description = "Mod-only: Don't allow SizeBot to send welcome messages.")
+@tree.command(name = "disable-welcome", description = "Mod-only: Don't allow SizeBot to send welcome messages.")
 async def disable_sizebot_welcome(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_disable_sizebot_welcome(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "enable-sizebot-goodbye", description = "Mod-only: Allow SizeBot to send goodbye messages.")
+@tree.command(name = "enable-welcome-characters", description = "Mod-only: Set SizeBot to send welcome messages with characters.")
+async def enable_sizebot_welcome_characters(interaction: discord.Interaction):
+    if is_mod(interaction.user):
+        await mod_enable_sizebot_welcome_characters(data_store, interaction)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name = "disable-welcome-characters", description = "Mod-only: Turn off SizeBot welcome messages with characters.")
+async def disable_sizebot_welcome_characters(interaction: discord.Interaction):
+    if is_mod(interaction.user):
+        await mod_disable_sizebot_welcome_characters(data_store, interaction)
+    else:
+        await deny_non_mod(interaction)
+
+@tree.command(name = "enable-goodbye", description = "Mod-only: Allow SizeBot to send goodbye messages.")
 async def enable_sizebot_goodbye(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_enable_sizebot_goodbye(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "disable-sizebot-goodbye", description = "Mod-only: Don't allow SizeBot to send goodbye messages.")
+@tree.command(name = "disable-goodbye", description = "Mod-only: Don't allow SizeBot to send goodbye messages.")
 async def disable_sizebot_goodbye(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_disable_sizebot_goodbye(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "enable-sizebot-birthdays", description = "Mod-only: Allow SizeBot to send birthday messages.")
+@tree.command(name = "enable-birthdays", description = "Mod-only: Allow SizeBot to send birthday messages.")
 async def enable_sizebot_birthdays(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_enable_sizebot_birthdays(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "disable-sizebot-birthdays", description = "Mod-only: Don't allow SizeBot to send birthday messages.")
+@tree.command(name = "disable-birthdays", description = "Mod-only: Don't allow SizeBot to send birthday messages.")
 async def disable_sizebot_birthdays(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_disable_sizebot_birthdays(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "set-sizebot-birthday-source", description = "Mod-only: Set the Google Sheets data source for birthdays.")
+@tree.command(name = "set-birthday-source", description = "Mod-only: Set the Google Sheets data source for birthdays.")
 async def set_sizebot_birthday_source(interaction: discord.Interaction, sheets_key: str, name_column: str, birthday_column: str):
     if is_mod(interaction.user):
         await mod_set_birthday_source(data_store, interaction, sheets_key, name_column, birthday_column)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "set-sizebot-birthday-info", description = "Mod-only: Set the info for how to add/view birthdays (Google Sheets/Forms link).")
+@tree.command(name = "set-birthday-info", description = "Mod-only: Set the info for how to add/view birthdays (Google Sheets/Forms link).")
 async def set_sizebot_birthday_info(interaction: discord.Interaction, info: str):
     if is_mod(interaction.user):
         await mod_set_birthday_info(data_store, interaction, info)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "set-sizebot-notify-channel", description = "Mod-only: Set the channel for SizeBot notifications (welcome, goodbye, etc..).")
+@tree.command(name = "set-notify-channel", description = "Mod-only: Set the channel for SizeBot notifications (welcome, goodbye, etc..).")
 async def set_sizebot_notifications_channel(interaction: discord.Interaction, channel: discord.channel.TextChannel):
     if is_mod(interaction.user):
         await mod_set_notifications_channel(data_store, interaction, channel)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "reset-sizebot-notify-channel", description = "Mod-only: Reset the channel for SizeBot notifications (welcome, goodbye, etc..).")
+@tree.command(name = "reset-notify-channel", description = "Mod-only: Reset the channel for SizeBot notifications (welcome, goodbye, etc..).")
 async def reset_sizebot_notifications_channel(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_reset_notifications_channel(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "set-sizebot-birthday-channel", description = "Mod-only: Set the channel for SizeBot birthday notifications.")
+@tree.command(name = "set-birthday-channel", description = "Mod-only: Set the channel for SizeBot birthday notifications.")
 async def set_sizebot_birthday_channel(interaction: discord.Interaction, channel: discord.channel.TextChannel):
     if is_mod(interaction.user):
         await mod_set_birthdays_channel(data_store, interaction, channel)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "reset-sizebot-birthday-channel", description = "Mod-only: Reset the channel for SizeBot birthday notifications.")
+@tree.command(name = "reset-birthday-channel", description = "Mod-only: Reset the channel for SizeBot birthday notifications.")
 async def reset_sizebot_birthday_channel(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_reset_birthdays_channel(data_store, interaction)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "set-sizebot-size-role", description = "Mod-only: Set a server-specific size role.")
+@tree.command(name = "set-size-role", description = "Mod-only: Set a server-specific size role.")
 async def set_sizebot_size_role(interaction: discord.Interaction, name: str, role: discord.Role):
     if is_mod(interaction.user):
         await mod_set_sizebot_size_role(data_store, interaction, name, role.id)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "delete-sizebot-size-role", description = "Mod-only: Delete a server-specific size role from SizeBot.")
+@tree.command(name = "delete-size-role", description = "Mod-only: Delete a server-specific size role from SizeBot.")
 async def delete_sizebot_size_role(interaction: discord.Interaction, name: str):
     if is_mod(interaction.user):
         await mod_delete_sizebot_size_role(data_store, interaction, name)
     else:
         await deny_non_mod(interaction)
 
-@tree.command(name = "list-sizebot-size-roles", description = "Mod-only: List all server-specific size roles.")
+@tree.command(name = "list-size-roles", description = "Mod-only: List all server-specific size roles.")
 async def list_sizebot_size_roles(interaction: discord.Interaction):
     if is_mod(interaction.user):
         await mod_list_sizebot_size_roles(data_store, interaction)
@@ -393,6 +449,7 @@ async def on_ready():
     # Create empty folders, if they don't exist
     create_folder_if_missing("data/images/guild_custom/welcome")
     create_folder_if_missing("data/images/guild_custom/goodbye")
+    create_folder_if_missing("data/images/guild_custom/character_images")
     create_folder_if_missing("data/images/temp")
     create_folder_if_missing("data/images/avatar_cache")
     create_folder_if_missing("data/images/server_avatar_cache")

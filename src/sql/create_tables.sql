@@ -140,3 +140,19 @@ timestamp       TIMESTAMP   NOT NULL,
 key             TEXT        NOT NULL,
 value           BIT         NULL
 );
+
+-- Store characters
+CREATE TABLE IF NOT EXISTS characters(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+character_name  TEXT        NOT NULL
+);
+
+-- Store messages associated with a character
+CREATE TABLE IF NOT EXISTS character_messages(
+guild                       INT         NOT NULL,
+timestamp                   TIMESTAMP   NOT NULL,
+message_type                TEXT        NOT NULL,
+message_character           TEXT        NOT NULL,
+message_value               TEXT        NOT NULL
+);

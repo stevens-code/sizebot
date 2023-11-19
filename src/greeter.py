@@ -11,6 +11,7 @@ from util import *
 from user_cache import *
 from log import *
 from settings import *
+from characters import *
 
 async def greeter_welcome(data_store: DataStore, sender: Union[discord.Interaction, discord.TextChannel], target: discord.Member):
     """Says hello to a new user."""
@@ -19,11 +20,28 @@ async def greeter_welcome(data_store: DataStore, sender: Union[discord.Interacti
     if isinstance(sender, discord.TextChannel) and not is_greeter_welcome_enabled(data_store, sender.guild): 
         await asyncio.sleep(0) # Return to caller 
 
-    # Send message
+    # Stop Discord from timing out
     await send_bot_thinking_response(sender)
-    random_message = random.choice(data_store.greeter_welcome_messages)
-    welcome_image = get_welcome_image(sender.guild.id)
-    await say_with_image(sender, variable_replace(random_message, sender, data_store, target), welcome_image, followup = True)
+
+    # Check if we should be sending character messages
+    use_characters = settings_get_bool(data_store, sender.guild, "welcome_message_characters")
+    
+    # Send message
+    if use_characters:
+        character_to_use = character_get_random(data_store, sender.guild.id)
+        if character_to_use != "":            
+            random_message = character_get_random_message(data_store, sender.guild.id, character_to_use, "welcome")
+            if random_message != "":
+                welcome_image = find_file_with_supported_ext("data/images/guild_custom/character_images", f"{sender.guild.id}_welcome_{character_to_use}")
+                await say_with_image(sender, variable_replace(random_message, sender, data_store, target), welcome_image, followup = True)
+            else:
+                await say(sender, "There are no character messages configured for this server.", followup = True)
+        else:
+            await say(sender, "There are no characters configured for this server.", followup = True)
+    else:
+        random_message = random.choice(data_store.greeter_welcome_messages)
+        welcome_image = get_welcome_image(sender.guild.id)
+        await say_with_image(sender, variable_replace(random_message, sender, data_store, target), welcome_image, followup = True)
 
 async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interaction, discord.TextChannel], target: discord.Member):
     """Generates an image for a member leaving and attaches it to a message saying goodbye. If a custom image is specified, uses that instead."""

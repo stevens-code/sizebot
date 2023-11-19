@@ -36,6 +36,6 @@ async def add_floof(data_store: DataStore, interaction: discord.Interaction, add
     cursor.execute("INSERT INTO floof_count(guild, timestamp, member, floof_count) VALUES (?, ?, ?, ?)", (guild_id, datetime.now(), target_id, floof_count))
     data_store.db_connection.commit()
 
-    message += " They now have " + str(floof_count) + " floof."
+    message += f" They now have {str(floof_count)} floof."
 
     await say(interaction, variable_replace(message, interaction, data_store, target), followup = True)
