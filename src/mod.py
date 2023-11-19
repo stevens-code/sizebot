@@ -117,6 +117,8 @@ async def mod_remove_sizebot_character(data_store: DataStore, interaction: disco
     cursor = data_store.db_connection.cursor()
     # Delete character
     cursor.execute("DELETE FROM characters WHERE guild = ? AND character_name = ?", (guild_id, name))
+    # Delete all their messages
+    cursor.execute("DELETE FROM character_messages WHERE guild = ? AND message_character = ?", (interaction.guild.id, name))
     # Commit changes
     data_store.db_connection.commit()  
 

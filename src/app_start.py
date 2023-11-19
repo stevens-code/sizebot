@@ -476,6 +476,9 @@ async def on_member_join(member: discord.Member):
     channel = get_notifications_channel(data_store, guild)
     if channel is not None and channel.permissions_for(guild.me).send_messages:
         await greeter_welcome(data_store, channel, member)
+    else:
+        log_message(f'No channel set with permissions that allow SizeBot to send welcome messages on the server "{guild.name}"')
+
     log_message(f'"{member.display_name}" has joined the server "{guild.name}"')
 
     # Update cache
