@@ -89,7 +89,7 @@ async def mod_add_sizebot_character(data_store: DataStore, interaction: discord.
 
         # Save character to DB
         cursor = data_store.db_connection.cursor()
-        # Delete character they exist 
+        # Delete character if they exist 
         cursor.execute("DELETE FROM characters WHERE guild = ? AND character_name = ?", (guild_id, name))
         # Add character
         cursor.execute("INSERT INTO characters(guild, timestamp, character_name) VALUES (?, ?, ?)", (interaction.guild.id, datetime.now(), name))
@@ -115,7 +115,7 @@ async def mod_remove_sizebot_character(data_store: DataStore, interaction: disco
 
     # Delete character from DB
     cursor = data_store.db_connection.cursor()
-    # Delete character if they exist 
+    # Delete character
     cursor.execute("DELETE FROM characters WHERE guild = ? AND character_name = ?", (guild_id, name))
     # Commit changes
     data_store.db_connection.commit()  
