@@ -141,6 +141,9 @@ async def mod_list_sizebot_characters(data_store: DataStore, interaction: discor
         character_name = row[2]
         lines.append(character_name)
 
+    if len(rows) == 0:
+        lines.append("*There are no characters defined for this server.*")
+
     await say(interaction, "\n".join(lines), ephemeral = True)
 
 async def mod_set_sizebot_character_messages(data_store: DataStore, interaction: discord.Interaction, character_name: str, message_type: str, messages: str):
@@ -177,6 +180,7 @@ async def mod_delete_sizebot_character_messages(data_store: DataStore, interacti
 async def mod_list_sizebot_character_messages(data_store: DataStore, interaction: discord.Interaction, character_name: str, message_type: str):
     """List SizeBot character messages."""
     lines = [f"**The character messages for \"{character_name}\" in this server are:**"]
+    messages = []
 
     # Save character to DB
     cursor = data_store.db_connection.cursor()
@@ -186,7 +190,16 @@ async def mod_list_sizebot_character_messages(data_store: DataStore, interaction
     rows = cursor.fetchall()
     for row in rows:
         message = row[4]
+        messages.append(message)
         lines.append(f"\"{message}\"")
+    
+    if len(rows) == 0:
+        lines.append("*There are no character messages defined on this server for this character*")
+    else:
+        # Add in the message formatted so that it can be edited
+        lines.append("\n Copy this and modify it when editing using /set-welcome-messages to change the messages for this character:")
+        joined_messages = "|".join(messages)
+        lines.append(f"`{joined_messages}`")
 
     await say(interaction, "\n".join(lines), ephemeral = True)
 

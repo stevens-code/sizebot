@@ -8,7 +8,7 @@ MAX_FLOOF_CHANGE = 1
 
 async def add_floof_entry(data_store: DataStore, interaction: discord.Interaction, added_floof: int, target: discord.Member):
     if abs(added_floof) > MAX_FLOOF_CHANGE and not is_bot_creator(interaction.user):
-        await say(interaction, str(added_floof) + " is too much floof.")
+        await say(interaction, f"{added_floof} is too much floof.")
     elif interaction.user.id == target.id:
         await say(interaction, "You can't add floof to yourself.")
     else:
@@ -36,6 +36,6 @@ async def add_floof(data_store: DataStore, interaction: discord.Interaction, add
     cursor.execute("INSERT INTO floof_count(guild, timestamp, member, floof_count) VALUES (?, ?, ?, ?)", (guild_id, datetime.now(), target_id, floof_count))
     data_store.db_connection.commit()
 
-    message += f" They now have {str(floof_count)} floof."
+    message += f" They now have {floof_count} floof."
 
     await say(interaction, variable_replace(message, interaction, data_store, target), followup = True)

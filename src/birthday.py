@@ -19,7 +19,10 @@ async def birthday_monthly_list(data_store: DataStore, sender: Union[discord.Int
 
     birthday_list = get_monthly_birthday_list(data_store, sender.guild.id, month)
     lines = [f"🎂 Birthdays for {MONTH_NAMES[month - 1]}: "]
-    lines.extend(birthday_list)
+    if len(birthday_list) == 0:
+        lines.append("*No birthdays for this month.*")
+    else:
+        lines.extend(birthday_list)
 
     await say(sender, "\n".join(lines))
 
@@ -56,7 +59,7 @@ async def birthday_daily_list(data_store: DataStore, sender: Union[discord.Inter
             lines.append(f"***{name}***")
         await say(sender, "\n".join(lines))
     elif isinstance(sender, discord.Interaction): # Not automated
-        await say(sender, "No birthdays for today.")
+        await say(sender, "*No birthdays for today.*")
     else:
         await asyncio.sleep(0) # Return to caller
 
