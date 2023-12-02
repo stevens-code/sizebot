@@ -15,6 +15,8 @@ from sizeray import *
 from sizeray_stats import *
 # Magic 8 Ball functionality
 from magic8 import *
+# Picker functionality
+from picker import *
 # Dice functionality
 from dice import *
 # Includes all greeter functionality
@@ -96,6 +98,11 @@ async def roll(interaction: discord.Interaction, sides: int = 6, rolls: int = 1)
 @tree.command(name = "magic8", description = "Ask the Magic 8 ball something.")
 async def magic8(interaction: discord.Interaction, question: str = ""):
     await magic8_ask(data_store, interaction, question)
+
+# === Picker commands ===
+@tree.command(name = "pick-from", description = "Pick a random option from a list of options. The options are split by the character \"|\".")
+async def pick_from(interaction: discord.Interaction, options: str, title: str = ""):
+    await picker_pick_random(data_store, interaction, title, options)
 
 # === Greeter commands ===
 @tree.command(name = "welcome", description = "Welcome a user.")
