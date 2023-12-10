@@ -41,6 +41,8 @@ from roles import *
 from log import *
 # Floof
 from floof import *
+# Duck Bucks
+from duck_bucks import *
 
 description = """SizeBot"""
 
@@ -126,6 +128,15 @@ async def bad_bot(interaction: discord.Interaction):
 @tree.command(name = "floof", description = "Add/remove floof from someone.")
 async def floof(interaction: discord.Interaction, target: discord.Member, added_floof: int):
     await add_floof_entry(data_store, interaction, added_floof, target)
+
+# === Duck Bucks commands ===
+@tree.command(name = "duck-bucks", description = "Add/remove Duck Bucks from someone.")
+async def duck_bucks(interaction: discord.Interaction, target: discord.Member, added_duck_bucks: int):
+    await add_duck_bucks_entry(data_store, interaction, target, added_duck_bucks)
+
+@tree.command(name = "get-duck-bucks", description = "See how many Duck Bucks someone has.")
+async def get_duck_bucks(interaction: discord.Interaction, target: discord.Member):
+    await get_duck_bucks_entry(data_store, interaction, target)
 
 # === About commands ===
 @tree.command(name = "about-sizebot", description = "Get info about SizeBot and the system it's running on.")
@@ -433,11 +444,20 @@ async def update_status_task():
 # Update guild and member caches every few hours
 @tasks.loop(hours = 6)
 async def update_caches_task():
-    for guild in client.guilds:        
+    for guild in client.guilds:
         log_message(f'Updating caches for guild: "{guild.name}" (Id: {guild.id})')
         await update_guild_cache(data_store, guild, client)
         await update_member_cache(data_store, guild)
     log_message("Finished all cache updates")
+
+# Update Duck Bucks every day
+@tasks.loop(hours=24)
+async def update_duck_bucks_task():
+    for guild in client.guilds:
+        log_message(f'Updating Duck Bucks for guild: "{guild.name}" (Id: {guild.id})')
+        for member in guild.members:
+            add_duck_bucks(data_store, guild.id, member.id, DUCK_BUCKS_DAILY)
+    log_message("Finished all Duck Bucks updates")
 
 # Remove temp size ray roles every 15 minutes
 @tasks.loop(minutes = 15)
@@ -468,6 +488,7 @@ async def on_ready():
     update_caches_task.start()
     update_roles_task.start()
     update_status_task.start()
+    update_duck_bucks_task.start()
 
     # Get guilds and add the slash commands to them
     for guild in client.guilds:

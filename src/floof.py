@@ -29,7 +29,7 @@ async def add_floof(data_store: DataStore, interaction: discord.Interaction, add
     floof_count = 0
     if result is not None: # Already exists so add to it
         floof_count = int(result[3]) + added_floof
-    else: # No user in cache, fall back to calling server
+    else: # No floof found, so set it to the added floof
         floof_count = added_floof
 
     cursor.execute("DELETE FROM floof_count WHERE guild = ? AND member = ?", (guild_id, target_id))

@@ -156,3 +156,11 @@ message_type                TEXT        NOT NULL,
 message_character           TEXT        NOT NULL,
 message_value               TEXT        NOT NULL
 );
+
+-- Store Duck Bucks
+CREATE TABLE IF NOT EXISTS duck_bucks(
+guild           INT         NOT NULL,
+timestamp       TIMESTAMP   NOT NULL,
+member          INT         NOT NULL,
+duck_bucks      INT         NOT NULL
+);

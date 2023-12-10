@@ -9,7 +9,7 @@ from data_store import *
 from util import *
 from log import *
 
-SIZEBOT_VERSION = 4.2
+SIZEBOT_VERSION = 4.3
 SIZEBOT_VERSION_STR = f"{SIZEBOT_VERSION}"
 
 async def about_message(data_store: DataStore, interaction: discord.Interaction):
