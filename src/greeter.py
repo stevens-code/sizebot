@@ -18,7 +18,7 @@ async def greeter_welcome(data_store: DataStore, sender: Union[discord.Interacti
 
     # If it's an automatic message and automatic messages are disabled
     if isinstance(sender, discord.TextChannel) and not is_greeter_welcome_enabled(data_store, sender.guild): 
-        await asyncio.sleep(0) # Return to caller 
+        return await asyncio.sleep(0) # Return to caller 
 
     # Stop Discord from timing out
     await send_bot_thinking_response(sender)
@@ -48,7 +48,7 @@ async def greeter_goodbye(data_store: DataStore, sender: Union[discord.Interacti
 
     # If it's an automatic message and automatic messages are disabled
     if isinstance(sender, discord.TextChannel) and not is_greeter_goodbye_enabled(data_store, sender.guild): 
-        await asyncio.sleep(0) # Return to caller
+        return await asyncio.sleep(0) # Return to caller
 
     # Send message
     await send_bot_thinking_response(sender)
@@ -104,7 +104,7 @@ def get_welcome_image(guild_id: int):
 def is_greeter_welcome_enabled(data_store: DataStore, guild: discord.Guild) -> bool:
     """Check if the automatic greeter welcome message is enabled."""
 
-    result = settings_get_bool(data_store, guild, "disable_welcome")    
+    result = settings_get_bool(data_store, guild, "disable_welcome")
     return not result
 
 def is_greeter_goodbye_enabled(data_store: DataStore, guild: discord.Guild) -> bool:

@@ -55,7 +55,7 @@ def settings_get_bool(data_store: DataStore, guild: discord.Guild, key: str) -> 
     result = cursor.fetchone()
     if result is not None:
         value = result[3]
-        return value
+        return value != 0
     else:
         return False
 
