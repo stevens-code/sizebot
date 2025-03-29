@@ -119,3 +119,22 @@ async def override_size_roles(data_store: DataStore, member: discord.Member, gui
     if found_role != -1:
         old_roles = get_member_size_roles(data_store, member)
         await swap_size_roles(data_store, member, guild, old_roles, [found_role])
+
+
+async def toggle_permanent_size_role(data_store: DataStore, guild: discord.Guild, interaction: discord.Interaction, role_name: str):
+    """Toggle a permanent size role (unlike the temp ones used by the size ray) for the person invoking this command."""
+
+    member = interaction.user
+    found_role = get_size_role(data_store, guild.id, role_name)
+    if found_role != -1:
+        role = guild.get_role(found_role)
+        # Remove if the role is found already on the user, add if it isn't
+        if role is not None:
+            if discord.utils.get(interaction.user.roles, id = role.id) is not None:
+                await member.remove_roles(role)
+                await say(interaction, f"Removed the role \"{role.name}\" from you", ephemeral = True)
+            else:
+                await member.add_roles(role)
+                await say(interaction, f"You now have the role \"{role.name}\"", ephemeral = True)
+    else:
+        await say(interaction, f"The role \"{role_name}\" is not configured on this server. Use /list-size-roles to find roles that are configured and /set-size-role to set them.", ephemeral = True)

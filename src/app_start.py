@@ -91,6 +91,19 @@ async def stats_chart_for(interaction: discord.Interaction, target: discord.Memb
 async def stats_biggest_users(interaction: discord.Interaction):
     await sizeray_stats_biggest_users(data_store, interaction)
 
+# === Size role switcher ===
+@tree.command(name = "toggle-tiny", description = "Toggle your tiny role.")
+async def shrink(interaction: discord.Interaction):
+    await toggle_permanent_size_role(data_store, interaction.guild, interaction, "tiny")
+
+@tree.command(name = "toggle-switch", description = "Toggle your switch role.")
+async def shrink(interaction: discord.Interaction):
+    await toggle_permanent_size_role(data_store, interaction.guild, interaction, "switch")
+
+@tree.command(name = "toggle-giant", description = "Toggle your giant role.")
+async def shrink(interaction: discord.Interaction):
+    await toggle_permanent_size_role(data_store, interaction.guild, interaction, "giant")
+
 # === Dice commands ===
 @tree.command(name = "roll", description = "Rolls a X sided die for up to a 100 rolls. Defaults to a single roll of a 6 sided die.")
 async def roll(interaction: discord.Interaction, sides: int = 6, rolls: int = 1):
@@ -169,7 +182,6 @@ async def birthdays_sheet(interaction: discord.Interaction, month: int = -1):
     else:
         selected_month = month if month >= 1 and month <= 12 else date.today().month
         await birthday_monthly_csv(data_store, interaction, selected_month)
-
 
 @tree.command(name = "birthdays-today", description = "Get a list of birthdays for today.")
 async def birthdays_today(interaction: discord.Interaction):
